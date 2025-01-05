@@ -1,6 +1,5 @@
 # auto-input-switch.nvim
-This is a neovim plugin that automatically switches the input-sources (aka input-methods) of your keyboard on various occasions.
-
+This is a neovim plugin that automatically switches the input-sources (aka input-methods) of your keyboard on various occasions.<br>
 これはキーボードの入力モードを様々なタイミングで自動で切り替える neovim プラグインです。
 
 For example:
@@ -24,8 +23,7 @@ NVIM v0.10.2
 
 
 ## Prerequisites - 動作に必要なもの
-On macOS or Windows, you may also need [im-select](https://github.com/daipeihust/im-select) to be installed.
-
+On macOS or Windows, you may also need [im-select](https://github.com/daipeihust/im-select) to be installed.<br>
 macOS か Windows の場合、別途 [im-select](https://github.com/daipeihust/im-select) が必要になります。
 
 
@@ -45,7 +43,8 @@ require('lazy').setup({
 
 
 ## Configuration - 設定
-Default config - デフォルトの設定:
+Default config:<br>
+デフォルトの設定:
 
 ```lua
 require('auto-input-switch').setup({
@@ -82,6 +81,13 @@ require('auto-input-switch').setup({
   },
 })
 ```
+
+
+## Commands - コマンド
+
+### `AutoInputSwitch on|off`
+Activate/Deactivate the whole funtionality.<br>
+機能全体の On/Off を切り替えます。
 
 
 ## License
