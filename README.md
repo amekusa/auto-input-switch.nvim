@@ -32,14 +32,14 @@ macOS か Windows の場合、別途 [im-select](https://github.com/daipeihust/i
 ## Installation - インストール
 ```lua
 require('lazy').setup({
-	{
-		'amekusa/auto-input-switch',
-		config = function()
-			require('auto-input-switch').setup({
-				-- your options
-			})
-		end
-	},
+  {
+    'amekusa/auto-input-switch',
+    config = function()
+      require('auto-input-switch').setup({
+        -- your options
+      })
+    end
+  },
 })
 ```
 
@@ -49,37 +49,37 @@ Default config - デフォルトの設定:
 
 ```lua
 require('auto-input-switch').setup({
-	activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command)
-	features = {
-		normalize_on_focus            = true, -- Switch the input-source to `normal_input` when neovim gain focus
-		normalize_on_leave_insertmode = true, -- Switch the input-source to `normal_input` on leave insert-mode
-		restore_on_enter_insertmode   = true, -- Restore the input-source to the state before the last "normalize"
-	},
-	os = nil, -- 'macos', 'windows', or 'linux' (nil to auto-detect)
-	os_settings = {
-		macos = {
-			enable = true,
-			cmd_get = 'im-select', -- Command to get the current input-source
-			cmd_set = 'im-select %s', -- Command to set the input-source (use `%s` as a placeholder)
-			normal_input = nil, -- Name of the input-source you want to use in normal-mode (nil to auto-detect)
-			-- Examples:
-			-- normal_input = 'com.apple.keylayout.ABC',
-			-- normal_input = 'com.apple.keylayout.US',
-			-- normal_input = 'com.apple.keylayout.USExtended',
-		},
-		windows = {
-			enable = true,
-			cmd_get = 'im-select.exe',
-			cmd_set = 'im-select.exe %s',
-			normal_input = nil, -- auto
-		},
-		linux = {
-			enable = true,
-			cmd_get = 'ibus engine',
-			cmd_set = 'ibus engine %s',
-			normal_input = nil, -- auto
-		},
-	},
+  activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command)
+  features = {
+    normalize_on_focus            = true, -- Switch the input-source to `normal_input` when neovim gain focus
+    normalize_on_leave_insertmode = true, -- Switch the input-source to `normal_input` on leave insert-mode
+    restore_on_enter_insertmode   = true, -- Restore the input-source to the state before the last "normalize"
+  },
+  os = nil, -- 'macos', 'windows', or 'linux' (nil to auto-detect)
+  os_settings = {
+    macos = {
+      enable = true,
+      cmd_get = 'im-select', -- Command to get the current input-source
+      cmd_set = 'im-select %s', -- Command to set the input-source (use `%s` as a placeholder)
+      normal_input = nil, -- Name of the input-source you want to use in normal-mode (nil to auto-detect)
+      -- Examples:
+      -- normal_input = 'com.apple.keylayout.ABC',
+      -- normal_input = 'com.apple.keylayout.US',
+      -- normal_input = 'com.apple.keylayout.USExtended',
+    },
+    windows = {
+      enable = true,
+      cmd_get = 'im-select.exe',
+      cmd_set = 'im-select.exe %s',
+      normal_input = nil, -- auto
+    },
+    linux = {
+      enable = true,
+      cmd_get = 'ibus engine',
+      cmd_set = 'ibus engine %s',
+      normal_input = nil, -- auto
+    },
+  },
 })
 ```
 
