@@ -4,8 +4,8 @@ This is a neovim plugin that automatically switches the input-sources (aka input
 
 For example:
 - Force the input-source to be US in normal-mode.
-- Restore the input-source back to Japanese on enter insert-mode, if you were previously using it.
-- Switch the input-source to US when neovim gain focus.
+- Restore the input-source back to Japanese on entering insert-mode, if you previously used it.
+- Switch the input-source to US when neovim gains focus.
 
 例えば:
 - normal モード時は自動で入力モードを US（英数）にする。
@@ -23,7 +23,7 @@ NVIM v0.10.2
 
 
 ## Prerequisites - 動作に必要なもの
-On macOS or Windows, you may also need [im-select](https://github.com/daipeihust/im-select) to be installed.<br>
+For macOS or Windows, you may also need [im-select](https://github.com/daipeihust/im-select) to be installed.<br>
 macOS か Windows の場合、別途 [im-select](https://github.com/daipeihust/im-select) が必要になります。
 
 
@@ -50,10 +50,10 @@ Default config:<br>
 
 ```lua
 require('auto-input-switch').setup({
-  activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command)
+  activate = true, -- Activate the plugin (You can toggle this with `AutoInputSwitch on|off` command at any time)
   features = {
-    normalize_on_focus            = true, -- Switch the input-source to `normal_input` when neovim gain focus
-    normalize_on_leave_insertmode = true, -- Switch the input-source to `normal_input` on leave insert-mode
+    normalize_on_focus            = true, -- Switch the input-source to `normal_input` when neovim gains focus
+    normalize_on_leave_insertmode = true, -- Switch the input-source to `normal_input` on leaving insert-mode
     restore_on_enter_insertmode   = true, -- Restore the input-source to the state before the last "normalize"
   },
   os = nil, -- 'macos', 'windows', or 'linux' (nil to auto-detect)
@@ -61,7 +61,7 @@ require('auto-input-switch').setup({
     macos = {
       enable = true,
       cmd_get = 'im-select', -- Command to get the current input-source
-      cmd_set = 'im-select %s', -- Command to set the input-source (use `%s` as a placeholder)
+      cmd_set = 'im-select %s', -- Command to change the input-source (use `%s` as a placeholder for the new input-source)
       normal_input = nil, -- Name of the input-source you want to use in normal-mode (nil to auto-detect)
       -- Examples:
       -- normal_input = 'com.apple.keylayout.ABC',
