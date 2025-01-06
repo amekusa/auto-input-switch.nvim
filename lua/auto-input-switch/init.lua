@@ -30,7 +30,7 @@ local api = vim.api
 --   - TRACE
 --   - WARN
 --   - OFF
-function log(msg, level)
+local function log(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
