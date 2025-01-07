@@ -1,6 +1,6 @@
 # auto-input-switch.nvim
 This is a neovim plugin that automatically switches the input-sources (aka input-methods) of your keyboard on various occasions.<br>
-これはキーボードの入力モードを様々なタイミングで自動で切り替える neovim プラグインです。
+これはキーボードの入力モードを様々なタイミングにおいて自動で切り替える neovim プラグインです。
 
 For example:
 - Force the input-source to be US in normal-mode.
@@ -88,7 +88,7 @@ require('auto-input-switch').setup({
 ## Commands - コマンド
 
 ### `AutoInputSwitch on|off`
-Activate/Deactivate the whole funtionality.<br>
+Activate/Deactivate the whole functionality.<br>
 機能全体の On/Off を切り替えます。
 
 
