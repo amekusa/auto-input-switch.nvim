@@ -56,7 +56,7 @@ function M.setup(opts)
 	local defaults = {
 		activate = true,
 		features = {
-			normalize_on_focus            = true,
+			normalize_on_gain_focus       = true,
 			normalize_on_leave_insertmode = true,
 			restore_on_enter_insertmode   = true,
 		},
@@ -155,7 +155,7 @@ function M.setup(opts)
 		if features.normalize_on_leave_insertmode then
 			table.insert(normalize_on, 'InsertLeave')
 		end
-		if features.normalize_on_focus then
+		if features.normalize_on_gain_focus then
 			table.insert(normalize_on, 'FocusGained')
 		end
 		api.nvim_create_autocmd(normalize_on, {callback = normalize})
