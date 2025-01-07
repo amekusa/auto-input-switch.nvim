@@ -112,7 +112,8 @@ function M.setup(opts)
 			else
 				log('invalid argument: on | off', 'ERROR')
 			end
-		end, {
+		end,
+		{
 			nargs = 1,
 			complete = function()
 				return {'on', 'off'}
@@ -120,47 +121,45 @@ function M.setup(opts)
 		}
 	)
 
-	api.nvim_create_autocmd('FocusGained', {
-		callback = function()
-			if not opts.activate then return end
-
-			-- switch to input_n
-			if features.normalize_on_focus and input_n and (input_n ~= input_i) then
-				exec(cmd_set:format(input_n))
-			end
-		end
-	})
-
 	api.nvim_create_autocmd('InsertEnter', {
 		callback = function()
 			if not opts.activate then return end
 
 			-- save input to input_n
-			if (not input_n) and features.normalize_on_leave_insertmode then
+			if not input_n then
 				input_n = trim(exec_get(cmd_get))
 			end
-			-- switch to input_i
+			-- restore input_i that was saved on the last normalize
 			if features.restore_on_enter_insertmode and input_i and (input_i ~= input_n) then
 				exec(cmd_set:format(input_i))
 			end
 		end
 	})
 
-	api.nvim_create_autocmd('InsertLeave', {
-		callback = function()
+	do
+		local function normalize()
 			if not opts.activate then return end
 
-			-- save input to input_i
+			-- save input to input_i before normalize
 			if features.restore_on_enter_insertmode
 				then input_i = trim(exec_get(cmd_get))
 				else input_i = nil
 			end
 			-- switch to input_n
-			if features.normalize_on_leave_insertmode and input_n and (input_n ~= input_i) then
+			if input_n and (input_n ~= input_i) then
 				exec(cmd_set:format(input_n))
 			end
 		end
-	})
+
+		local normalize_on = {}
+		if features.normalize_on_leave_insertmode then
+			table.insert(normalize_on, 'InsertLeave')
+		end
+		if features.normalize_on_focus then
+			table.insert(normalize_on, 'FocusGained')
+		end
+		api.nvim_create_autocmd(normalize_on, {callback = normalize})
+	end
 
 end
 
