@@ -56,10 +56,10 @@ function M.setup(opts)
 	local defaults = {
 		activate = true,
 		features = {
-			normalize_on_gain_focus       = true,
-			normalize_on_lose_focus       = true,
-			normalize_on_leave_insertmode = true,
-			restore_on_enter_insertmode   = true,
+			normalize_on_gain_focus       = {enable = true},
+			normalize_on_lose_focus       = {enable = true},
+			normalize_on_leave_insertmode = {enable = true},
+			restore_on_enter_insertmode   = {enable = true},
 		},
 		os = nil, -- macos/windows/linux or nil to auto-detect
 		os_settings = {
@@ -100,6 +100,7 @@ function M.setup(opts)
 	local input_i
 
 	local features = opts.features
+	local restore_on_enter_insertmode = features.restore_on_enter_insertmode.enable
 
 	api.nvim_create_user_command('AutoInputSwitch',
 		function(cmd)
@@ -131,7 +132,7 @@ function M.setup(opts)
 				input_n = trim(exec_get(cmd_get))
 			end
 			-- restore input_i that was saved on the last normalize
-			if features.restore_on_enter_insertmode and input_i and (input_i ~= input_n) then
+			if restore_on_enter_insertmode and input_i and (input_i ~= input_n) then
 				exec(cmd_set:format(input_i))
 			end
 		end
@@ -142,7 +143,7 @@ function M.setup(opts)
 			if not opts.activate then return end
 
 			-- save input to input_i before normalize
-			if features.restore_on_enter_insertmode
+			if restore_on_enter_insertmode
 				then input_i = trim(exec_get(cmd_get))
 				else input_i = nil
 			end
@@ -153,13 +154,13 @@ function M.setup(opts)
 		end
 
 		local normalize_on = {}
-		if features.normalize_on_leave_insertmode then
+		if features.normalize_on_leave_insertmode.enable then
 			table.insert(normalize_on, 'InsertLeave')
 		end
-		if features.normalize_on_gain_focus then
+		if features.normalize_on_gain_focus.enable then
 			table.insert(normalize_on, 'FocusGained')
 		end
-		if features.normalize_on_lose_focus then
+		if features.normalize_on_lose_focus.enable then
 			table.insert(normalize_on, 'FocusLost')
 		end
 		api.nvim_create_autocmd(normalize_on, {callback = normalize})
