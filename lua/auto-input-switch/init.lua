@@ -99,6 +99,7 @@ function M.setup(opts)
 	local input_n = oss.normal_input
 	local input_i
 
+	local active = opts.activate
 	local features = opts.features
 	local restore_on_enter_insertmode = features.restore_on_enter_insertmode.enable
 
@@ -106,10 +107,10 @@ function M.setup(opts)
 		function(cmd)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
-				opts.activate = true
+				active = true
 				log('activated')
 			elseif arg == 'off' then
-				opts.activate = false
+				active = false
 				log('deactivated')
 			else
 				log('invalid argument: on | off', 'ERROR')
@@ -125,7 +126,7 @@ function M.setup(opts)
 
 	api.nvim_create_autocmd('InsertEnter', {
 		callback = function()
-			if not opts.activate then return end
+			if not active then return end
 
 			-- save input to input_n
 			if not input_n then
@@ -140,7 +141,7 @@ function M.setup(opts)
 
 	do
 		local function normalize()
-			if not opts.activate then return end
+			if not active then return end
 
 			-- save input to input_i before normalize
 			if restore_on_enter_insertmode
