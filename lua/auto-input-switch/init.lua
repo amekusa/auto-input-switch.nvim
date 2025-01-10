@@ -64,6 +64,9 @@ function M.setup(opts)
 				condition = nil,
 			},
 		},
+		normalize = {
+			exclude_insertmode = true,
+		},
 		os = nil, -- macos/windows/linux or nil to auto-detect
 		os_settings = {
 			macos = {
@@ -157,8 +160,12 @@ function M.setup(opts)
 	end
 
 	do
-		local function normalize()
-			if not active then return end
+		local exclude_insertmode = opts.normalize.exclude_insertmode
+		local get_mode = api.nvim_get_mode
+		local s_insertleave = 'InsertLeave'
+		local s_i = 'i'
+		local function normalize(ctx)
+			if (not active) or (exclude_insertmode and (ctx.event ~= s_insertleave) and (get_mode().mode == s_i)) then return end
 
 			-- save input to input_i before normalize
 			if restore_on_enter_insertmode
