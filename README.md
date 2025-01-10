@@ -89,7 +89,7 @@ require('auto-input-switch').setup({
 
 ### `AutoInputSwitch on|off`
 Activate/Deactivate the whole functionality.<br>
-機能全体の On/Off を切り替えます。
+機能全体の on/off を切り替えます。
 
 
 ## License
