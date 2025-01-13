@@ -55,17 +55,22 @@ local M = {}
 function M.setup(opts)
 	local defaults = {
 		activate = true,
-		features = {
-			normalize_on_gain_focus       = {enable = true},
-			normalize_on_lose_focus       = {enable = true},
-			normalize_on_leave_insertmode = {enable = true},
-			restore_on_enter_insertmode   = {
-				enable = true,
-				condition = nil,
-			},
-		},
 		normalize = {
+			enable = true,
+			on = {
+				'InsertLeave',
+				'FocusGained',
+				'FocusLost',
+			},
 			exclude_insertmode = true,
+		},
+		restore = {
+			enable = true,
+			on = {
+				'InsertEnter'
+			},
+			filetypes = nil,
+			exclude_alphanumeric = true,
 		},
 		os = nil, -- macos/windows/linux or nil to auto-detect
 		os_settings = {
@@ -105,9 +110,10 @@ function M.setup(opts)
 	local input_n = oss.normal_input
 	local input_i
 
+	local normalize = opts.normalize
+	local restore   = opts.restore
+
 	local active = opts.activate
-	local features = opts.features
-	local restore_on_enter_insertmode = features.restore_on_enter_insertmode.enable
 
 	api.nvim_create_user_command('AutoInputSwitch',
 		function(cmd)
@@ -130,10 +136,10 @@ function M.setup(opts)
 		}
 	)
 
-	do
-		local condition = features.restore_on_enter_insertmode.condition
-		if not condition then
-			local get_option = vim.api.nvim_get_option_value
+	if restore.enable then
+		local condition
+		do
+			local get_option = api.nvim_get_option_value
 			local get_option_arg1 = 'buftype'
 			local get_option_arg2 = {buf = false}
 			condition = function(ctx)
@@ -142,33 +148,34 @@ function M.setup(opts)
 				--   NOTE: Regular buffer has buftype empty
 			end
 		end
+		local function fn_restore(ctx)
+			if (not active) or (not condition(ctx)) then return end
 
-		api.nvim_create_autocmd('InsertEnter', {
-			callback = function(ctx)
-				if (not active) or (not condition(ctx)) then return end
-
-				-- save input to input_n
-				if not input_n then
-					input_n = trim(exec_get(cmd_get))
-				end
-				-- restore input_i that was saved on the last normalize
-				if restore_on_enter_insertmode and input_i and (input_i ~= input_n) then
-					exec(cmd_set:format(input_i))
-				end
+			-- save input to input_n
+			if not input_n then
+				input_n = trim(exec_get(cmd_get))
 			end
-		})
+			-- restore input_i that was saved on the last normalize
+			if input_i and (input_i ~= input_n) then
+				exec(cmd_set:format(input_i))
+			end
+		end
+		if restore.on then
+			api.nvim_create_autocmd(restore.on, {callback = fn_restore})
+		end
 	end
 
-	do
-		local exclude_insertmode = opts.normalize.exclude_insertmode
+	if normalize.enable then
+		local exclude_insertmode = normalize.exclude_insertmode
+		local restore_enable = restore.enable
 		local get_mode = api.nvim_get_mode
 		local s_insertleave = 'InsertLeave'
 		local s_i = 'i'
-		local function normalize(ctx)
+		local function fn_normalize(ctx)
 			if (not active) or (exclude_insertmode and (ctx.event ~= s_insertleave) and (get_mode().mode == s_i)) then return end
 
 			-- save input to input_i before normalize
-			if restore_on_enter_insertmode
+			if restore_enable
 				then input_i = trim(exec_get(cmd_get))
 				else input_i = nil
 			end
@@ -177,18 +184,9 @@ function M.setup(opts)
 				exec(cmd_set:format(input_n))
 			end
 		end
-
-		local normalize_on = {}
-		if features.normalize_on_leave_insertmode.enable then
-			table.insert(normalize_on, 'InsertLeave')
+		if normalize.on then
+			api.nvim_create_autocmd(normalize.on, {callback = fn_normalize})
 		end
-		if features.normalize_on_gain_focus.enable then
-			table.insert(normalize_on, 'FocusGained')
-		end
-		if features.normalize_on_lose_focus.enable then
-			table.insert(normalize_on, 'FocusLost')
-		end
-		api.nvim_create_autocmd(normalize_on, {callback = normalize})
 	end
 
 end
