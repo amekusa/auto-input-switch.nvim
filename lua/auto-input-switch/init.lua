@@ -115,6 +115,18 @@ function M.setup(opts)
 
 	local active = opts.activate
 
+	-- Returns whether AIS is active or not.
+	-- @return boolean
+	function M.is_active()
+		return active
+	end
+
+	-- Sets whether AIS is active or not.
+	-- @param boolean x
+	function M.set_active(x)
+		active = x
+	end
+
 	api.nvim_create_user_command('AutoInputSwitch',
 		function(cmd)
 			local arg = cmd.fargs[1]
@@ -125,7 +137,7 @@ function M.setup(opts)
 				active = false
 				log('deactivated')
 			else
-				log('invalid argument: on | off', 'ERROR')
+				log('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
 			end
 		end,
 		{
@@ -148,7 +160,10 @@ function M.setup(opts)
 				--   NOTE: Regular buffer has buftype empty
 			end
 		end
-		local function fn_restore(ctx)
+
+		-- (Event Handler) Switches the input-source back to the one used before the last normalization.
+		-- @param table Auto-command context
+		function M.restore(ctx)
 			if (not active) or (not condition(ctx)) then return end
 
 			-- save input to input_n
@@ -160,8 +175,9 @@ function M.setup(opts)
 				exec(cmd_set:format(input_i))
 			end
 		end
+
 		if restore.on then
-			api.nvim_create_autocmd(restore.on, {callback = fn_restore})
+			api.nvim_create_autocmd(restore.on, {callback = M.restore})
 		end
 	end
 
@@ -171,7 +187,10 @@ function M.setup(opts)
 		local get_mode = api.nvim_get_mode
 		local s_insertleave = 'InsertLeave'
 		local s_i = 'i'
-		local function fn_normalize(ctx)
+
+		-- (Event Handler) Normalizes the input-source.
+		-- @param table Auto-command context
+		function M.normalize(ctx)
 			if (not active) or (exclude_insertmode and (ctx.event ~= s_insertleave) and (get_mode().mode == s_i)) then return end
 
 			-- save input to input_i before normalize
@@ -184,8 +203,9 @@ function M.setup(opts)
 				exec(cmd_set:format(input_n))
 			end
 		end
+
 		if normalize.on then
-			api.nvim_create_autocmd(normalize.on, {callback = fn_normalize})
+			api.nvim_create_autocmd(normalize.on, {callback = M.normalize})
 		end
 	end
 
