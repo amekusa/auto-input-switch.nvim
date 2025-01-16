@@ -23,6 +23,9 @@
 local vim = vim
 local api = vim.api
 
+-- lua 5.1 vs 5.2 compatibility
+local unpack = unpack or table.unpack
+
 -- levels:
 --   - DEBUG
 --   - ERROR
@@ -70,7 +73,7 @@ function M.setup(opts)
 				'InsertEnter'
 			},
 			filetypes = nil,
-			exclude_alphanumeric = true,
+			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
 		},
 		os = nil, -- macos/windows/linux or nil to auto-detect
 		os_settings = {
@@ -161,6 +164,10 @@ function M.setup(opts)
 			end
 		end
 
+		local excludes = restore.exclude_pattern
+		local get_cursor = api.nvim_win_get_cursor
+		local get_lines = api.nvim_buf_get_lines
+
 		-- (Event Handler) Switches the input-source back to the one used before the last normalization.
 		-- @param table Auto-command context
 		function M.restore(ctx)
@@ -172,6 +179,11 @@ function M.setup(opts)
 			end
 			-- restore input_i that was saved on the last normalize
 			if input_i and (input_i ~= input_n) then
+				if excludes then -- check if the chars before & after the cursor are alphanumeric
+					local row, col = unpack(get_cursor(0))
+					local line = get_lines(0, row - 1, row, true)[1]
+					if line:sub(col, col + 1):find(excludes) then return end
+				end
 				exec(cmd_set:format(input_i))
 			end
 		end
