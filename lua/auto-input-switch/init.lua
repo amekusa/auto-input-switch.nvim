@@ -198,7 +198,7 @@ function M.setup(opts)
 			local get_option_arg2 = {buf = 0}
 			condition = function(ctx)
 				get_option_arg2.buf = ctx.buf
-				if not get_option(get_option_arg1, get_option_arg2) then return end
+				return get_option(get_option_arg1, get_option_arg2)
 			end
 		end
 
