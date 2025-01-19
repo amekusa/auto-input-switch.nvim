@@ -72,7 +72,7 @@ function M.setup(opts)
 			on = {
 				'InsertEnter'
 			},
-			filetypes = nil,
+			file_pattern = nil,
 			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
 		},
 		os = nil, -- macos/windows/linux or nil to auto-detect
@@ -223,7 +223,10 @@ function M.setup(opts)
 		end
 
 		if restore.on then
-			api.nvim_create_autocmd(restore.on, {callback = M.restore})
+			api.nvim_create_autocmd(restore.on, {
+				callback = M.restore,
+				pattern = restore.file_pattern,
+			})
 		end
 	end
 
