@@ -155,12 +155,11 @@ function M.setup(opts)
 		local condition
 		do
 			local get_option = api.nvim_get_option_value
-			local get_option_arg1 = 'buftype'
-			local get_option_arg2 = {buf = false}
+			local get_option_arg1 = 'buflisted'
+			local get_option_arg2 = {buf = 0}
 			condition = function(ctx)
 				get_option_arg2.buf = ctx.buf
-				return get_option(get_option_arg1, get_option_arg2):len() == 0
-				--   NOTE: Regular buffer has buftype empty
+				if not get_option(get_option_arg1, get_option_arg2) then return end
 			end
 		end
 
