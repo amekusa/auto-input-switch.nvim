@@ -151,43 +151,6 @@ function M.setup(opts)
 		}
 	)
 
-	if restore.enable then
-		local condition
-		do
-			local get_option = api.nvim_get_option_value
-			local get_option_arg1 = 'buflisted'
-			local get_option_arg2 = {buf = 0}
-			condition = function(ctx)
-				get_option_arg2.buf = ctx.buf
-				if not get_option(get_option_arg1, get_option_arg2) then return end
-			end
-		end
-
-		local excludes = restore.exclude_pattern
-		local get_cursor = api.nvim_win_get_cursor
-		local get_lines = api.nvim_buf_get_lines
-
-		-- (Event Handler) Switches the input-source back to the one used before the last normalization.
-		-- @param table event-args
-		function M.restore(ctx)
-			if (not active) or (not condition(ctx)) then return end
-
-			-- restore input_i that was saved on the last normalize
-			if input_i and (input_i ~= input_n) then
-				if excludes then -- check if the chars before & after the cursor are alphanumeric
-					local row, col = unpack(get_cursor(0))
-					local line = get_lines(0, row - 1, row, true)[1]
-					if line:sub(col, col + 1):find(excludes) then return end
-				end
-				exec(cmd_set:format(input_i))
-			end
-		end
-
-		if restore.on then
-			api.nvim_create_autocmd(restore.on, {callback = M.restore})
-		end
-	end
-
 	if normalize.enable then
 
 		-- auto-detect the normal input
@@ -224,6 +187,43 @@ function M.setup(opts)
 
 		if normalize.on then
 			api.nvim_create_autocmd(normalize.on, {callback = M.normalize})
+		end
+	end
+
+	if restore.enable then
+		local condition
+		do
+			local get_option = api.nvim_get_option_value
+			local get_option_arg1 = 'buflisted'
+			local get_option_arg2 = {buf = 0}
+			condition = function(ctx)
+				get_option_arg2.buf = ctx.buf
+				if not get_option(get_option_arg1, get_option_arg2) then return end
+			end
+		end
+
+		local excludes = restore.exclude_pattern
+		local get_cursor = api.nvim_win_get_cursor
+		local get_lines = api.nvim_buf_get_lines
+
+		-- (Event Handler) Switches the input-source back to the one used before the last normalization.
+		-- @param table event-args
+		function M.restore(ctx)
+			if (not active) or (not condition(ctx)) then return end
+
+			-- restore input_i that was saved on the last normalize
+			if input_i and (input_i ~= input_n) then
+				if excludes then -- check if the chars before & after the cursor are alphanumeric
+					local row, col = unpack(get_cursor(0))
+					local line = get_lines(0, row - 1, row, true)[1]
+					if line:sub(col, col + 1):find(excludes) then return end
+				end
+				exec(cmd_set:format(input_i))
+			end
+		end
+
+		if restore.on then
+			api.nvim_create_autocmd(restore.on, {callback = M.restore})
 		end
 	end
 
