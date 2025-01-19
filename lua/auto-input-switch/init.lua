@@ -169,7 +169,7 @@ function M.setup(opts)
 		local get_lines = api.nvim_buf_get_lines
 
 		-- (Event Handler) Switches the input-source back to the one used before the last normalization.
-		-- @param table Auto-command context
+		-- @param table event-args
 		function M.restore(ctx)
 			if (not active) or (not condition(ctx)) then return end
 
@@ -191,8 +191,8 @@ function M.setup(opts)
 
 	if normalize.enable then
 
-		-- auto-detect the normal input
 		if not input_n then
+			-- auto-detect the normal input
 			api.nvim_create_autocmd('InsertEnter', {
 				callback = function()
 					input_n = trim(exec_get(cmd_get))
@@ -208,7 +208,7 @@ function M.setup(opts)
 		local s_i = 'i'
 
 		-- (Event Handler) Normalizes the input-source.
-		-- @param table Auto-command context
+		-- @param table event-args context
 		function M.normalize(ctx)
 			if (not active) or (exclude_insertmode and (ctx.event ~= s_insertleave) and (get_mode().mode == s_i)) then return end
 
