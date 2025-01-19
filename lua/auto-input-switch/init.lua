@@ -191,8 +191,8 @@ function M.setup(opts)
 
 	if normalize.enable then
 
+		-- auto-detect the normal input
 		if not input_n then
-			-- auto-detect the normal input
 			api.nvim_create_autocmd('InsertEnter', {
 				callback = function()
 					input_n = trim(exec_get(cmd_get))
