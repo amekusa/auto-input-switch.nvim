@@ -173,10 +173,6 @@ function M.setup(opts)
 		function M.restore(ctx)
 			if (not active) or (not condition(ctx)) then return end
 
-			-- save input to input_n
-			if not input_n then
-				input_n = trim(exec_get(cmd_get))
-			end
 			-- restore input_i that was saved on the last normalize
 			if input_i and (input_i ~= input_n) then
 				if excludes then -- check if the chars before & after the cursor are alphanumeric
@@ -194,6 +190,17 @@ function M.setup(opts)
 	end
 
 	if normalize.enable then
+
+		-- auto-detect the normal input
+		if not input_n then
+			api.nvim_create_autocmd('InsertEnter', {
+				callback = function()
+					input_n = trim(exec_get(cmd_get))
+					return true -- oneshot
+				end
+			})
+		end
+
 		local exclude_insertmode = normalize.exclude_insertmode
 		local restore_enable = restore.enable
 		local get_mode = api.nvim_get_mode
