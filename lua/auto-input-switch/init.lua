@@ -62,14 +62,17 @@ function M.setup(opts)
 			enable = true,
 			on = {
 				'InsertLeave',
-				'FocusGained',
+				'BufLeave',
+				'WinLeave',
 				'FocusLost',
+				'ExitPre',
 			},
 		},
 		restore = {
 			enable = true,
 			on = {
-				'InsertEnter'
+				'InsertEnter',
+				'FocusGained',
 			},
 			file_pattern = nil,
 			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
