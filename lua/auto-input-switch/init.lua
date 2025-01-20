@@ -181,13 +181,18 @@ function M.setup(opts)
 	end
 
 	if restore.enable then
-		local buf_is_listed; do
+		local condition; do
+			local get_mode = api.nvim_get_mode
+			local s_InsertEnter = 'InsertEnter'
+			local s_i = 'i'
 			local get_option = api.nvim_get_option_value
 			local get_option_arg1 = 'buflisted'
 			local get_option_arg2 = {buf = 0}
-			buf_is_listed = function(buf)
-				get_option_arg2.buf = buf
-				return get_option(get_option_arg1, get_option_arg2)
+			condition = function(ctx)
+				if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
+				get_option_arg2.buf = ctx.buf
+				if not get_option(get_option_arg1, get_option_arg2) then return false end
+				return true
 			end
 		end
 
@@ -195,7 +200,7 @@ function M.setup(opts)
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 		local function fn_restore(ctx)
-			if not active or not buf_is_listed(ctx.buf) then return end
+			if not active or not condition(ctx) then return end
 
 			-- restore input_i that was saved on the last normalize
 			if input_i and (input_i ~= input_n) then
