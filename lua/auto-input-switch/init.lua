@@ -65,7 +65,6 @@ function M.setup(opts)
 				'FocusGained',
 				'FocusLost',
 			},
-			exclude_insertmode = true,
 		},
 		restore = {
 			enable = true,
@@ -152,8 +151,6 @@ function M.setup(opts)
 	)
 
 	if normalize.enable then
-
-		-- auto-detect the normal input
 		if not input_n then
 			api.nvim_create_autocmd('InsertEnter', {
 				callback = function()
@@ -163,14 +160,9 @@ function M.setup(opts)
 			})
 		end
 
-		local exclude_insertmode = normalize.exclude_insertmode
 		local restore_enable = restore.enable
-		local get_mode = api.nvim_get_mode
-		local s_insertleave = 'InsertLeave'
-		local s_i = 'i'
-
-		local function fn_normalize(ctx)
-			if (not active) or (exclude_insertmode and (ctx.event ~= s_insertleave) and (get_mode().mode == s_i)) then return end
+		local function fn_normalize()
+			if not active then return end
 
 			-- save input to input_i before normalize
 			if restore_enable
@@ -189,28 +181,27 @@ function M.setup(opts)
 	end
 
 	if restore.enable then
-		local condition
-		do
+		local buf_is_listed; do
 			local get_option = api.nvim_get_option_value
 			local get_option_arg1 = 'buflisted'
 			local get_option_arg2 = {buf = 0}
-			condition = function()
+			buf_is_listed = function(buf)
+				get_option_arg2.buf = buf
 				return get_option(get_option_arg1, get_option_arg2)
 			end
 		end
 
 		local excludes = restore.exclude_pattern
-		local get_cursor = api.nvim_win_get_cursor
-		local get_lines = api.nvim_buf_get_lines
-
-		local function fn_restore()
-			if (not active) or (not condition()) then return end
+		local win_get_cursor = api.nvim_win_get_cursor
+		local buf_get_lines  = api.nvim_buf_get_lines
+		local function fn_restore(ctx)
+			if not active or not buf_is_listed(ctx.buf) then return end
 
 			-- restore input_i that was saved on the last normalize
 			if input_i and (input_i ~= input_n) then
 				if excludes then -- check if the chars before & after the cursor are alphanumeric
-					local row, col = unpack(get_cursor(0))
-					local line = get_lines(0, row - 1, row, true)[1]
+					local row, col = unpack(win_get_cursor(0))
+					local line = buf_get_lines(0, row - 1, row, true)[1]
 					if line:sub(col, col + 1):find(excludes) then return end
 				end
 				exec(cmd_set:format(input_i))
