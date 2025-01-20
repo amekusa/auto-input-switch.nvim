@@ -6,11 +6,22 @@ For example:
 - Force the input-source to be US in normal-mode.
 - Restore the input-source back to Japanese on entering insert-mode, if you previously used it.
 - Switch the input-source to US when neovim gains focus.
+- Switch the input-source to US after exit neovim.
 
 例えば:
 - normal モード時は自動で入力モードを US（英数）にする。
 - insert モードに入った際、自動で日本語入力モードに戻る。（直前に日本語入力モードを使っていた場合）
 - neovim のウィンドウがフォーカスされた時に自動で入力モードを US（英数）にする。
+- neovim を終了した時に自動で入力モードを US（英数）にする。
+
+
+## Version History - バージョン履歴
+- v2.0.0
+  - Added/Removed some options.
+  - オプション項目をいくつか追加/削除しました。
+- v1.0.0
+  - Released.
+  - リリース。
 
 
 ## Compatibility - 互換性
@@ -23,8 +34,8 @@ NVIM v0.10.2
 
 
 ## Prerequisites - 動作に必要なもの
-For macOS or Windows, you may also need [im-select](https://github.com/daipeihust/im-select) to be installed.<br>
-macOS か Windows の場合、別途 [im-select](https://github.com/daipeihust/im-select) が必要になります。
+With the default settings, you also need [im-select](https://github.com/daipeihust/im-select) for macOS/Windows, or [ibus](https://github.com/ibus/ibus) for Linux to be installed.<br>
+デフォルト設定の場合、別途 [im-select](https://github.com/daipeihust/im-select) (macOS/Windows) または [ibus](https://github.com/ibus/ibus) (Linux) が必要になります。
 
 
 ## Installation - インストール
@@ -50,19 +61,40 @@ Default config:<br>
 
 ```lua
 require('auto-input-switch').setup({
-  activate = true, -- Activate the plugin (You can toggle this with `AutoInputSwitch on|off` command at any time)
-  features = {
-    normalize_on_focus            = true, -- Switch the input-source to `normal_input` when neovim gains focus
-    normalize_on_leave_insertmode = true, -- Switch the input-source to `normal_input` on leaving insert-mode
-    restore_on_enter_insertmode   = true, -- Restore the input-source to the state before the last "normalize"
+  activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
+  normalize = {
+    enable = true, -- Enable to normalize the input-source?
+    on = { -- When to normalize (:h events)
+      'InsertLeave',
+      'BufLeave',
+      'WinLeave',
+      'FocusLost',
+      'ExitPre',
+    },
   },
-  os = nil, -- 'macos', 'windows', or 'linux' (nil to auto-detect)
-  os_settings = {
+  restore = {
+    enable = true, -- Enable to restore the input-source?
+    on = { -- When to restore (:h events)
+      'InsertEnter',
+      'FocusGained',
+    },
+    file_pattern = nil, -- File pattern to enable it on (nil to any file)
+    -- Example:
+    -- file_pattern = { '*.md', '*.txt' },
+
+    exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
+    -- When you switch to insert-mode, the plugin checks the cursor position at the moment.
+    -- And if any of the characters before & after the position match with `exclude_pattern`,
+    -- the plugin cancel to restore the input-source and leave it as it is.
+    -- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
+  },
+  os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
+  os_settings = { -- OS-specific settings
     macos = {
       enable = true,
       cmd_get = 'im-select', -- Command to get the current input-source
-      cmd_set = 'im-select %s', -- Command to change the input-source (use `%s` as a placeholder for the new input-source)
-      normal_input = nil, -- Name of the input-source you want to use in normal-mode (nil to auto-detect)
+      cmd_set = 'im-select %s', -- Command to set the input-source (Use `%s` as a placeholder for the input-source)
+      normal_input = nil, -- Name of the input-source to normalize to when you leave insert-mode (Set nil to auto-detect)
       -- Examples:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
@@ -89,7 +121,7 @@ require('auto-input-switch').setup({
 
 ### `AutoInputSwitch on|off`
 Activate/Deactivate the whole functionality.<br>
-機能全体の On/Off を切り替えます。
+機能全体の on/off を切り替えます。
 
 
 ## License

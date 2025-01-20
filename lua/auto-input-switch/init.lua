@@ -23,6 +23,9 @@
 local vim = vim
 local api = vim.api
 
+-- lua 5.1 vs 5.2 compatibility
+local unpack = unpack or table.unpack
+
 -- levels:
 --   - DEBUG
 --   - ERROR
@@ -54,19 +57,41 @@ local exec_get = vim.fn.system
 local M = {}
 function M.setup(opts)
 	local defaults = {
-		activate = true,
-		features = {
-			normalize_on_focus            = true,
-			normalize_on_leave_insertmode = true,
-			restore_on_enter_insertmode   = true,
+		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
+		normalize = {
+			enable = true, -- Enable to normalize the input-source?
+			on = { -- When to normalize (:h events)
+				'InsertLeave',
+				'BufLeave',
+				'WinLeave',
+				'FocusLost',
+				'ExitPre',
+			},
 		},
-		os = nil, -- macos/windows/linux or nil to auto-detect
-		os_settings = {
+		restore = {
+			enable = true, -- Enable to restore the input-source?
+			on = { -- When to restore (:h events)
+				'InsertEnter',
+				'FocusGained',
+			},
+			file_pattern = nil, -- File pattern to enable it on (nil to any file)
+			-- Example:
+			-- file_pattern = { '*.md', '*.txt' },
+
+			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
+			-- When you switch to insert-mode, the plugin checks the cursor position at the moment.
+			-- And if any of the characters before & after the position match with `exclude_pattern`,
+			-- the plugin cancel to restore the input-source and leave it as it is.
+			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
+		},
+		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
+		os_settings = { -- OS-specific settings
 			macos = {
 				enable = true,
-				cmd_get = 'im-select', -- command to get the current input-source
-				cmd_set = 'im-select %s', -- command to set the input-source (use `%s` as a placeholder)
-				normal_input = nil, -- auto
+				cmd_get = 'im-select', -- Command to get the current input-source
+				cmd_set = 'im-select %s', -- Command to set the input-source (Use `%s` as a placeholder for the input-source)
+				normal_input = nil, -- Name of the input-source to normalize to when you leave insert-mode (Set nil to auto-detect)
+				-- Examples:
 				-- normal_input = 'com.apple.keylayout.ABC',
 				-- normal_input = 'com.apple.keylayout.US',
 				-- normal_input = 'com.apple.keylayout.USExtended',
@@ -98,19 +123,34 @@ function M.setup(opts)
 	local input_n = oss.normal_input
 	local input_i
 
-	local features = opts.features
+	local normalize = opts.normalize
+	local restore   = opts.restore
+
+	local active = opts.activate
+
+	-- Returns whether AIS is active or not.
+	-- @return boolean
+	function M.is_active()
+		return active
+	end
+
+	-- Sets whether AIS is active or not.
+	-- @param boolean x
+	function M.set_active(x)
+		active = x
+	end
 
 	api.nvim_create_user_command('AutoInputSwitch',
 		function(cmd)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
-				opts.activate = true
+				active = true
 				log('activated')
 			elseif arg == 'off' then
-				opts.activate = false
+				active = false
 				log('deactivated')
 			else
-				log('invalid argument: on | off', 'ERROR')
+				log('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
 			end
 		end,
 		{
@@ -121,27 +161,22 @@ function M.setup(opts)
 		}
 	)
 
-	api.nvim_create_autocmd('InsertEnter', {
-		callback = function()
-			if not opts.activate then return end
-
-			-- save input to input_n
-			if not input_n then
-				input_n = trim(exec_get(cmd_get))
-			end
-			-- restore input_i that was saved on the last normalize
-			if features.restore_on_enter_insertmode and input_i and (input_i ~= input_n) then
-				exec(cmd_set:format(input_i))
-			end
+	if normalize.enable then
+		if not input_n then
+			api.nvim_create_autocmd('InsertEnter', {
+				callback = function()
+					input_n = trim(exec_get(cmd_get))
+					return true -- oneshot
+				end
+			})
 		end
-	})
 
-	do
-		local function normalize()
-			if not opts.activate then return end
+		local restore_enable = restore.enable
+		local function fn_normalize()
+			if not active then return end
 
 			-- save input to input_i before normalize
-			if features.restore_on_enter_insertmode
+			if restore_enable
 				then input_i = trim(exec_get(cmd_get))
 				else input_i = nil
 			end
@@ -151,14 +186,48 @@ function M.setup(opts)
 			end
 		end
 
-		local normalize_on = {}
-		if features.normalize_on_leave_insertmode then
-			table.insert(normalize_on, 'InsertLeave')
+		api.nvim_create_autocmd(normalize.on, {
+			callback = fn_normalize
+		})
+	end
+
+	if restore.enable then
+		local condition; do
+			local get_mode = api.nvim_get_mode
+			local s_InsertEnter = 'InsertEnter'
+			local s_i = 'i'
+			local get_option = api.nvim_get_option_value
+			local get_option_arg1 = 'buflisted'
+			local get_option_arg2 = {buf = 0}
+			condition = function(ctx)
+				if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
+				get_option_arg2.buf = ctx.buf
+				if not get_option(get_option_arg1, get_option_arg2) then return false end
+				return true
+			end
 		end
-		if features.normalize_on_focus then
-			table.insert(normalize_on, 'FocusGained')
+
+		local excludes = restore.exclude_pattern
+		local win_get_cursor = api.nvim_win_get_cursor
+		local buf_get_lines  = api.nvim_buf_get_lines
+		local function fn_restore(ctx)
+			if not active or not condition(ctx) then return end
+
+			-- restore input_i that was saved on the last normalize
+			if input_i and (input_i ~= input_n) then
+				if excludes then -- check if the chars before & after the cursor are alphanumeric
+					local row, col = unpack(win_get_cursor(0))
+					local line = buf_get_lines(0, row - 1, row, true)[1]
+					if line:sub(col, col + 1):find(excludes) then return end
+				end
+				exec(cmd_set:format(input_i))
+			end
 		end
-		api.nvim_create_autocmd(normalize_on, {callback = normalize})
+
+		api.nvim_create_autocmd(restore.on, {
+			pattern = restore.file_pattern,
+			callback = fn_restore
+		})
 	end
 
 end
