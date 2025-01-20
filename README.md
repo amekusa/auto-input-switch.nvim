@@ -6,11 +6,22 @@ For example:
 - Force the input-source to be US in normal-mode.
 - Restore the input-source back to Japanese on entering insert-mode, if you previously used it.
 - Switch the input-source to US when neovim gains focus.
+- Switch the input-source to US after exit neovim.
 
 例えば:
 - normal モード時は自動で入力モードを US（英数）にする。
 - insert モードに入った際、自動で日本語入力モードに戻る。（直前に日本語入力モードを使っていた場合）
 - neovim のウィンドウがフォーカスされた時に自動で入力モードを US（英数）にする。
+- neovim を終了した時に自動で入力モードを US（英数）にする。
+
+
+## Version History - バージョン履歴
+- v2.0.0
+  - Added/Removed some options.
+  - オプション項目をいくつか追加/削除しました。
+- v1.0.0
+  - Released.
+  - リリース。
 
 
 ## Compatibility - 互換性
@@ -23,8 +34,8 @@ NVIM v0.10.2
 
 
 ## Prerequisites - 動作に必要なもの
-For macOS or Windows, you may also need [im-select](https://github.com/daipeihust/im-select) to be installed.<br>
-macOS か Windows の場合、別途 [im-select](https://github.com/daipeihust/im-select) が必要になります。
+With the default settings, you also need [im-select](https://github.com/daipeihust/im-select) for macOS/Windows, or [ibus](https://github.com/ibus/ibus) for Linux to be installed.<br>
+デフォルト設定の場合、別途 [im-select](https://github.com/daipeihust/im-select) (macOS/Windows) または [ibus](https://github.com/ibus/ibus) (Linux) が必要になります。
 
 
 ## Installation - インストール
