@@ -1,14 +1,14 @@
 # auto-input-switch.nvim
-Lang: English | [日本語](README.ja.md)
+**English** / [日本語](README.ja.md)
 
 This is a Neovim plugin that automatically switches the input sources (aka input methods) of your keyboard on various occasions,
 improving your writing experience in non-English languages.
 
 For example, it can:
-- Force the input source to be US in Normal-mode
-- Switch the input source to Japanese on entering Insert-mode, if you previously used it
-- Switch the input source to US when Neovim gains focus
-- Switch the input source to US after exiting Neovim
+- Force the input source to be US in Normal-mode.
+- Switch the input source to Japanese on entering Insert-mode, if you previously used it.
+- Switch the input source to US when Neovim gains focus.
+- Switch the input source to US after exiting Neovim.
 
 
 ## Version History
@@ -48,7 +48,7 @@ require('lazy').setup({
 ```
 
 
-## Configuration - 設定
+## Configuration
 Default options:
 
 ```lua

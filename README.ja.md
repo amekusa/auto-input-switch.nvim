@@ -1,5 +1,5 @@
 # auto-input-switch.nvim
-Lang: [English](README.md) | 日本語 
+[English](README.md) / **日本語**
 
 これはキーボードの入力モードを様々なタイミングにおいて自動で切り替える Neovim プラグインです。
 英語以外の言語によるライティング・エクスペリエンスを向上させます。
@@ -115,7 +115,7 @@ require('auto-input-switch').setup({
 機能全体の on/off を切り替えます。
 
 
-## License
+## ライセンス
 Copyright (c) 2025 Satoshi Soma <noreply@amekusa.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
