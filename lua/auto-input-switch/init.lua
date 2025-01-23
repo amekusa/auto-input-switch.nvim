@@ -59,7 +59,7 @@ function M.setup(opts)
 	local defaults = {
 		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
 		normalize = {
-			enable = true, -- Enable to normalize the input-source?
+			enable = true, -- Enable to normalize the input source?
 			on = { -- When to normalize (:h events)
 				'InsertLeave',
 				'BufLeave',
@@ -69,7 +69,7 @@ function M.setup(opts)
 			},
 		},
 		restore = {
-			enable = true, -- Enable to restore the input-source?
+			enable = true, -- Enable to restore the input source?
 			on = { -- When to restore (:h events)
 				'InsertEnter',
 				'FocusGained',
@@ -81,16 +81,16 @@ function M.setup(opts)
 			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
 			-- When you switch to insert-mode, the plugin checks the cursor position at the moment.
 			-- And if any of the characters before & after the position match with `exclude_pattern`,
-			-- the plugin cancel to restore the input-source and leave it as it is.
+			-- the plugin cancel to restore the input source and leave it as it is.
 			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
 		},
 		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
 		os_settings = { -- OS-specific settings
 			macos = {
 				enable = true,
-				cmd_get = 'im-select', -- Command to get the current input-source
-				cmd_set = 'im-select %s', -- Command to set the input-source (Use `%s` as a placeholder for the input-source)
-				normal_input = nil, -- Name of the input-source to normalize to when you leave insert-mode (Set nil to auto-detect)
+				cmd_get = 'im-select', -- Command to get the current input source
+				cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
+				normal_input = nil, -- Name of the input source to normalize to when you leave insert-mode (Set nil to auto-detect)
 				-- Examples:
 				-- normal_input = 'com.apple.keylayout.ABC',
 				-- normal_input = 'com.apple.keylayout.US',
@@ -189,7 +189,7 @@ function M.setup(opts)
 
 		api.nvim_create_user_command('AutoInputSwitchNormalize',
 			M.normalize, {
-				desc = 'Normalize the input-source',
+				desc = 'Normalize the input source',
 				nargs = 0
 			}
 		)
@@ -237,7 +237,7 @@ function M.setup(opts)
 
 		api.nvim_create_user_command('AutoInputSwitchRestore',
 			function() M.restore() end, {
-				desc = 'Restore the input-source to the state before tha last normalization',
+				desc = 'Restore the input source to the state before tha last normalization',
 				nargs = 0
 			}
 		)
