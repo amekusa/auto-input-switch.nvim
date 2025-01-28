@@ -60,7 +60,7 @@ function M.setup(opts)
 		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
 		normalize = {
 			enable = true, -- Enable to normalize the input source?
-			on = { -- When to normalize (:h events)
+			on = { -- Events to trigger auto-normalize (:h events)
 				'InsertLeave',
 				'BufLeave',
 				'WinLeave',
@@ -73,7 +73,7 @@ function M.setup(opts)
 		},
 		restore = {
 			enable = true, -- Enable to restore the input source?
-			on = { -- When to restore (:h events)
+			on = { -- Events to trigger auto-restore (:h events)
 				'InsertEnter',
 				'FocusGained',
 			},
