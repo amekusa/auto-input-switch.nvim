@@ -67,6 +67,9 @@ function M.setup(opts)
 				'FocusLost',
 				'ExitPre',
 			},
+			file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
+			-- Example:
+			-- file_pattern = { '*.md', '*.txt' },
 		},
 		restore = {
 			enable = true, -- Enable to restore the input source?
@@ -165,6 +168,7 @@ function M.setup(opts)
 	if normalize.enable then
 		if not input_n then
 			api.nvim_create_autocmd('InsertEnter', {
+				pattern = normalize.file_pattern,
 				callback = function()
 					input_n = trim(exec_get(cmd_get))
 					return true -- oneshot
@@ -196,6 +200,7 @@ function M.setup(opts)
 
 		if normalize.on then
 			api.nvim_create_autocmd(normalize.on, {
+				pattern = normalize.file_pattern,
 				callback = M.normalize
 			})
 		end
