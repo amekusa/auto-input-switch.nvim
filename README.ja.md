@@ -1,10 +1,12 @@
 # auto-input-switch.nvim
+
 [English](README.md) / **日本語**
 
 これはキーボードの入力モードを様々なタイミングにおいて自動で切り替える Neovim プラグインです。
 英語以外の言語によるライティング・エクスペリエンスを向上させます。
 
 例えば、以下のようなことが実現可能です:
+
 - Normal モード時は自動で入力モードを US（英数）にする。
 - Insert モードに入った際、自動で日本語入力モードに戻る。（直前に日本語入力モードを使っていた場合）
 - Neovim のウィンドウがフォーカスされた時に自動で入力モードを US（英数）にする。
@@ -29,6 +31,7 @@ NVIM v0.10.2
 
 ## 動作に必要なもの
 デフォルト設定の場合、別途 [im-select](https://github.com/daipeihust/im-select) (macOS/Windows) または [ibus](https://github.com/ibus/ibus) (Linux) が必要になります。
+あるいは macOS の場合、[macism](https://github.com/laishulu/macism) の方が im-select よりも良いかもしれません。
 
 
 ## インストール
@@ -56,21 +59,22 @@ require('auto-input-switch').setup({
   activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
   normalize = {
     enable = true, -- Enable to normalize the input source?
-    on = { -- When to normalize (:h events)
+    on = { -- Events to trigger auto-normalize (:h events)
       'InsertLeave',
       'BufLeave',
       'WinLeave',
       'FocusLost',
       'ExitPre',
     },
+    file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
   },
   restore = {
     enable = true, -- Enable to restore the input source?
-    on = { -- When to restore (:h events)
+    on = { -- Events to trigger auto-restore (:h events)
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- File pattern to enable it on (nil to any file)
+    file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
     -- Example:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -111,8 +115,19 @@ require('auto-input-switch').setup({
 
 ## コマンド
 
-### `AutoInputSwitch on|off`
+`:AutoInputSwitch on|off`
+
 機能全体の on/off を切り替えます。
+
+
+`:AutoInputSwitchNormalize`
+
+入力モードを手動でノーマライズします。
+
+
+`:AutoInputSwitchRestore`
+
+入力モードを手動でリストアします。
 
 
 ## ライセンス
