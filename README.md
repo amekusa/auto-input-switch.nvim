@@ -1,4 +1,5 @@
 # auto-input-switch.nvim
+
 **English** / [日本語](README.ja.md)
 
 This is a Neovim plugin that automatically switches the input sources (aka input methods) of your keyboard on various occasions,
@@ -114,13 +115,18 @@ require('auto-input-switch').setup({
 
 ## Commands
 
-### `:AutoInputSwitch on|off`
+`:AutoInputSwitch on|off`
+
 Activate/Deactivate the whole functionality.
 
-### `:AutoInputSwitchNormalize`
+
+`:AutoInputSwitchNormalize`
+
 Manually normalize the input source.
 
-### `:AutoInputSwitchRestore`
+
+`:AutoInputSwitchRestore`
+
 Manually restore the input source.
 
 
