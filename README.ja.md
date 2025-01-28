@@ -1,26 +1,26 @@
 # auto-input-switch.nvim
 
-**English** / [日本語](README.ja.md)
+[English](README.md) / **日本語**
 
-This is a Neovim plugin that automatically switches the input sources (aka input methods) of your keyboard on various occasions,
-improving your writing experience in non-English languages.
+これはキーボードの入力モードを様々なタイミングにおいて自動で切り替える Neovim プラグインです。
+英語以外の言語によるライティング・エクスペリエンスを向上させます。
 
-For example, it can:
+例えば、以下のようなことが実現可能です:
 
-- Force the input source to be US in Normal-mode.
-- Switch the input source to Japanese on entering Insert-mode, if you previously used it.
-- Switch the input source to US when Neovim gains focus.
-- Switch the input source to US after exiting Neovim.
+- Normal モード時は自動で入力モードを US（英数）にする。
+- Insert モードに入った際、自動で日本語入力モードに戻る。（直前に日本語入力モードを使っていた場合）
+- Neovim のウィンドウがフォーカスされた時に自動で入力モードを US（英数）にする。
+- Neovim を終了した時に自動で入力モードを US（英数）にする。
 
 
-## Version History
+## バージョン履歴
 - v2.0.0
-  - Added/Removed some options.
+  - オプション項目をいくつか追加/削除しました。
 - v1.0.0
-  - Released.
+  - リリース。
 
 
-## Compatibility 
+## 互換性
 NVIM v0.10.2
 
 ### OS
@@ -29,12 +29,12 @@ NVIM v0.10.2
 - Linux
 
 
-## Prerequisites
-With the default settings, you also need [im-select](https://github.com/daipeihust/im-select) for macOS/Windows, or [ibus](https://github.com/ibus/ibus) for Linux to be installed.
-Alternatively, [macism](https://github.com/laishulu/macism) can be a better choice over im-select for macOS.
+## 動作に必要なもの
+デフォルト設定の場合、別途 [im-select](https://github.com/daipeihust/im-select) (macOS/Windows) または [ibus](https://github.com/ibus/ibus) (Linux) が必要になります。
+あるいは macOS の場合、[macism](https://github.com/laishulu/macism) の方が im-select よりも良いかもしれません。
 
 
-## Installation
+## インストール
 ```lua
 require('lazy').setup({
 
@@ -51,8 +51,8 @@ require('lazy').setup({
 ```
 
 
-## Configuration
-Default options:
+## 設定
+デフォルトの設定:
 
 ```lua
 require('auto-input-switch').setup({
@@ -113,24 +113,24 @@ require('auto-input-switch').setup({
 ```
 
 
-## Commands
+## コマンド
 
 `:AutoInputSwitch on|off`
 
-Activate/Deactivate the whole functionality.
+機能全体の on/off を切り替えます。
 
 
 `:AutoInputSwitchNormalize`
 
-Manually normalize the input source.
+入力モードを手動でノーマライズします。
 
 
 `:AutoInputSwitchRestore`
 
-Manually restore the input source.
+入力モードを手動でリストアします。
 
 
-## License
+## ライセンス
 Copyright (c) 2025 Satoshi Soma <noreply@amekusa.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

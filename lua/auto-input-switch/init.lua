@@ -59,38 +59,41 @@ function M.setup(opts)
 	local defaults = {
 		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
 		normalize = {
-			enable = true, -- Enable to normalize the input-source?
-			on = { -- When to normalize (:h events)
+			enable = true, -- Enable to normalize the input source?
+			on = { -- Events to trigger auto-normalize (:h events)
 				'InsertLeave',
 				'BufLeave',
 				'WinLeave',
 				'FocusLost',
 				'ExitPre',
 			},
+			file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
+			-- Example:
+			-- file_pattern = { '*.md', '*.txt' },
 		},
 		restore = {
-			enable = true, -- Enable to restore the input-source?
-			on = { -- When to restore (:h events)
+			enable = true, -- Enable to restore the input source?
+			on = { -- Events to trigger auto-restore (:h events)
 				'InsertEnter',
 				'FocusGained',
 			},
-			file_pattern = nil, -- File pattern to enable it on (nil to any file)
+			file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 
 			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
 			-- When you switch to insert-mode, the plugin checks the cursor position at the moment.
 			-- And if any of the characters before & after the position match with `exclude_pattern`,
-			-- the plugin cancel to restore the input-source and leave it as it is.
+			-- the plugin cancel to restore the input source and leave it as it is.
 			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
 		},
 		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
 		os_settings = { -- OS-specific settings
 			macos = {
 				enable = true,
-				cmd_get = 'im-select', -- Command to get the current input-source
-				cmd_set = 'im-select %s', -- Command to set the input-source (Use `%s` as a placeholder for the input-source)
-				normal_input = nil, -- Name of the input-source to normalize to when you leave insert-mode (Set nil to auto-detect)
+				cmd_get = 'im-select', -- Command to get the current input source
+				cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
+				normal_input = nil, -- Name of the input source to normalize to when you leave insert-mode (Set nil to auto-detect)
 				-- Examples:
 				-- normal_input = 'com.apple.keylayout.ABC',
 				-- normal_input = 'com.apple.keylayout.US',
@@ -154,6 +157,7 @@ function M.setup(opts)
 			end
 		end,
 		{
+			desc = 'Activate/Deactivate auto-input-switch',
 			nargs = 1,
 			complete = function()
 				return {'on', 'off'}
@@ -164,6 +168,7 @@ function M.setup(opts)
 	if normalize.enable then
 		if not input_n then
 			api.nvim_create_autocmd('InsertEnter', {
+				pattern = normalize.file_pattern,
 				callback = function()
 					input_n = trim(exec_get(cmd_get))
 					return true -- oneshot
@@ -172,7 +177,7 @@ function M.setup(opts)
 		end
 
 		local restore_enable = restore.enable
-		local function fn_normalize()
+		M.normalize = function()
 			if not active then return end
 
 			-- save input to input_i before normalize
@@ -186,9 +191,19 @@ function M.setup(opts)
 			end
 		end
 
-		api.nvim_create_autocmd(normalize.on, {
-			callback = fn_normalize
-		})
+		api.nvim_create_user_command('AutoInputSwitchNormalize',
+			M.normalize, {
+				desc = 'Normalize the input source',
+				nargs = 0
+			}
+		)
+
+		if normalize.on then
+			api.nvim_create_autocmd(normalize.on, {
+				pattern = normalize.file_pattern,
+				callback = M.normalize
+			})
+		end
 	end
 
 	if restore.enable then
@@ -200,17 +215,18 @@ function M.setup(opts)
 			local get_option_arg1 = 'buflisted'
 			local get_option_arg2 = {buf = 0}
 			condition = function(ctx)
-				if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
-				get_option_arg2.buf = ctx.buf
-				if not get_option(get_option_arg1, get_option_arg2) then return false end
-				return true
+				if ctx then
+					if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
+					get_option_arg2.buf = ctx.buf
+				end
+				return get_option(get_option_arg1, get_option_arg2)
 			end
 		end
 
 		local excludes = restore.exclude_pattern
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
-		local function fn_restore(ctx)
+		M.restore = function(ctx)
 			if not active or not condition(ctx) then return end
 
 			-- restore input_i that was saved on the last normalize
@@ -224,10 +240,19 @@ function M.setup(opts)
 			end
 		end
 
-		api.nvim_create_autocmd(restore.on, {
-			pattern = restore.file_pattern,
-			callback = fn_restore
-		})
+		api.nvim_create_user_command('AutoInputSwitchRestore',
+			function() M.restore() end, {
+				desc = 'Restore the input source to the state before tha last normalization',
+				nargs = 0
+			}
+		)
+
+		if restore.on then
+			api.nvim_create_autocmd(restore.on, {
+				pattern = restore.file_pattern,
+				callback = M.restore
+			})
+		end
 	end
 
 end
