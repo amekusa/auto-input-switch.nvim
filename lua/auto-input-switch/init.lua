@@ -74,7 +74,7 @@ function M.setup(opts)
 				'InsertEnter',
 				'FocusGained',
 			},
-			file_pattern = nil, -- File pattern to enable it on (nil to any file)
+			file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 
