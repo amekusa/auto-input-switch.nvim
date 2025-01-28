@@ -5,6 +5,7 @@ This is a Neovim plugin that automatically switches the input sources (aka input
 improving your writing experience in non-English languages.
 
 For example, it can:
+
 - Force the input source to be US in Normal-mode.
 - Switch the input source to Japanese on entering Insert-mode, if you previously used it.
 - Switch the input source to US when Neovim gains focus.
@@ -56,21 +57,22 @@ require('auto-input-switch').setup({
   activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
   normalize = {
     enable = true, -- Enable to normalize the input source?
-    on = { -- When to normalize (:h events)
+    on = { -- Events to trigger auto-normalize (:h events)
       'InsertLeave',
       'BufLeave',
       'WinLeave',
       'FocusLost',
       'ExitPre',
     },
+    file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
   },
   restore = {
     enable = true, -- Enable to restore the input source?
-    on = { -- When to restore (:h events)
+    on = { -- Events to trigger auto-restore (:h events)
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- File pattern to enable it on (nil to any file)
+    file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
     -- Example:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -111,8 +113,14 @@ require('auto-input-switch').setup({
 
 ## Commands
 
-### `AutoInputSwitch on|off`
-Activate/Deactivate the whole functionality.<br>
+### `:AutoInputSwitch on|off`
+Activate/Deactivate the whole functionality.
+
+### `:AutoInputSwitchNormalize`
+Manually normalize the input source.
+
+### `:AutoInputSwitchRestore`
+Manually restore the input source.
 
 
 ## License
