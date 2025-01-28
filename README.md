@@ -30,6 +30,7 @@ NVIM v0.10.2
 
 ## Prerequisites
 With the default settings, you also need [im-select](https://github.com/daipeihust/im-select) for macOS/Windows, or [ibus](https://github.com/ibus/ibus) for Linux to be installed.
+Alternatively, [macism](https://github.com/laishulu/macism) can be a better choice over im-select for macOS.
 
 
 ## Installation
