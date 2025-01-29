@@ -1,4 +1,4 @@
--- AUTO-INPUT-SWITCH.nvim
+-- auto-input-switch.nvim
 --
 -- Copyright (c) 2025 Satoshi Soma <noreply@amekusa.com>
 --
