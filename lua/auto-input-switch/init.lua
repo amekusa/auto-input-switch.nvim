@@ -51,13 +51,11 @@ local function detect_os()
 	return 'linux'
 end
 
-local exec     = os.execute
-local exec_get = vim.fn.system
-
 local M = {}
 function M.setup(opts)
 	local defaults = {
 		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
+		async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
 		normalize = {
 			enable = true, -- Enable to normalize the input source?
 			on = { -- Events to trigger auto-normalize (:h events)
@@ -165,25 +163,52 @@ function M.setup(opts)
 		}
 	)
 
+	local exec, exec_get; do
+		local split = vim.split
+		local split_sep = ' '
+		local system = vim.system
+		local system_opts = {text = true}
+		if opts.async then -- asynchronous implementation
+			exec = function(cmd)
+				system(split(cmd, split_sep))
+			end
+			exec_get = function(cmd, handler)
+				system(split(cmd, split_sep), system_opts, handler)
+			end
+		else -- synchronous implementation
+			exec = os.execute
+			exec_get = function(cmd, handler)
+				handler(system(split(cmd, split_sep), system_opts):wait())
+			end
+		end
+	end
+
 	if normalize.enable then
 		if not input_n then
+			local set_input_n = function(r)
+				input_n = trim(r.stdout)
+			end
 			api.nvim_create_autocmd('InsertEnter', {
 				pattern = normalize.file_pattern,
 				callback = function()
-					input_n = trim(exec_get(cmd_get))
+					exec_get(cmd_get, set_input_n)
 					return true -- oneshot
 				end
 			})
 		end
 
 		local restore_enable = restore.enable
+		local set_input_i = restore_enable and function(r)
+			input_i = trim(r.stdout)
+		end
 		M.normalize = function()
 			if not active then return end
 
 			-- save input to input_i before normalize
-			if restore_enable
-				then input_i = trim(exec_get(cmd_get))
-				else input_i = nil
+			if restore_enable then
+				exec_get(cmd_get, set_input_i)
+			else
+				input_i = nil
 			end
 			-- switch to input_n
 			if input_n and (input_n ~= input_i) then
