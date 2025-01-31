@@ -14,6 +14,8 @@ For example, it can:
 
 
 ## Version History
+- v2.2.0
+  - Support `async` option.
 - v2.0.0
   - Added/Removed some options.
 - v1.0.0
