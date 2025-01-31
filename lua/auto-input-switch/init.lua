@@ -54,33 +54,49 @@ end
 local M = {}
 function M.setup(opts)
 	local defaults = {
-		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
-		async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
+		activate = true, -- Activate the plugin?
+		-- You can toggle this with `AutoInputSwitch on|off` command at any time.
+
+		async = true, -- Run `cmd_get` & `cmd_set` asynchronously?
+		-- false: Runs synchronously. (Recommended)
+		--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
+		--  true: Runs asynchronously.
+		--        No lags, but less reliable than synchronous.
+
 		normalize = {
-			enable = true, -- Enable to normalize the input source?
-			on = { -- Events to trigger auto-normalize (:h events)
+			-- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
+			-- the plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
+			-- We call this feature "Normalize".
+
+			enable = true, -- Enable Normalize?
+			on = { -- Events to trigger Normalize (:h events)
 				'InsertLeave',
 				'BufLeave',
 				'WinLeave',
 				'FocusLost',
 				'ExitPre',
 			},
-			file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
+			file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 		},
+
 		restore = {
-			enable = true, -- Enable to restore the input source?
-			on = { -- Events to trigger auto-restore (:h events)
+			-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
+			-- And the next time you enter Insert-mode, it can automatically restore the saved state.
+			-- We call this feature "Restore".
+
+			enable = true, -- Enable Restore?
+			on = { -- Events to trigger Restore (:h events)
 				'InsertEnter',
 				'FocusGained',
 			},
-			file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
+			file_pattern = nil, -- File pattern to enable Restore (nil to any file)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 
 			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
-			-- When you switch to insert-mode, the plugin checks the cursor position at the moment.
+			-- When you switch to Insert-mode, the plugin checks the cursor position at the moment.
 			-- And if any of the characters before & after the position match with `exclude_pattern`,
 			-- the plugin cancel to restore the input source and leave it as it is.
 			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
