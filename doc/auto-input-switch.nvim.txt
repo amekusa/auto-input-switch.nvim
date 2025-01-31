@@ -28,6 +28,8 @@ For example, it can:
 ==============================================================================
 1. Version History                    *auto-input-switch.nvim-version-history*
 
+- v2.2.0
+    - Support `async` option.
 - v2.0.0
     - Added/Removed some options.
 - v1.0.0
