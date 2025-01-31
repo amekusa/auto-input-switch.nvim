@@ -110,7 +110,7 @@ require('auto-input-switch').setup({
       enable = true,
       cmd_get = 'im-select', -- Command to get the current input source
       cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
-      normal_input = nil, -- Name of the input source to normalize to when you leave insert-mode (Set nil to auto-detect)
+      normal_input = nil, -- Name of the input source for Normalize (Set nil to auto-detect)
       -- Examples:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
