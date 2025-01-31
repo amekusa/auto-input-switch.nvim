@@ -1,4 +1,4 @@
--- AUTO-INPUT-SWITCH.nvim
+-- auto-input-switch.nvim
 --
 -- Copyright (c) 2025 Satoshi Soma <noreply@amekusa.com>
 --
@@ -51,49 +51,64 @@ local function detect_os()
 	return 'linux'
 end
 
-local exec     = os.execute
-local exec_get = vim.fn.system
-
 local M = {}
 function M.setup(opts)
 	local defaults = {
-		activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
+		activate = true, -- Activate the plugin?
+		-- You can toggle this with `AutoInputSwitch on|off` command at any time.
+
+		async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
+		-- false: Runs synchronously. (Recommended)
+		--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
+		--  true: Runs asynchronously.
+		--        No lags, but less reliable than synchronous.
+
 		normalize = {
-			enable = true, -- Enable to normalize the input source?
-			on = { -- Events to trigger auto-normalize (:h events)
+			-- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
+			-- the plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
+			-- We call this feature "Normalize".
+
+			enable = true, -- Enable Normalize?
+			on = { -- Events to trigger Normalize (:h events)
 				'InsertLeave',
 				'BufLeave',
 				'WinLeave',
 				'FocusLost',
 				'ExitPre',
 			},
-			file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
+			file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 		},
+
 		restore = {
-			enable = true, -- Enable to restore the input source?
-			on = { -- Events to trigger auto-restore (:h events)
+			-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
+			-- And the next time you enter Insert-mode, it can automatically restore the saved state.
+			-- We call this feature "Restore".
+
+			enable = true, -- Enable Restore?
+			on = { -- Events to trigger Restore (:h events)
 				'InsertEnter',
 				'FocusGained',
 			},
-			file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
+			file_pattern = nil, -- File pattern to enable Restore (nil to any file)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 
 			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
-			-- When you switch to insert-mode, the plugin checks the cursor position at the moment.
+			-- When you switch to Insert-mode, the plugin checks the cursor position at the moment.
 			-- And if any of the characters before & after the position match with `exclude_pattern`,
 			-- the plugin cancel to restore the input source and leave it as it is.
 			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
 		},
+
 		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
 		os_settings = { -- OS-specific settings
 			macos = {
 				enable = true,
 				cmd_get = 'im-select', -- Command to get the current input source
 				cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
-				normal_input = nil, -- Name of the input source to normalize to when you leave insert-mode (Set nil to auto-detect)
+				normal_input = nil, -- Name of the input source for Normalize (Set nil to auto-detect)
 				-- Examples:
 				-- normal_input = 'com.apple.keylayout.ABC',
 				-- normal_input = 'com.apple.keylayout.US',
@@ -165,25 +180,52 @@ function M.setup(opts)
 		}
 	)
 
+	local exec, exec_get; do
+		local split = vim.split
+		local split_sep = ' '
+		local system = vim.system
+		local system_opts = {text = true}
+		if opts.async then -- asynchronous implementation
+			exec = function(cmd)
+				system(split(cmd, split_sep))
+			end
+			exec_get = function(cmd, handler)
+				system(split(cmd, split_sep), system_opts, handler)
+			end
+		else -- synchronous implementation
+			exec = os.execute
+			exec_get = function(cmd, handler)
+				handler(system(split(cmd, split_sep), system_opts):wait())
+			end
+		end
+	end
+
 	if normalize.enable then
 		if not input_n then
+			local set_input_n = function(r)
+				input_n = trim(r.stdout)
+			end
 			api.nvim_create_autocmd('InsertEnter', {
 				pattern = normalize.file_pattern,
 				callback = function()
-					input_n = trim(exec_get(cmd_get))
+					exec_get(cmd_get, set_input_n)
 					return true -- oneshot
 				end
 			})
 		end
 
 		local restore_enable = restore.enable
+		local set_input_i = restore_enable and function(r)
+			input_i = trim(r.stdout)
+		end
 		M.normalize = function()
 			if not active then return end
 
 			-- save input to input_i before normalize
-			if restore_enable
-				then input_i = trim(exec_get(cmd_get))
-				else input_i = nil
+			if restore_enable then
+				exec_get(cmd_get, set_input_i)
+			else
+				input_i = nil
 			end
 			-- switch to input_n
 			if input_n and (input_n ~= input_i) then

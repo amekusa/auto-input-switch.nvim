@@ -14,6 +14,8 @@
 
 
 ## バージョン履歴
+- v2.2.0
+  - `async` オプションを追加しました。
 - v2.0.0
   - オプション項目をいくつか追加/削除しました。
 - v1.0.0
@@ -56,42 +58,62 @@ require('lazy').setup({
 
 ```lua
 require('auto-input-switch').setup({
-  activate = true, -- Activate the plugin? (You can toggle this with `AutoInputSwitch on|off` command at any time)
+  activate = true, -- 本プラグインの機能を有効にするか否か。
+  -- このフラグは `AutoInputSwitch on|off` コマンドでいつでも切り替え可能です。
+
+  async = false, -- `cmd_get` & `cmd_set` の実行を非同期で行うか否か。
+  -- false: 同期実行。(推奨)
+  --        Insert モードと Normal モード間の切り替えを素早く繰り返した際などに僅かなラグが発生する場合があります。
+  --  true: 非同期実行。
+  --        ラグは発生しませんが、同期実行よりも信頼性に劣ります。
+
   normalize = {
-    enable = true, -- Enable to normalize the input source?
-    on = { -- Events to trigger auto-normalize (:h events)
+    -- Normal モードか Visual モードにおいては、使用するキーボードの言語に関わらず、入力モードは常に半角英数であるべきです。
+    -- 本プラグインは、ユーザーが Insert モードから Normal モードに変更する際に、自動で入力モードを半角英数に切り替えることができます。
+    -- この機能を "Normalize" と呼称します。
+
+    enable = true, -- Normalize を有効にするか否か。
+    on = { -- Normalize のトリガーとなるイベント。(:h events)
       'InsertLeave',
       'BufLeave',
       'WinLeave',
       'FocusLost',
       'ExitPre',
     },
-    file_pattern = nil, -- File pattern to enable auto-normalize (nil to any file)
+    file_pattern = nil, -- Normalize が有効となるファイル名のパターン。 (nil は全ファイル)
+    -- 例:
+    -- file_pattern = { '*.md', '*.txt' },
   },
+
   restore = {
-    enable = true, -- Enable to restore the input source?
-    on = { -- Events to trigger auto-restore (:h events)
+    -- "Normalize" が実行される際、本プラグインによって直前の入力モードが記憶されます。
+    -- そしてユーザーが次に Insert モードに移行した瞬間、記憶していた入力モードを自動的に復元することができます。
+    -- この機能を "Restore" と呼称します。
+
+    enable = true, -- Restore を有効にするか否か。
+    on = { -- Restore のトリガーとなるイベント。(:h events)
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- File pattern to enable auto-restore (nil to any file)
-    -- Example:
+    file_pattern = nil, -- Restore が有効となるファイル名のパターン。 (nil は全ファイル)
+    -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
     exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
-    -- When you switch to insert-mode, the plugin checks the cursor position at the moment.
-    -- And if any of the characters before & after the position match with `exclude_pattern`,
-    -- the plugin cancel to restore the input source and leave it as it is.
-    -- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
+    -- ユーザーが Insert モードに移行すると、その瞬間のカーソルの位置が本プラグインによってチェックされます。
+    -- そして、その位置からの前後 2 文字が `exclude_pattern` に含まれていた場合にのみ、
+    -- Restore を実行しません。
+    -- `exclude_pattern` のデフォルト値は半角英数と一般的な半角記号です。
   },
-  os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
-  os_settings = { -- OS-specific settings
+
+  os = nil, -- 'macos', 'windows', 'linux', または nil で自動判別。
+  os_settings = { -- OS 毎の設定。
     macos = {
       enable = true,
-      cmd_get = 'im-select', -- Command to get the current input source
-      cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
-      normal_input = nil, -- Name of the input source to normalize to when you leave insert-mode (Set nil to auto-detect)
-      -- Examples:
+      cmd_get = 'im-select', -- 現在の入力モードを取得するコマンド。
+      cmd_set = 'im-select %s', -- 入力モードを変更するコマンド。(`%s` が入力モードで置換されます)
+      normal_input = nil, -- Normalize で使用する入力モード。(nil で自動判別)
+      -- 例:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
       -- normal_input = 'com.apple.keylayout.USExtended',
