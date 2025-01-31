@@ -57,7 +57,7 @@ function M.setup(opts)
 		activate = true, -- Activate the plugin?
 		-- You can toggle this with `AutoInputSwitch on|off` command at any time.
 
-		async = true, -- Run `cmd_get` & `cmd_set` asynchronously?
+		async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
 		-- false: Runs synchronously. (Recommended)
 		--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
 		--  true: Runs asynchronously.
