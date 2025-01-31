@@ -101,6 +101,7 @@ function M.setup(opts)
 			-- the plugin cancel to restore the input source and leave it as it is.
 			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
 		},
+
 		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
 		os_settings = { -- OS-specific settings
 			macos = {
