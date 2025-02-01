@@ -69,7 +69,7 @@ require('auto-input-switch').setup({
 
   normalize = {
     -- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
-    -- the plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
+    -- The plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
     -- We call this feature "Normalize".
 
     enable = true, -- Enable Normalize?
@@ -104,6 +104,7 @@ require('auto-input-switch').setup({
     -- And if any of the characters before & after the position match with `exclude_pattern`,
     -- the plugin cancel to restore the input source and leave it as it is.
     -- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
+    -- Set nil to disable this feature.
   },
 
   os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect

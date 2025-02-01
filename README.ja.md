@@ -104,6 +104,7 @@ require('auto-input-switch').setup({
     -- そして、その位置からの前後 2 文字が `exclude_pattern` に含まれていた場合にのみ、
     -- Restore を実行しません。
     -- `exclude_pattern` のデフォルト値は半角英数と一般的な半角記号です。
+    -- この機能を無効にするには nil をセットしてください。
   },
 
   os = nil, -- 'macos', 'windows', 'linux', または nil で自動判別。
