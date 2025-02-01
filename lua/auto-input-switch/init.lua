@@ -146,6 +146,7 @@ function M.setup(opts)
 	local restore   = opts.restore
 
 	local active = opts.activate
+	local async  = opts.async
 
 	-- Returns whether AIS is active or not.
 	-- @return boolean
@@ -186,7 +187,7 @@ function M.setup(opts)
 		local split_sep = ' '
 		local system = vim.system
 		local system_opts = {text = true}
-		if opts.async then -- asynchronous implementation
+		if async then -- asynchronous implementation
 			exec = function(cmd)
 				system(split(cmd, split_sep))
 			end
@@ -229,7 +230,7 @@ function M.setup(opts)
 				input_i = nil
 			end
 			-- switch to input_n
-			if input_n and (input_n ~= input_i) then
+			if input_n and (async or input_n ~= input_i) then
 				exec(cmd_set:format(input_n))
 			end
 		end
