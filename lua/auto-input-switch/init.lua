@@ -216,18 +216,15 @@ function M.setup(opts)
 			})
 		end
 
-		local restore_enable = restore.enable
-		local set_input_i = restore_enable and function(r)
+		local save_input = restore.enable and function(r)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function()
 			if not active then return end
 
 			-- save input to input_i before normalize
-			if restore_enable then
-				exec_get(cmd_get, set_input_i)
-			else
-				input_i = nil
+			if save_input then
+				exec_get(cmd_get, save_input)
 			end
 			-- switch to input_n
 			if input_n and (async or input_n ~= input_i) then
@@ -251,14 +248,14 @@ function M.setup(opts)
 	end
 
 	if restore.enable then
-		local condition; do
+		local check_context; do
 			local get_mode = api.nvim_get_mode
 			local s_InsertEnter = 'InsertEnter'
 			local s_i = 'i'
 			local get_option = api.nvim_get_option_value
 			local get_option_arg1 = 'buflisted'
 			local get_option_arg2 = {buf = 0}
-			condition = function(ctx)
+			check_context = function(ctx)
 				if ctx then
 					if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
 					get_option_arg2.buf = ctx.buf
