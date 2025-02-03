@@ -16,6 +16,8 @@ For example, it can:
 
 
 ## Version History
+- v3.0.0
+  - New feature "Match".
 - v2.2.0
   - Support `async` option.
 - v2.0.0
