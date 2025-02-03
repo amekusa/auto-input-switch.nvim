@@ -184,12 +184,17 @@ require('auto-input-switch').setup({
 
 `:AutoInputSwitchNormalize`
 
-入力モードを手動でノーマライズします。
+入力モードを手動で Normalize します。
 
 
 `:AutoInputSwitchRestore`
 
-入力モードを手動でリストアします。
+入力モードを手動で Restore します。
+
+
+`:AutoInputSwitchMatch`
+
+入力モードを手動で Match します。
 
 
 ## ライセンス
