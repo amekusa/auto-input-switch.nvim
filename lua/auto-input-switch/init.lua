@@ -108,6 +108,7 @@ function M.setup(opts)
 			-- Then, it can automatically switch the input source to the one that matches with the detected language.
 			-- We call this feature "Match".
 			-- If you enable this feature, we recommend to set `restore.enable` to false.
+			-- This feature is disabled by default.
 
 			enable = false, -- Enable Match?
 			on = { -- Events to trigger Match (:h events)
