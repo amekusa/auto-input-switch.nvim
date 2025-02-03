@@ -96,16 +96,44 @@ require('auto-input-switch').setup({
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- Restore が有効となるファイル名のパターン。 (nil は全ファイル)
+    file_pattern = nil, -- Restore が有効となるファイル名のパターン。(nil は全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
     exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
-    -- ユーザーが Insert モードに移行すると、その瞬間のカーソルの位置が本プラグインによってチェックされます。
+    -- ユーザーが Insert モードに入ると、その瞬間のカーソルの位置が本プラグインによってチェックされます。
     -- そして、その位置からの前後 2 文字が `exclude_pattern` に含まれていた場合にのみ、
     -- Restore の実行をキャンセルします。
     -- `exclude_pattern` のデフォルト値は半角英数と一般的な半角記号です。
     -- この機能を無効にするには nil をセットしてください。
+  },
+
+  match = {
+    -- Insert モードに入った際、本プラグインはカーソル付近の文字の言語を判別し、
+    -- その言語に対応した入力モードに自動で切り替えることができます。
+    -- この機能を "Match" と呼称します。
+    -- Match を有効にする場合、`restore.enable` を false にすることが推奨されます。
+    -- Match はデフォルトでは無効に設定されています。
+
+    enable = false, -- Match を有効にするか否か。
+    on = { -- Match のトリガーとなるイベント。(:h events)
+      'InsertEnter',
+      'FocusGained',
+    },
+    file_pattern = nil, -- Match が有効となるファイル名のパターン。(nil は全ファイル)
+    -- 例:
+    -- file_pattern = { '*.md', '*.txt' },
+
+    languages = {
+      -- カーソル付近の文字と照合させる言語のリスト。使用したい言語の `enable` を true にしてください。
+      -- `pattern` は正規表現の文字列です。その言語に対応するユニコードの範囲を指定すると良いでしょう。
+      -- ユーザーが任意の言語を追加することも可能です。
+      -- その場合は `os_settings[あなたのOS].lang_inputs` に、対応する入力モードも併せて追加する必要があります。
+      Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
+      Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
+      Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
+      Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
+    },
   },
 
   os = nil, -- 'macos', 'windows', 'linux', または nil で自動判別。
@@ -119,18 +147,28 @@ require('auto-input-switch').setup({
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
       -- normal_input = 'com.apple.keylayout.USExtended',
+
+      lang_inputs = {
+        -- `match.languages` 内の各言語に対応する入力モードのリスト。
+        Ru = 'com.apple.keylayout.Russian',
+        Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
+        Zh = 'com.apple.inputmethod.SCIM.ITABC',
+        Ko = 'com.apple.inputmethod.Korean.2SetKorean',
+      },
     },
     windows = {
       enable = true,
       cmd_get = 'im-select.exe',
       cmd_set = 'im-select.exe %s',
-      normal_input = nil, -- auto
+      normal_input = nil,
+      lang_inputs = {},
     },
     linux = {
       enable = true,
       cmd_get = 'ibus engine',
       cmd_set = 'ibus engine %s',
-      normal_input = nil, -- auto
+      normal_input = nil,
+      lang_inputs = {},
     },
   },
 })
