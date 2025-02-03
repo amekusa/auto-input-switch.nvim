@@ -119,8 +119,8 @@ function M.setup(opts)
 			-- file_pattern = { '*.md', '*.txt' },
 
 			languages = {
-				-- Languages to match with the characters.
-				-- `pattern` must be a valid regex string. Use the unicode ranges corresponding to each language.
+				-- Languages to match with the characters. Set `enable` to true of the ones you want to use.
+				-- `pattern` must be a valid regex string. Use the unicode ranges corresponding to the language.
 				-- You can also add your own languages.
 				-- If you do, do not forget to add the corresponding inputs to `os_settings[Your OS].lang_inputs` as well.
 				Ru = { enable = true, priority = 0, pattern = '[\\u0400-\\u04ff]' },
