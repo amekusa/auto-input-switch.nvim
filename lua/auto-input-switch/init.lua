@@ -103,6 +103,24 @@ function M.setup(opts)
 			-- Set nil to disable this feature.
 		},
 
+		match = {
+			enable = true,
+			on = { -- Events to trigger Match (:h events)
+				'InsertEnter',
+				'FocusGained',
+			},
+			file_pattern = nil, -- File pattern to enable Match (nil to any file)
+			-- Example:
+			-- file_pattern = { '*.md', '*.txt' },
+
+			input_map = {
+				Ru = { enable = true, priority = 0, pattern = '[\\u0400-\\u04ff]' },
+				Ja = { enable = true, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
+				Zh = { enable = true, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
+				Ko = { enable = true, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
+			},
+		},
+
 		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
 		os_settings = { -- OS-specific settings
 			macos = {
@@ -114,6 +132,13 @@ function M.setup(opts)
 				-- normal_input = 'com.apple.keylayout.ABC',
 				-- normal_input = 'com.apple.keylayout.US',
 				-- normal_input = 'com.apple.keylayout.USExtended',
+
+				mapped_inputs = {
+					Ru = 'com.apple.keylayout.Russian',
+					Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
+					Zh = 'com.apple.inputmethod.SCIM.ITABC',
+					Ko = 'com.apple.inputmethod.Korean.2SetKorean',
+				},
 			},
 			windows = {
 				enable = true,
@@ -144,6 +169,7 @@ function M.setup(opts)
 
 	local normalize = opts.normalize
 	local restore   = opts.restore
+	local match     = opts.match
 
 	local active = opts.activate
 	local async  = opts.async
@@ -216,7 +242,7 @@ function M.setup(opts)
 			})
 		end
 
-		local save_input = restore.enable and function(r)
+		local save_input = (restore.enable or match.enable) and function(r)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function()
@@ -247,7 +273,7 @@ function M.setup(opts)
 		end
 	end
 
-	if restore.enable then
+	if restore.enable or match.enable then
 		local check_context; do
 			local get_mode = api.nvim_get_mode
 			local s_InsertEnter = 'InsertEnter'
@@ -264,38 +290,92 @@ function M.setup(opts)
 			end
 		end
 
-		local excludes = restore.exclude_pattern
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
-		M.restore = function(ctx)
-			if not active or not condition(ctx) then return end
 
-			-- restore input_i that was saved on the last normalize
-			if input_i and (input_i ~= input_n) then
-				if excludes then -- check if the chars before & after the cursor are alphanumeric
-					local row, col = unpack(win_get_cursor(0))
-					local line = buf_get_lines(0, row - 1, row, true)[1]
-					if line:sub(col, col + 1):find(excludes) then return end
+		local function max(a, b)
+			return a > b and a or b
+		end
+
+		if restore.enable then
+			local excludes = restore.exclude_pattern
+			M.restore = function(ctx)
+				if not active or not check_context(ctx) then return end
+
+				-- restore input_i that was saved on the last normalize
+				if input_i and (input_i ~= input_n) then
+					if excludes then -- check if the chars before & after the cursor are alphanumeric
+						local row, col = unpack(win_get_cursor(0))
+						local line = buf_get_lines(0, row - 1, row, true)[1]
+						if line:sub(col, col + 1):find(excludes) then return end
+					end
+					exec(cmd_set:format(input_i))
 				end
-				exec(cmd_set:format(input_i))
+			end
+
+			api.nvim_create_user_command('AutoInputSwitchRestore',
+				function() M.restore() end, {
+					desc = 'Restore the input source to the state before tha last normalization',
+					nargs = 0
+				}
+			)
+
+			if restore.on then
+				api.nvim_create_autocmd(restore.on, {
+					pattern = restore.file_pattern,
+					callback = M.restore
+				})
 			end
 		end
 
-		api.nvim_create_user_command('AutoInputSwitchRestore',
-			function() M.restore() end, {
-				desc = 'Restore the input source to the state before tha last normalization',
-				nargs = 0
-			}
-		)
+		if match.enable then
+			local map = {}; do
+				local regex = vim.regex
+				for k,v in pairs(match.input_map) do
+					if v.enable then
+						table.insert(map, {
+							name = k,
+							priority = v.priority,
+							pattern = regex(v.pattern),
+						})
+					end
+				end
+				table.sort(map, function(a, b)
+					return a.priority > b.priority
+				end)
+			end
+			local map_len = #map
+			local inputs = oss.mapped_inputs
+			M.match = function(ctx)
+				if not active or not check_context(ctx) then return end
 
-		if restore.on then
-			api.nvim_create_autocmd(restore.on, {
-				pattern = restore.file_pattern,
-				callback = M.restore
-			})
+				local row, col = unpack(win_get_cursor(0))
+				local line = buf_get_lines(0, row - 1, row, true)[1]
+				local str = line:sub(max(1, col - 2), col + 3)
+				local found
+				for i = 1, map_len do
+					local item = map[i]
+					if item.pattern:match_str(str) then
+						found = item.name
+						break
+					end
+				end
+				if not found then return end
+				local input = inputs[found]
+				if input then
+					exec(cmd_set:format(input))
+				end
+			end
+
+			if match.on then
+				api.nvim_create_autocmd(match.on, {
+					pattern = match.file_pattern,
+					callback = M.match
+				})
+			end
 		end
-	end
 
+	end
 end
 
 return M
