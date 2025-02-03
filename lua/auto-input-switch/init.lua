@@ -367,6 +367,13 @@ function M.setup(opts)
 				end
 			end
 
+			api.nvim_create_user_command('AutoInputSwitchMatch',
+				function() M.match() end, {
+					desc = 'Match the input source with the characters near the cursor',
+					nargs = 0
+				}
+			)
+
 			if match.on then
 				api.nvim_create_autocmd(match.on, {
 					pattern = match.file_pattern,
