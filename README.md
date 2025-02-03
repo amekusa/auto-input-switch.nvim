@@ -108,6 +108,34 @@ require('auto-input-switch').setup({
     -- Set nil to disable this feature.
   },
 
+  match = {
+    -- When you enter Insert-mode, the plugin can detect the language of the characters near the cursor at the moment.
+    -- Then, it can automatically switch the input source to the one that matches with the detected language.
+    -- We call this feature "Match".
+    -- If you enable this feature, we recommend to set `restore.enable` to false.
+    -- This feature is disabled by default.
+
+    enable = false, -- Enable Match?
+    on = { -- Events to trigger Match (:h events)
+      'InsertEnter',
+      'FocusGained',
+    },
+    file_pattern = nil, -- File pattern to enable Match (nil to any file)
+    -- Example:
+    -- file_pattern = { '*.md', '*.txt' },
+
+    languages = {
+      -- Languages to match with the characters. Set `enable` to true of the ones you want to use.
+      -- `pattern` must be a valid regex string. Use the unicode ranges corresponding to the language.
+      -- You can also add your own languages.
+      -- If you do, do not forget to add the corresponding inputs to `os_settings[Your OS].lang_inputs` as well.
+      Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
+      Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
+      Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
+      Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
+    },
+  },
+
   os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
   os_settings = { -- OS-specific settings
     macos = {
@@ -119,18 +147,28 @@ require('auto-input-switch').setup({
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
       -- normal_input = 'com.apple.keylayout.USExtended',
+
+      lang_inputs = {
+        -- The input sources corresponding to `match.languages` for each.
+        Ru = 'com.apple.keylayout.Russian',
+        Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
+        Zh = 'com.apple.inputmethod.SCIM.ITABC',
+        Ko = 'com.apple.inputmethod.Korean.2SetKorean',
+      },
     },
     windows = {
       enable = true,
       cmd_get = 'im-select.exe',
       cmd_set = 'im-select.exe %s',
-      normal_input = nil, -- auto
+      normal_input = nil,
+      lang_inputs = {},
     },
     linux = {
       enable = true,
       cmd_get = 'ibus engine',
       cmd_set = 'ibus engine %s',
-      normal_input = nil, -- auto
+      normal_input = nil,
+      lang_inputs = {},
     },
   },
 })
@@ -152,6 +190,11 @@ Manually normalize the input source.
 `:AutoInputSwitchRestore`
 
 Manually restore the input source.
+
+
+`:AutoInputSwitchMatch`
+
+Manually match the input source.
 
 
 ## License
