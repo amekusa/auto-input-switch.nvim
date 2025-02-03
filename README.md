@@ -9,6 +9,7 @@ improving your writing experience in non-English languages.
 For example, it can:
 
 - Force the input source to be US in Normal-mode.
+- Detect the language of the characters near the cursor, and switch the input source to the one for the language.
 - Switch the input source to Japanese on entering Insert-mode, if you previously used it.
 - Switch the input source to US when Neovim gains focus.
 - Switch the input source to US after exiting Neovim.
