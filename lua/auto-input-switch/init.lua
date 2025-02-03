@@ -118,7 +118,7 @@ function M.setup(opts)
 			-- Example:
 			-- file_pattern = { '*.md', '*.txt' },
 
-			input_map = {
+			languages = {
 				Ru = { enable = true, priority = 0, pattern = '[\\u0400-\\u04ff]' },
 				Ja = { enable = true, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
 				Zh = { enable = true, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
@@ -138,7 +138,7 @@ function M.setup(opts)
 				-- normal_input = 'com.apple.keylayout.US',
 				-- normal_input = 'com.apple.keylayout.USExtended',
 
-				mapped_inputs = {
+				lang_inputs = {
 					Ru = 'com.apple.keylayout.Russian',
 					Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
 					Zh = 'com.apple.inputmethod.SCIM.ITABC',
@@ -150,12 +150,14 @@ function M.setup(opts)
 				cmd_get = 'im-select.exe',
 				cmd_set = 'im-select.exe %s',
 				normal_input = nil, -- auto
+				lang_inputs = {},
 			},
 			linux = {
 				enable = true,
 				cmd_get = 'ibus engine',
 				cmd_set = 'ibus engine %s',
 				normal_input = nil, -- auto
+				lang_inputs = {},
 			},
 		},
 	}
@@ -336,7 +338,7 @@ function M.setup(opts)
 		if match.enable then
 			local map = {}; do
 				local regex = vim.regex
-				for k,v in pairs(match.input_map) do
+				for k,v in pairs(match.languages) do
 					if v.enable then
 						table.insert(map, {
 							name = k,
@@ -350,7 +352,7 @@ function M.setup(opts)
 				end)
 			end
 			local map_len = #map
-			local inputs = oss.mapped_inputs
+			local inputs = oss.lang_inputs
 			M.match = function(ctx)
 				if not active or not check_context(ctx) then return end
 
