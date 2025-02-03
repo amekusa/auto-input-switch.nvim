@@ -242,7 +242,7 @@ function M.setup(opts)
 			})
 		end
 
-		local save_input = (restore.enable or match.enable) and function(r)
+		local save_input = restore.enable and function(r)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function()
