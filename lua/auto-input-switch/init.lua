@@ -143,6 +143,7 @@ function M.setup(opts)
 				-- normal_input = 'com.apple.keylayout.USExtended',
 
 				lang_inputs = {
+					-- The input sources corresponding to `match.languages` for each.
 					Ru = 'com.apple.keylayout.Russian',
 					Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
 					Zh = 'com.apple.inputmethod.SCIM.ITABC',
