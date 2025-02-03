@@ -119,6 +119,10 @@ function M.setup(opts)
 			-- file_pattern = { '*.md', '*.txt' },
 
 			languages = {
+				-- Languages to match with the characters.
+				-- `pattern` must be a valid regex string. Use the unicode ranges corresponding to each language.
+				-- You can also add your own languages.
+				-- If you do, do not forget to add the corresponding inputs to `os_settings[Your OS].lang_inputs` as well.
 				Ru = { enable = true, priority = 0, pattern = '[\\u0400-\\u04ff]' },
 				Ja = { enable = true, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
 				Zh = { enable = true, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
@@ -149,14 +153,14 @@ function M.setup(opts)
 				enable = true,
 				cmd_get = 'im-select.exe',
 				cmd_set = 'im-select.exe %s',
-				normal_input = nil, -- auto
+				normal_input = nil,
 				lang_inputs = {},
 			},
 			linux = {
 				enable = true,
 				cmd_get = 'ibus engine',
 				cmd_set = 'ibus engine %s',
-				normal_input = nil, -- auto
+				normal_input = nil,
 				lang_inputs = {},
 			},
 		},
