@@ -178,6 +178,27 @@ require('auto-input-switch').setup({
 ```
 
 
+## 設定例
+
+```lua
+-- 日本語, 中国語, 韓国語の Match を有効にする。
+require('auto-input-switch').setup({
+  restore = { enable = false },
+  match = {
+    enable = true,
+    languages = {
+      Ja = { enable = true, priority = 1 },
+      Zh = { enable = true, priority = 0 },
+      Ko = { enable = true },
+    }
+  }
+})
+```
+
+日本語と中国語は部分的にユニコード範囲が被っているので、
+`priority` の数値をそれぞれの言語に指定しておくことは重要です。
+
+
 ## コマンド
 
 `:AutoInputSwitch on|off`
