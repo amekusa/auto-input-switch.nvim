@@ -104,7 +104,7 @@ function M.setup(opts)
 		},
 
 		match = {
-			-- When you enter Insert-mode, the plugin can detect the language of the characters near the cursor at the moment.
+			-- When you enter Insert-mode, the plugin can detect the language of the characters adjacent to the cursor at the moment.
 			-- Then, it can automatically switch the input source to the one that matches with the detected language.
 			-- We call this feature "Match".
 			-- If you enable this feature, we recommend to set `restore.enable` to false.
