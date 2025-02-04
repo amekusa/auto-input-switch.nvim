@@ -9,9 +9,10 @@ Table of Contents                   *auto-input-switch.nvim-table-of-contents*
 3. Prerequisites                        |auto-input-switch.nvim-prerequisites|
 4. Installation                          |auto-input-switch.nvim-installation|
 5. Configuration                        |auto-input-switch.nvim-configuration|
-6. Commands                                  |auto-input-switch.nvim-commands|
-7. License                                    |auto-input-switch.nvim-license|
-8. Links                                        |auto-input-switch.nvim-links|
+6. Configuration Examples      |auto-input-switch.nvim-configuration-examples|
+7. Commands                                  |auto-input-switch.nvim-commands|
+8. License                                    |auto-input-switch.nvim-license|
+9. Links                                        |auto-input-switch.nvim-links|
 **English** / 日本語 <README.ja.md>
 
 This is a Neovim plugin that automatically switches the input sources (aka
@@ -206,7 +207,29 @@ Default options:
 
 
 ==============================================================================
-6. Commands                                  *auto-input-switch.nvim-commands*
+6. Configuration Examples      *auto-input-switch.nvim-configuration-examples*
+
+>lua
+    -- Enable to match Japanese, Chinese, Korean languages
+    require('auto-input-switch').setup({
+      restore = { enable = false },
+      match = {
+        enable = true,
+        languages = {
+          Ja = { enable = true, priority = 1 },
+          Zh = { enable = true, priority = 0 },
+          Ko = { enable = true },
+        }
+      }
+    })
+<
+
+Since Japanese and Chinese partially share the same unicode ranges, it is
+important to specify `priority` numbers for each language.
+
+
+==============================================================================
+7. Commands                                  *auto-input-switch.nvim-commands*
 
 `:AutoInputSwitch on|off`
 
@@ -226,7 +249,7 @@ Manually match the input source.
 
 
 ==============================================================================
-7. License                                    *auto-input-switch.nvim-license*
+8. License                                    *auto-input-switch.nvim-license*
 
 Copyright (c) 2025 Satoshi Soma noreply@amekusa.com
 <mailto:noreply@amekusa.com>
@@ -250,7 +273,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ==============================================================================
-8. Links                                        *auto-input-switch.nvim-links*
+9. Links                                        *auto-input-switch.nvim-links*
 
 1. *GitHub Tag*: https://img.shields.io/github/v/tag/amekusa/auto-input-switch.nvim?label=stable&link=https%3A%2F%2Fgithub.com%2Famekusa%2Fauto-input-switch.nvim%2Ftags
 
