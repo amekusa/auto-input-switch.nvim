@@ -178,6 +178,27 @@ require('auto-input-switch').setup({
 ```
 
 
+## Configuration Examples
+
+```lua
+-- Enable to match Japanese, Chinese, Korean languages
+require('auto-input-switch').setup({
+  restore = { enable = false },
+  match = {
+    enable = true,
+    languages = {
+      Ja = { enable = true, priority = 1 },
+      Zh = { enable = true, priority = 0 },
+      Ko = { enable = true },
+    }
+  }
+})
+```
+
+Since Japanese and Chinese partially share the same unicode ranges,
+it is important to specify `priority` numbers for each language.
+
+
 ## Commands
 
 `:AutoInputSwitch on|off`
