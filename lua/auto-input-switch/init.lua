@@ -293,14 +293,14 @@ function M.setup(opts)
 	end
 
 	if restore.enable or match.enable then
-		local check_context; do
+		local valid_context; do
 			local get_mode = api.nvim_get_mode
 			local s_InsertEnter = 'InsertEnter'
 			local s_i = 'i'
 			local get_option = api.nvim_get_option_value
 			local get_option_arg1 = 'buflisted'
 			local get_option_arg2 = {buf = 0}
-			check_context = function(ctx)
+			valid_context = function(ctx)
 				if ctx then
 					if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
 					get_option_arg2.buf = ctx.buf
@@ -320,7 +320,7 @@ function M.setup(opts)
 		if restore.enable then
 			local excludes = restore.exclude_pattern
 			M.restore = function(ctx)
-				if not active or not check_context(ctx) then return end
+				if not active or not valid_context(ctx) then return end
 
 				-- restore input_i that was saved on the last normalize
 				if input_i and (input_i ~= input_n) then
@@ -382,7 +382,7 @@ function M.setup(opts)
 			local lines_below = match.lines.below
 			local printable = '%S'
 			M.match = function(ctx)
-				if not active or not check_context(ctx) then return end
+				if not active or not valid_context(ctx) then return end
 
 				local found -- language name to find
 				local buf = ctx.buf
