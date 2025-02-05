@@ -351,7 +351,6 @@ function M.setup(opts)
 		end
 
 		if match.enable then
-
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
@@ -368,7 +367,6 @@ function M.setup(opts)
 					return a.priority > b.priority
 				end)
 			end
-
 			-- returns `name` of the item of `map`, matched with the given string
 			local map_len = #map
 			local function find_in_map(str)
@@ -379,7 +377,6 @@ function M.setup(opts)
 					end
 				end
 			end
-
 			-- main function
 			local inputs = oss.lang_inputs
 			local lines_above = match.lines.above
@@ -403,7 +400,7 @@ function M.setup(opts)
 				elseif n_lines > 2 then -- current line is empty. search in the lines above/below
 					local j, above_done, below_done
 					for i = 1, n_lines do
-						if not above_done then
+						if not above_done then -- search in the lines above
 							j = cur - i
 							if j > 0 then
 								found = find_in_map(lines[j])
@@ -414,7 +411,7 @@ function M.setup(opts)
 								above_done = true
 							end
 						end
-						if not below_done then
+						if not below_done then -- search in the lines below
 							j = cur + i
 							if j <= n_lines then
 								found = find_in_map(lines[j])
