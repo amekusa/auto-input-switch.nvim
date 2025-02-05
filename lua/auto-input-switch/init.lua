@@ -415,7 +415,7 @@ function M.setup(opts)
 							end
 						end
 						if not below_done then
-							j = cur + 1
+							j = cur + i
 							if j <= n_lines then
 								found = find_in_map(lines[j])
 								if found then break end
