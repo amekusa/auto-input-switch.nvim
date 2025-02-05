@@ -129,6 +129,11 @@ function M.setup(opts)
 				Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
 				Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
 			},
+
+			lines = {
+				above = 2,
+				below = 2,
+			},
 		},
 
 		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
@@ -306,6 +311,10 @@ function M.setup(opts)
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 
+		local function min(a, b)
+			return a < b and a or b
+		end
+
 		local function max(a, b)
 			return a > b and a or b
 		end
@@ -342,6 +351,8 @@ function M.setup(opts)
 		end
 
 		if match.enable then
+
+			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
 				for k,v in pairs(match.languages) do
@@ -357,20 +368,63 @@ function M.setup(opts)
 					return a.priority > b.priority
 				end)
 			end
-			local map_len = #map
-			local inputs = oss.lang_inputs
-			M.match = function(ctx)
-				if not active or not check_context(ctx) then return end
 
-				local row, col = unpack(win_get_cursor(0))
-				local line = buf_get_lines(0, row - 1, row, true)[1]
-				local str = line:sub(max(1, col - 2), col + 3)
-				local found
+			-- returns `name` of the item of `map`, matched with the given string
+			local map_len = #map
+			local function find_in_map(str)
 				for i = 1, map_len do
 					local item = map[i]
 					if item.pattern:match_str(str) then
-						found = item.name
-						break
+						return item.name
+					end
+				end
+			end
+
+			-- main function
+			local inputs = oss.lang_inputs
+			local lines_above = match.lines.above
+			local lines_below = match.lines.below
+			local printable = '%S'
+			M.match = function(ctx)
+				if not active or not check_context(ctx) then return end
+
+				local found -- language name to find
+				local buf = ctx.buf
+				local row, col = unpack(win_get_cursor(0)) -- cusor position
+				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
+				local lines = buf_get_lines(buf, row_top - 1, row + lines_below, false) -- lines to search in
+				local n_lines = #lines
+				local cur = row - row_top + 1 -- the index of the current line in `lines`
+				local line = lines[cur] -- current line
+
+				if line:find(printable) then -- search in the current line
+					found = find_in_map(line:sub(max(1, col - 2), col + 3))
+
+				elseif n_lines > 2 then -- current line is empty. search in the lines above/below
+					local j, above_done, below_done
+					for i = 1, n_lines do
+						if not above_done then
+							j = cur - i
+							if j > 0 then
+								found = find_in_map(lines[j])
+								if found then break end
+							elseif below_done then
+								break
+							else
+								above_done = true
+							end
+						end
+						if not below_done then
+							j = cur + 1
+							if j <= n_lines then
+								found = find_in_map(lines[j])
+								if found then break end
+							elseif above_done then
+								break
+							else
+								below_done = true
+							end
+						end
 					end
 				end
 				if not found then return end
