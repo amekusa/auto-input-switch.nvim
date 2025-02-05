@@ -372,7 +372,7 @@ function M.setup(opts)
 				for i = 1, map_len do
 					local item = map[i]
 					if item.pattern:match_str(str) then
-						return item.name
+						return item.name, i
 					end
 				end
 			end
@@ -397,14 +397,13 @@ function M.setup(opts)
 					found = find_in_map(line:sub(max(1, col - 2), col + 3))
 
 				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
-					local j, above_done, below_done
+					local j, above_done, below_done, found_i
 					local n = n_lines - 1
 					for i = 1, n do
 						if not above_done then -- search in the lines above
 							j = cur - i
 							if j > 0 then
-								found = find_in_map(lines[j])
-								if found then break end
+								found, found_i = find_in_map(lines[j])
 							elseif below_done then
 								break
 							else
@@ -414,6 +413,13 @@ function M.setup(opts)
 						if not below_done then -- search in the lines below
 							j = cur + i
 							if j <= n_lines then
+								if found then -- already found in the line above
+									local _found, _found_i = find_in_map(lines[j])
+									if _found and _found_i < found_i then -- more prioritized lang found
+										found = _found
+									end
+									break
+								end
 								found = find_in_map(lines[j])
 								if found then break end
 							elseif above_done then
