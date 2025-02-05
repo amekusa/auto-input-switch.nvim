@@ -396,9 +396,10 @@ function M.setup(opts)
 				if line:find(printable) then -- search in the current line
 					found = find_in_map(line:sub(max(1, col - 2), col + 3))
 
-				elseif n_lines > 2 then -- current line is empty. search in the lines above/below
+				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
 					local j, above_done, below_done
-					for i = 1, n_lines - 1 do
+					local n = n_lines - 1
+					for i = 1, n do
 						if not above_done then -- search in the lines above
 							j = cur - i
 							if j > 0 then
