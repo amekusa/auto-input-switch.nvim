@@ -246,6 +246,7 @@ function M.setup(opts)
 		end
 	end
 
+	-- #normalize
 	if normalize.enable then
 		if not input_n then
 			local set_input_n = function(r)
@@ -311,14 +312,11 @@ function M.setup(opts)
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 
-		local function min(a, b)
-			return a < b and a or b
-		end
-
 		local function max(a, b)
 			return a > b and a or b
 		end
 
+		-- #restore
 		if restore.enable then
 			local excludes = restore.exclude_pattern
 			M.restore = function(ctx)
@@ -350,6 +348,7 @@ function M.setup(opts)
 			end
 		end
 
+		-- #match
 		if match.enable then
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
