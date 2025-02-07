@@ -400,17 +400,14 @@ function M.setup(opts)
 					local j, above_done, below_done, found_i
 					local n = n_lines - 1
 					for i = 1, n do
-						if not above_done then -- search in the lines above
+						if not above_done then
 							j = cur - i
-							if j > 0 then
-								found, found_i = find_in_map(lines[j])
-							elseif below_done then
-								break
-							else
-								above_done = true
+							if j > 0
+								then found, found_i = find_in_map(lines[j])
+								else above_done = true
 							end
 						end
-						if not below_done then -- search in the lines below
+						if not below_done then
 							j = cur + i
 							if j <= n_lines then
 								if found then -- already found in the line above
@@ -421,13 +418,13 @@ function M.setup(opts)
 									break
 								end
 								found = find_in_map(lines[j])
-								if found then break end
 							elseif above_done then
 								break
 							else
 								below_done = true
 							end
 						end
+						if found then break end
 					end
 				end
 				if not found then return end
