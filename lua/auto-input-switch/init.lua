@@ -209,7 +209,7 @@ function M.setup(opts)
 				if input_i and (input_i ~= input_n) then
 					if excludes then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
-						local line = buf_get_lines(0, row - 1, row, true)[1]
+						local line = buf_get_lines(ctx.buf, row - 1, row, true)[1]
 						if line:sub(col, col + 1):find(excludes) then return end
 					end
 					exec(cmd_set:format(input_i))
@@ -268,10 +268,9 @@ function M.setup(opts)
 				if not active or not valid_context(ctx) then return end
 
 				local found -- language name to find
-				local buf = ctx.buf
 				local row, col = unpack(win_get_cursor(0)) -- cusor position
 				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
-				local lines = buf_get_lines(buf, row_top - 1, row + lines_below, false) -- lines to search in
+				local lines = buf_get_lines(ctx.buf, row_top - 1, row + lines_below, false) -- lines to search in
 				local n_lines = #lines
 				local cur = row - row_top + 1 -- the index of the current line in `lines`
 				local line = lines[cur] -- current line
