@@ -112,8 +112,8 @@ require('auto-input-switch').setup({
   },
 
   match = {
-    -- When you enter Insert-mode, the plugin can detect the language of the characters near the cursor at the moment.
-    -- Then, it can automatically switch the input source to the one that matches with the detected language.
+    -- When you enter Insert-mode, the plugin can detect the language of the characters adjacent to the cursor at the moment.
+    -- Then, it can automatically switch the input source to the one that matches the detected language.
     -- We call this feature "Match".
     -- If you enable this feature, we recommend to set `restore.enable` to false.
     -- This feature is disabled by default.
@@ -128,14 +128,21 @@ require('auto-input-switch').setup({
     -- file_pattern = { '*.md', '*.txt' },
 
     languages = {
-      -- Languages to match with the characters. Set `enable` to true of the ones you want to use.
+      -- Languages to match with the characters. Set `enable` to true for the ones you want to use.
       -- `pattern` must be a valid regex string. Use the unicode ranges corresponding to the language.
       -- You can also add your own languages.
-      -- If you do, do not forget to add the corresponding inputs to `os_settings[Your OS].lang_inputs` as well.
+      -- If you do, do not forget to add the input sources for them as well, to `os_settings[Your OS].lang_inputs`.
       Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
       Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
       Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
       Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
+    },
+
+    lines = {
+      -- If the current line is empty or has only whitespace characters,
+      -- the plugin can go further above/below the current line to see if there are any matching characters to `languages`.
+      above = 2, -- How meany lines above the current line to check
+      below = 1, -- How meany lines below the current line to check
     },
   },
 
