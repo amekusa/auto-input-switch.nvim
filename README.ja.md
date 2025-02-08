@@ -105,7 +105,7 @@ require('auto-input-switch').setup({
 
     exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
     -- ユーザーが Insert モードに入ると、その瞬間のカーソルの位置が本プラグインによってチェックされます。
-    -- そして、その位置からの前後 2 文字が `exclude_pattern` に含まれていた場合にのみ、
+    -- そして、その位置と隣接する 2 文字のいずれかが `exclude_pattern` に含まれていた場合、
     -- Restore の実行をキャンセルします。
     -- `exclude_pattern` のデフォルト値は半角英数と一般的な半角記号です。
     -- この機能を無効にするには nil をセットしてください。
@@ -136,6 +136,12 @@ require('auto-input-switch').setup({
       Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
       Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
       Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
+    },
+
+    lines = {
+      -- 現在の行が空か空白文字のみを含んでいる場合、そこから上下の行に対して Match の検証を行います。
+      above = 2, -- 上に何行分 Match の検証を行うか
+      below = 1, -- 下に何行分 Match の検証を行うか
     },
   },
 

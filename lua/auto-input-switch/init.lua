@@ -20,6 +20,7 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
+local ns = (...)
 local vim = vim
 local api = vim.api
 
@@ -53,120 +54,7 @@ end
 
 local M = {}
 function M.setup(opts)
-	local defaults = {
-		activate = true, -- Activate the plugin?
-		-- You can toggle this with `AutoInputSwitch on|off` command at any time.
-
-		async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
-		-- false: Runs synchronously. (Recommended)
-		--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
-		--  true: Runs asynchronously.
-		--        No lags, but less reliable than synchronous.
-
-		normalize = {
-			-- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
-			-- The plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
-			-- We call this feature "Normalize".
-
-			enable = true, -- Enable Normalize?
-			on = { -- Events to trigger Normalize (:h events)
-				'InsertLeave',
-				'BufLeave',
-				'WinLeave',
-				'FocusLost',
-				'ExitPre',
-			},
-			file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
-			-- Example:
-			-- file_pattern = { '*.md', '*.txt' },
-		},
-
-		restore = {
-			-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
-			-- And the next time you enter Insert-mode, it can automatically restore the saved state.
-			-- We call this feature "Restore".
-
-			enable = true, -- Enable Restore?
-			on = { -- Events to trigger Restore (:h events)
-				'InsertEnter',
-				'FocusGained',
-			},
-			file_pattern = nil, -- File pattern to enable Restore (nil to any file)
-			-- Example:
-			-- file_pattern = { '*.md', '*.txt' },
-
-			exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
-			-- When you switch to Insert-mode, the plugin checks the cursor position at the moment.
-			-- And if any of the characters before & after the position match with `exclude_pattern`,
-			-- the plugin cancel to restore the input source and leave it as it is.
-			-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
-			-- Set nil to disable this feature.
-		},
-
-		match = {
-			-- When you enter Insert-mode, the plugin can detect the language of the characters near the cursor at the moment.
-			-- Then, it can automatically switch the input source to the one that matches with the detected language.
-			-- We call this feature "Match".
-			-- If you enable this feature, we recommend to set `restore.enable` to false.
-			-- This feature is disabled by default.
-
-			enable = false, -- Enable Match?
-			on = { -- Events to trigger Match (:h events)
-				'InsertEnter',
-				'FocusGained',
-			},
-			file_pattern = nil, -- File pattern to enable Match (nil to any file)
-			-- Example:
-			-- file_pattern = { '*.md', '*.txt' },
-
-			languages = {
-				-- Languages to match with the characters. Set `enable` to true of the ones you want to use.
-				-- `pattern` must be a valid regex string. Use the unicode ranges corresponding to the language.
-				-- You can also add your own languages.
-				-- If you do, do not forget to add the corresponding inputs to `os_settings[Your OS].lang_inputs` as well.
-				Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
-				Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
-				Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
-				Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
-			},
-		},
-
-		os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
-		os_settings = { -- OS-specific settings
-			macos = {
-				enable = true,
-				cmd_get = 'im-select', -- Command to get the current input source
-				cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
-				normal_input = nil, -- Name of the input source for Normalize (Set nil to auto-detect)
-				-- Examples:
-				-- normal_input = 'com.apple.keylayout.ABC',
-				-- normal_input = 'com.apple.keylayout.US',
-				-- normal_input = 'com.apple.keylayout.USExtended',
-
-				lang_inputs = {
-					-- The input sources corresponding to `match.languages` for each.
-					Ru = 'com.apple.keylayout.Russian',
-					Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
-					Zh = 'com.apple.inputmethod.SCIM.ITABC',
-					Ko = 'com.apple.inputmethod.Korean.2SetKorean',
-				},
-			},
-			windows = {
-				enable = true,
-				cmd_get = 'im-select.exe',
-				cmd_set = 'im-select.exe %s',
-				normal_input = nil,
-				lang_inputs = {},
-			},
-			linux = {
-				enable = true,
-				cmd_get = 'ibus engine',
-				cmd_set = 'ibus engine %s',
-				normal_input = nil,
-				lang_inputs = {},
-			},
-		},
-	}
+	local defaults = require(ns..'.defaults')
 	if opts and type(opts) == 'table'
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
@@ -241,6 +129,7 @@ function M.setup(opts)
 		end
 	end
 
+	-- #normalize
 	if normalize.enable then
 		if not input_n then
 			local set_input_n = function(r)
@@ -287,14 +176,14 @@ function M.setup(opts)
 	end
 
 	if restore.enable or match.enable then
-		local check_context; do
+		local valid_context; do
 			local get_mode = api.nvim_get_mode
 			local s_InsertEnter = 'InsertEnter'
 			local s_i = 'i'
 			local get_option = api.nvim_get_option_value
 			local get_option_arg1 = 'buflisted'
 			local get_option_arg2 = {buf = 0}
-			check_context = function(ctx)
+			valid_context = function(ctx)
 				if ctx then
 					if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
 					get_option_arg2.buf = ctx.buf
@@ -310,10 +199,11 @@ function M.setup(opts)
 			return a > b and a or b
 		end
 
+		-- #restore
 		if restore.enable then
 			local excludes = restore.exclude_pattern
 			M.restore = function(ctx)
-				if not active or not check_context(ctx) then return end
+				if not active or not valid_context(ctx) then return end
 
 				-- restore input_i that was saved on the last normalize
 				if input_i and (input_i ~= input_n) then
@@ -341,7 +231,9 @@ function M.setup(opts)
 			end
 		end
 
+		-- #match
 		if match.enable then
+			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
 				for k,v in pairs(match.languages) do
@@ -357,20 +249,65 @@ function M.setup(opts)
 					return a.priority > b.priority
 				end)
 			end
+			-- returns `name` of the item of `map`, matched with the given string
 			local map_len = #map
-			local inputs = oss.lang_inputs
-			M.match = function(ctx)
-				if not active or not check_context(ctx) then return end
-
-				local row, col = unpack(win_get_cursor(0))
-				local line = buf_get_lines(0, row - 1, row, true)[1]
-				local str = line:sub(max(1, col - 2), col + 3)
-				local found
+			local function find_in_map(str)
 				for i = 1, map_len do
 					local item = map[i]
 					if item.pattern:match_str(str) then
-						found = item.name
-						break
+						return item.name, i
+					end
+				end
+			end
+			-- main function
+			local inputs = oss.lang_inputs
+			local lines_above = match.lines.above
+			local lines_below = match.lines.below
+			local printable = '%S'
+			M.match = function(ctx)
+				if not active or not valid_context(ctx) then return end
+
+				local found -- language name to find
+				local buf = ctx.buf
+				local row, col = unpack(win_get_cursor(0)) -- cusor position
+				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
+				local lines = buf_get_lines(buf, row_top - 1, row + lines_below, false) -- lines to search in
+				local n_lines = #lines
+				local cur = row - row_top + 1 -- the index of the current line in `lines`
+				local line = lines[cur] -- current line
+
+				if line:find(printable) then -- search in the current line
+					found = find_in_map(line:sub(max(1, col - 2), col + 3))
+
+				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
+					local j, above_done, below_done, found_i
+					local n = n_lines - 1
+					for i = 1, n do
+						if not above_done then
+							j = cur - i
+							if j > 0
+								then found, found_i = find_in_map(lines[j])
+								else above_done = true
+							end
+						end
+						if not below_done then
+							j = cur + i
+							if j <= n_lines then
+								if found then -- already found in the line above
+									local _found, _found_i = find_in_map(lines[j])
+									if _found and _found_i < found_i then -- more prioritized lang found
+										found = _found
+									end
+									break
+								end
+								found = find_in_map(lines[j])
+							elseif above_done then
+								break
+							else
+								below_done = true
+							end
+						end
+						if found then break end
 					end
 				end
 				if not found then return end
