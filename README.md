@@ -141,8 +141,8 @@ require('auto-input-switch').setup({
     lines = {
       -- If the current line is empty or has only whitespace characters,
       -- the plugin can also check the lines above/below the current line that if they have any characters match `languages`.
-      above = 2, -- How meany lines above the current line to check
-      below = 1, -- How meany lines below the current line to check
+      above = 2, -- How many lines above the current line to check
+      below = 1, -- How many lines below the current line to check
     },
   },
 
