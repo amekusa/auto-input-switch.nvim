@@ -277,6 +277,12 @@ function M.setup(opts)
 
 				if line:find(printable) then -- search in the current line
 					found = find_in_map(line:sub(max(1, col - 2), col + 3))
+					if found then
+						found = inputs[found]
+						if found then
+							exec(cmd_set:format(found))
+						end
+					end
 
 				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
 					local j, above_done, below_done, found_i
@@ -284,9 +290,12 @@ function M.setup(opts)
 					for i = 1, n do
 						if not above_done then
 							j = cur - i
-							if j > 0
-								then found, found_i = find_in_map(lines[j])
-								else above_done = true
+							if j > 0 then
+								found, found_i = find_in_map(lines[j])
+							elseif below_done then
+								return
+							else
+								above_done = true
 							end
 						end
 						if not below_done then
@@ -297,22 +306,23 @@ function M.setup(opts)
 									if _found and _found_i < found_i then -- more prioritized lang found
 										found = _found
 									end
-									break
+								else
+									found = find_in_map(lines[j])
 								end
-								found = find_in_map(lines[j])
 							elseif above_done then
-								break
+								return
 							else
 								below_done = true
 							end
 						end
-						if found then break end
+						if found then
+							found = inputs[found]
+							if found then
+								exec(cmd_set:format(found))
+							end
+							return
+						end
 					end
-				end
-				if not found then return end
-				local input = inputs[found]
-				if input then
-					exec(cmd_set:format(input))
 				end
 			end
 
