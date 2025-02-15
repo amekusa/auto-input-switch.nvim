@@ -286,8 +286,7 @@ function M.setup(opts)
 
 				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
 					local j, above_done, below_done, found_i
-					local n = n_lines - 1
-					for i = 1, n do
+					for i = 1, n_lines do
 						if not above_done then
 							j = cur - i
 							if j > 0 then
