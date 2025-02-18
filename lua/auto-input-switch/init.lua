@@ -68,6 +68,7 @@ function M.setup(opts)
 	local input_n = oss.normal_input
 	local input_i
 
+	local popup     = opts.popup.enable and opts.popup
 	local normalize = opts.normalize
 	local restore   = opts.restore
 	local match     = opts.match
@@ -129,6 +130,75 @@ function M.setup(opts)
 		end
 	end
 
+	-- #popup
+	local show_popup; if popup then
+		local buf_create     = api.nvim_create_buf
+		local buf_set_lines  = api.nvim_buf_set_lines
+		local win_open       = api.nvim_open_win
+		local win_close      = api.nvim_win_close
+		local win_set_config = api.nvim_win_set_config
+		local new_timer      = vim.uv.new_timer
+		local schedule_wrap  = vim.schedule_wrap
+
+		local duration = popup.duration
+		local pad      = popup.pad and ' '
+
+		local buf
+		local buf_lines = {''}
+
+		local win
+		local win_opts = {
+			relative = popup.relative,
+			row = popup.row,
+			col = popup.col,
+			anchor = popup.anchor,
+			border = popup.border,
+			height = 1,
+			style = 'minimal',
+			focusable = false,
+		}
+
+		local timer
+
+		hide_popup = function()
+			if timer then
+				timer:stop()
+				timer:close()
+				timer = nil
+			end
+			if win then
+				win_close(win, true)
+				win = nil
+			end
+		end
+
+		show_popup = function(str)
+			hide_popup()
+
+			str = pad..str..pad
+			buf_lines[1] = str
+			if not buf then
+				buf = buf_create(false, true)
+			end
+			buf_set_lines(buf, 0, 1, false, buf_lines)
+
+			win_opts.width = #str
+			win = win_open(buf, false, win_opts)
+
+			timer = new_timer()
+			timer:start(duration, 0, schedule_wrap(hide_popup))
+		end
+
+		api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
+			callback = function()
+				if win then
+					-- this updates window position
+					win_set_config(win, win_opts)
+				end
+			end
+		})
+	end
+
 	-- #normalize
 	if normalize.enable then
 		if not input_n then
@@ -144,6 +214,7 @@ function M.setup(opts)
 			})
 		end
 
+		local popup_text = popup and normalize.popup
 		local save_input = restore.enable and function(r)
 			input_i = trim(r.stdout)
 		end
@@ -157,6 +228,9 @@ function M.setup(opts)
 			-- switch to input_n
 			if input_n and (async or input_n ~= input_i) then
 				exec(cmd_set:format(input_n))
+				if popup_text then
+					show_popup(popup_text)
+				end
 			end
 		end
 

@@ -8,6 +8,17 @@ return {
 	--  true: Runs asynchronously.
 	--        No lags, but less reliable than synchronous.
 
+	popup = {
+		enable = true,
+		duration = 1500,
+		border = 'none',
+		pad = true,
+		relative = 'cursor',
+		row = 1,
+		col = 0,
+		anchor = 'NW',
+	},
+
 	normalize = {
 		-- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
 		-- The plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
@@ -24,6 +35,8 @@ return {
 		file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
+
+		popup = 'ABC', -- Popup text to show when normalize (nil to disable)
 	},
 
 	restore = {
