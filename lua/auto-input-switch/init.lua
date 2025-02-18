@@ -68,10 +68,10 @@ function M.setup(opts)
 	local input_n = oss.normal_input
 	local input_i
 
-	local popup     = opts.popup.enable and opts.popup
-	local normalize = opts.normalize
-	local restore   = opts.restore
-	local match     = opts.match
+	local popup     = opts.popup.enable     and opts.popup
+	local normalize = opts.normalize.enable and opts.normalize
+	local restore   = opts.restore.enable   and opts.restore
+	local match     = opts.match.enable     and opts.match
 
 	local active = opts.activate
 	local async  = opts.async
@@ -203,7 +203,7 @@ function M.setup(opts)
 	end
 
 	-- #normalize
-	if normalize.enable then
+	if normalize then
 		if not input_n then
 			local set_input_n = function(r)
 				input_n = trim(r.stdout)
@@ -218,7 +218,7 @@ function M.setup(opts)
 		end
 
 		local popup_text = popup and normalize.popup
-		local save_input = restore.enable and function(r)
+		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function()
@@ -252,7 +252,7 @@ function M.setup(opts)
 		end
 	end
 
-	if restore.enable or match.enable then
+	if restore or match then
 
 		local valid_context; do
 			local get_mode = api.nvim_get_mode
@@ -280,7 +280,7 @@ function M.setup(opts)
 		local lang_inputs = oss.lang_inputs
 
 		-- #restore
-		if restore.enable then
+		if restore then
 
 			-- create a reverse-lookup table of lang_inputs
 			local langs; if popup then
@@ -327,7 +327,7 @@ function M.setup(opts)
 		end
 
 		-- #match
-		if match.enable then
+		if match then
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
