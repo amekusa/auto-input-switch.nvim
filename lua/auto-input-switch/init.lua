@@ -160,7 +160,7 @@ function M.setup(opts)
 
 		local timer
 
-		hide_popup = function()
+		local hide_popup = function()
 			if timer then
 				timer:stop()
 				timer:close()
