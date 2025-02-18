@@ -137,6 +137,7 @@ function M.setup(opts)
 		local win_open       = api.nvim_open_win
 		local win_close      = api.nvim_win_close
 		local win_set_config = api.nvim_win_set_config
+		local set_option     = api.nvim_set_option_value
 		local new_timer      = vim.uv.new_timer
 		local schedule_wrap  = vim.schedule_wrap
 
@@ -186,6 +187,7 @@ function M.setup(opts)
 			-- window
 			win_opts.width = #str
 			win = win_open(buf, false, win_opts)
+			set_option('winhighlight', 'NormalFloat:PmenuSel', {win = win})
 
 			-- timer
 			timer = new_timer()
