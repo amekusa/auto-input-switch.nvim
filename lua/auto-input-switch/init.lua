@@ -175,6 +175,7 @@ function M.setup(opts)
 		show_popup = function(str)
 			hide_popup()
 
+			-- buffer
 			str = pad..str..pad
 			buf_lines[1] = str
 			if not buf then
@@ -182,17 +183,19 @@ function M.setup(opts)
 			end
 			buf_set_lines(buf, 0, 1, false, buf_lines)
 
+			-- window
 			win_opts.width = #str
 			win = win_open(buf, false, win_opts)
 
+			-- timer
 			timer = new_timer()
 			timer:start(duration, 0, schedule_wrap(hide_popup))
 		end
 
+		-- popup position updater
 		api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
 			callback = function()
 				if win then
-					-- this updates window position
 					win_set_config(win, win_opts)
 				end
 			end
