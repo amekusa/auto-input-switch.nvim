@@ -253,10 +253,6 @@ function M.setup(opts)
 	end
 
 	if restore.enable or match.enable then
-		local win_get_cursor = api.nvim_win_get_cursor
-		local buf_get_lines  = api.nvim_buf_get_lines
-
-		local lang_inputs = oss.lang_inputs
 
 		local valid_context; do
 			local get_mode = api.nvim_get_mode
@@ -277,6 +273,11 @@ function M.setup(opts)
 		local max = function(a, b)
 			return a > b and a or b
 		end
+
+		local win_get_cursor = api.nvim_win_get_cursor
+		local buf_get_lines  = api.nvim_buf_get_lines
+
+		local lang_inputs = oss.lang_inputs
 
 		-- #restore
 		if restore.enable then
