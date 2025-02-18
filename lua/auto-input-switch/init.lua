@@ -281,6 +281,15 @@ function M.setup(opts)
 
 		-- #restore
 		if restore.enable then
+
+			-- create a reverse-lookup table of lang_inputs
+			local langs; if popup then
+				langs = {}
+				for k,v in pairs(lang_inputs) do
+					langs[v] = k
+				end
+			end
+
 			local excludes = restore.exclude_pattern
 			M.restore = function(ctx)
 				if not active or not valid_context(ctx) then return end
@@ -293,6 +302,12 @@ function M.setup(opts)
 						if line:sub(col, col + 1):find(excludes) then return end
 					end
 					exec(cmd_set:format(input_i))
+					if popup then
+						local lang = langs[input_i]
+						if lang then
+							show_popup(lang)
+						end
+					end
 				end
 			end
 
