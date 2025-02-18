@@ -355,9 +355,12 @@ function M.setup(opts)
 				if line:find(printable) then -- search in the current line
 					found = find_in_map(line:sub(max(1, col - 2), col + 3))
 					if found then
-						found = inputs[found]
-						if found then
-							exec(cmd_set:format(found))
+						local input = inputs[found]
+						if input then
+							exec(cmd_set:format(input))
+							if popup then
+								show_popup(found)
+							end
 						end
 					end
 
@@ -392,9 +395,12 @@ function M.setup(opts)
 							end
 						end
 						if found then
-							found = inputs[found]
-							if found then
-								exec(cmd_set:format(found))
+							local input = inputs[found]
+							if input then
+								exec(cmd_set:format(input))
+								if popup then
+									show_popup(found)
+								end
 							end
 							return
 						end
