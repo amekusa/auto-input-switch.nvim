@@ -173,6 +173,9 @@ function M.setup(opts)
 			end
 		end
 
+		local whl = 'winhighlight'
+		local whl_group = 'NormalFloat:'..popup.hl_group
+		local whl_scope = {win = nil}
 		show_popup = function(str)
 			hide_popup()
 
@@ -187,7 +190,8 @@ function M.setup(opts)
 			-- window
 			win_opts.width = #str
 			win = win_open(buf, false, win_opts)
-			set_option('winhighlight', 'NormalFloat:PmenuSel', {win = win})
+			whl_scope.win = win
+			set_option(whl, whl_group, whl_scope)
 
 			-- timer
 			timer = new_timer()
