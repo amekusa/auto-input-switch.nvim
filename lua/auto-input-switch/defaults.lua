@@ -9,14 +9,22 @@ return {
 	--        No lags, but less reliable than synchronous.
 
 	popup = {
-		enable = true,
-		duration = 1500,
-		border = 'none',
-		pad = true,
-		relative = 'cursor',
-		row = 1,
-		col = 0,
-		anchor = 'NW',
+		-- When the plugin changed the input source, it can indicate the new input source with a popup.
+		enable = true, -- Show popups?
+		duration = 1500, -- How long to remain visible (ms)
+		pad = true, -- Whether to add leading & trailing spaces
+		hl_group = 'PmenuSel', -- Highlight group
+
+		-- Popup window settings (See `:help nvim_open_win()`)
+		border = 'none', -- Style of the window border
+		row = 1, -- Horizontal offset
+		col = 0, -- Vertical offset
+		relative = 'cursor', -- The offsets are relative to: 'editor', 'win', 'cursor', or 'mouse'
+		anchor = 'NW', -- Which corner of the window should be the origin?
+		-- 'NW' : Northwest
+		-- 'NE' : Northeast
+		-- 'SW' : Southwest
+		-- 'SE' : Southeast
 	},
 
 	normalize = {
