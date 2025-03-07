@@ -18,6 +18,7 @@
 ## バージョン履歴
 
 ```
+v3.2.0 - "Popup" 機能を追加しました。
 v3.1.0 - `match.lines` オプションを追加しました。
 v3.0.0 - "Match" 機能を追加しました。
 v2.2.0 - `async` オプションを追加しました。
@@ -70,6 +71,27 @@ require('auto-input-switch').setup({
   --        Insert モードと Normal モード間の切り替えを素早く繰り返した際などに僅かなラグが発生する場合があります。
   --  true: 非同期実行。
   --        ラグは発生しませんが、同期実行よりも信頼性に劣ります。
+
+  popup = {
+    -- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
+    -- プラグインによって入力モードが変更された際、現在の入力モードの言語をポップアップ表示で知らせます。
+
+    enable = true, -- ポップアップ表示を有効にするか否か
+    duration = 1500, -- ポップアップを表示する時間 (ms)
+    pad = true, -- 表示言語の前後に空白文字を入れるか否か
+    hl_group = 'PmenuSel', -- ハイライトグループ
+
+    -- ポップアップウィンドウの設定 (:help nvim_open_win())
+    border = 'none', -- ウィンドウの枠のスタイル
+    row = 1, -- 横位置のオフセット
+    col = 0, -- 縦位置のオフセット
+    relative = 'cursor', -- 何を位置の基準とするか: editor/win/cursor/mouse
+    anchor = 'NW', -- どの角を基準位置に合わせるか
+    -- 'NW' : 左上
+    -- 'NE' : 右上
+    -- 'SW' : 左下
+    -- 'SE' : 右下
+  },
 
   normalize = {
     -- Normal モードか Visual モードにおいては、使用するキーボードの言語に関わらず、入力モードは常に半角英数であるべきです。
@@ -139,9 +161,9 @@ require('auto-input-switch').setup({
     },
 
     lines = {
-      -- 現在の行が空か空白文字のみを含んでいる場合、そこから上下の行に対して Match の検証を行います。
-      above = 2, -- 上に何行分 Match の検証を行うか。
-      below = 1, -- 下に何行分 Match の検証を行うか。
+      -- 現在の行が空か空白文字のみを含んでいる場合、そこから上下の行に対して Match を行います。
+      above = 2, -- 上に何行分 Match を行うか。
+      below = 1, -- 下に何行分 Match を行うか。
     },
   },
 

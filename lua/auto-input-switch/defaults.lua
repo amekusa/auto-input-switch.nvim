@@ -8,6 +8,26 @@ return {
 	--  true: Runs asynchronously.
 	--        No lags, but less reliable than synchronous.
 
+	popup = {
+		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
+
+		enable = true, -- Show popups?
+		duration = 1500, -- How long does a popup remain visible? (ms)
+		pad = true, -- Whether to add leading & trailing spaces
+		hl_group = 'PmenuSel', -- Highlight group
+
+		-- Popup window settings (See `:help nvim_open_win()`)
+		border = 'none', -- Style of the window border
+		row = 1, -- Horizontal offset
+		col = 0, -- Vertical offset
+		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
+		anchor = 'NW', -- Which corner is a popup window aligned to?
+		-- 'NW' : Northwest
+		-- 'NE' : Northeast
+		-- 'SW' : Southwest
+		-- 'SE' : Southeast
+	},
+
 	normalize = {
 		-- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
 		-- The plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
@@ -24,6 +44,8 @@ return {
 		file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
+
+		popup = 'ABC', -- Popup text to show when normalize (nil to disable)
 	},
 
 	restore = {

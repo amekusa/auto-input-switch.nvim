@@ -68,9 +68,10 @@ function M.setup(opts)
 	local input_n = oss.normal_input
 	local input_i
 
-	local normalize = opts.normalize
-	local restore   = opts.restore
-	local match     = opts.match
+	local popup     = opts.popup.enable     and opts.popup
+	local normalize = opts.normalize.enable and opts.normalize
+	local restore   = opts.restore.enable   and opts.restore
+	local match     = opts.match.enable     and opts.match
 
 	local active = opts.activate
 	local async  = opts.async
@@ -129,8 +130,87 @@ function M.setup(opts)
 		end
 	end
 
+	-- #popup
+	local show_popup; if popup then
+		local buf_is_valid   = api.nvim_buf_is_valid
+		local buf_create     = api.nvim_create_buf
+		local buf_set_lines  = api.nvim_buf_set_lines
+		local win_open       = api.nvim_open_win
+		local win_hide       = api.nvim_win_hide
+		local win_set_config = api.nvim_win_set_config
+		local set_option     = api.nvim_set_option_value
+		local new_timer      = vim.uv.new_timer
+		local schedule_wrap  = vim.schedule_wrap
+
+		local duration = popup.duration
+		local pad      = popup.pad and ' '
+
+		local buf
+		local buf_lines = {''}
+
+		local win
+		local win_opts = {
+			relative = popup.relative,
+			row = popup.row,
+			col = popup.col,
+			anchor = popup.anchor,
+			border = popup.border,
+			height = 1,
+			style = 'minimal',
+			focusable = false,
+		}
+
+		local timer
+
+		local hide_popup = function()
+			if timer then
+				timer:stop()
+				timer:close()
+				timer = nil
+			end
+			if win then
+				win_hide(win)
+				win = nil
+			end
+		end
+
+		local whl = 'winhighlight'
+		local whl_group = 'NormalFloat:'..popup.hl_group
+		local whl_scope = {win = nil}
+		show_popup = function(str)
+			hide_popup()
+
+			-- buffer
+			str = pad..str..pad
+			buf_lines[1] = str
+			if not buf or not buf_is_valid(buf) then
+				buf = buf_create(false, true)
+			end
+			buf_set_lines(buf, 0, 1, false, buf_lines)
+
+			-- window
+			win_opts.width = #str
+			win = win_open(buf, false, win_opts)
+			whl_scope.win = win
+			set_option(whl, whl_group, whl_scope)
+
+			-- timer
+			timer = new_timer()
+			timer:start(duration, 0, schedule_wrap(hide_popup))
+		end
+
+		-- popup position updater
+		api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
+			callback = function()
+				if win then
+					win_set_config(win, win_opts)
+				end
+			end
+		})
+	end
+
 	-- #normalize
-	if normalize.enable then
+	if normalize then
 		if not input_n then
 			local set_input_n = function(r)
 				input_n = trim(r.stdout)
@@ -144,7 +224,8 @@ function M.setup(opts)
 			})
 		end
 
-		local save_input = restore.enable and function(r)
+		local popup_text = popup and normalize.popup
+		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function()
@@ -157,6 +238,9 @@ function M.setup(opts)
 			-- switch to input_n
 			if input_n and (async or input_n ~= input_i) then
 				exec(cmd_set:format(input_n))
+				if popup_text then
+					show_popup(popup_text)
+				end
 			end
 		end
 
@@ -175,32 +259,46 @@ function M.setup(opts)
 		end
 	end
 
-	if restore.enable or match.enable then
+	if restore or match then
+
 		local valid_context; do
+			local event = 'InsertEnter'
+			local mode  = 'i'
 			local get_mode = api.nvim_get_mode
-			local s_InsertEnter = 'InsertEnter'
-			local s_i = 'i'
 			local get_option = api.nvim_get_option_value
-			local get_option_arg1 = 'buflisted'
-			local get_option_arg2 = {buf = 0}
+			local get_option_key = 'buflisted'
+			local get_option_scope = {buf = 0}
 			valid_context = function(ctx)
 				if ctx then
-					if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
-					get_option_arg2.buf = ctx.buf
+					if ctx.event ~= event and get_mode().mode ~= mode then
+						return false
+					end
+					get_option_scope.buf = ctx.buf
 				end
-				return get_option(get_option_arg1, get_option_arg2)
+				return get_option(get_option_key, get_option_scope)
 			end
+		end
+
+		local max = function(a, b)
+			return a > b and a or b
 		end
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 
-		local function max(a, b)
-			return a > b and a or b
-		end
+		local lang_inputs = oss.lang_inputs
 
 		-- #restore
-		if restore.enable then
+		if restore then
+
+			-- create a reverse-lookup table of lang_inputs
+			local langs; if popup then
+				langs = {}
+				for k,v in pairs(lang_inputs) do
+					langs[v] = k
+				end
+			end
+
 			local excludes = restore.exclude_pattern
 			M.restore = function(ctx)
 				if not active or not valid_context(ctx) then return end
@@ -213,6 +311,12 @@ function M.setup(opts)
 						if line:sub(col, col + 1):find(excludes) then return end
 					end
 					exec(cmd_set:format(input_i))
+					if popup then
+						local lang = langs[input_i]
+						if lang then
+							show_popup(lang)
+						end
+					end
 				end
 			end
 
@@ -232,7 +336,7 @@ function M.setup(opts)
 		end
 
 		-- #match
-		if match.enable then
+		if match then
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
@@ -260,7 +364,6 @@ function M.setup(opts)
 				end
 			end
 			-- main function
-			local inputs = oss.lang_inputs
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local printable = '%S'
@@ -278,16 +381,18 @@ function M.setup(opts)
 				if line:find(printable) then -- search in the current line
 					found = find_in_map(line:sub(max(1, col - 2), col + 3))
 					if found then
-						found = inputs[found]
-						if found then
-							exec(cmd_set:format(found))
+						local input = lang_inputs[found]
+						if input then
+							exec(cmd_set:format(input))
+							if popup then
+								show_popup(found)
+							end
 						end
 					end
 
 				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
 					local j, above_done, below_done, found_i
-					local n = n_lines - 1
-					for i = 1, n do
+					for i = 1, n_lines do
 						if not above_done then
 							j = cur - i
 							if j > 0 then
@@ -316,9 +421,12 @@ function M.setup(opts)
 							end
 						end
 						if found then
-							found = inputs[found]
-							if found then
-								exec(cmd_set:format(found))
+							local input = lang_inputs[found]
+							if input then
+								exec(cmd_set:format(input))
+								if popup then
+									show_popup(found)
+								end
 							end
 							return
 						end
