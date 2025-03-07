@@ -9,9 +9,10 @@ return {
 	--        No lags, but less reliable than synchronous.
 
 	popup = {
-		-- When the plugin changed the input source, it can indicate the new input source with a popup.
+		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
+
 		enable = true, -- Show popups?
-		duration = 1500, -- How long to remain visible (ms)
+		duration = 1500, -- How long does a popup remain visible? (ms)
 		pad = true, -- Whether to add leading & trailing spaces
 		hl_group = 'PmenuSel', -- Highlight group
 
