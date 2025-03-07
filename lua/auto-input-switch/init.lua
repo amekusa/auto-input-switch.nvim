@@ -132,6 +132,7 @@ function M.setup(opts)
 
 	-- #popup
 	local show_popup; if popup then
+		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
 		local win_open       = api.nvim_open_win
@@ -182,7 +183,7 @@ function M.setup(opts)
 			-- buffer
 			str = pad..str..pad
 			buf_lines[1] = str
-			if not buf then
+			if not buf or not buf_is_valid(buf) then
 				buf = buf_create(false, true)
 			end
 			buf_set_lines(buf, 0, 1, false, buf_lines)
