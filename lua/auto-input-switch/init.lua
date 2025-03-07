@@ -136,7 +136,7 @@ function M.setup(opts)
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
 		local win_open       = api.nvim_open_win
-		local win_close      = api.nvim_win_close
+		local win_hide       = api.nvim_win_hide
 		local win_set_config = api.nvim_win_set_config
 		local set_option     = api.nvim_set_option_value
 		local new_timer      = vim.uv.new_timer
@@ -169,7 +169,7 @@ function M.setup(opts)
 				timer = nil
 			end
 			if win then
-				win_close(win, true)
+				win_hide(win)
 				win = nil
 			end
 		end
