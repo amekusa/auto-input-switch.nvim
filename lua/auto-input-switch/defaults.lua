@@ -20,8 +20,8 @@ return {
 		border = 'none', -- Style of the window border
 		row = 1, -- Horizontal offset
 		col = 0, -- Vertical offset
-		relative = 'cursor', -- The offsets are relative to: 'editor', 'win', 'cursor', or 'mouse'
-		anchor = 'NW', -- Which corner of the window should be the origin?
+		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
+		anchor = 'NW', -- Which corner is a popup window aligned to?
 		-- 'NW' : Northwest
 		-- 'NE' : Northeast
 		-- 'SW' : Southwest
