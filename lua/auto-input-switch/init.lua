@@ -262,18 +262,20 @@ function M.setup(opts)
 	if restore or match then
 
 		local valid_context; do
+			local event = 'InsertEnter'
+			local mode  = 'i'
 			local get_mode = api.nvim_get_mode
-			local s_InsertEnter = 'InsertEnter'
-			local s_i = 'i'
 			local get_option = api.nvim_get_option_value
-			local get_option_arg1 = 'buflisted'
-			local get_option_arg2 = {buf = 0}
+			local get_option_key = 'buflisted'
+			local get_option_scope = {buf = 0}
 			valid_context = function(ctx)
 				if ctx then
-					if ctx.event ~= s_InsertEnter and get_mode().mode ~= s_i then return false end
-					get_option_arg2.buf = ctx.buf
+					if ctx.event ~= event and get_mode().mode ~= mode then
+						return false
+					end
+					get_option_scope.buf = ctx.buf
 				end
-				return get_option(get_option_arg1, get_option_arg2)
+				return get_option(get_option_key, get_option_scope)
 			end
 		end
 
