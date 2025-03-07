@@ -71,6 +71,27 @@ require('auto-input-switch').setup({
   --  true: 非同期実行。
   --        ラグは発生しませんが、同期実行よりも信頼性に劣ります。
 
+  popup = {
+    -- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
+    -- プラグインによって入力モードが変更された際、現在の入力モードの言語をポップアップ表示で知らせます。
+
+    enable = true, -- ポップアップ表示を有効にするか否か
+    duration = 1500, -- ポップアップを表示する時間 (ms)
+    pad = true, -- 表示言語の前後に空白文字を入れるか否か
+    hl_group = 'PmenuSel', -- ハイライトグループ
+
+    -- ポップアップウィンドウの設定 (:help nvim_open_win())
+    border = 'none', -- ウィンドウの枠のスタイル
+    row = 1, -- 横位置のオフセット
+    col = 0, -- 縦位置のオフセット
+    relative = 'cursor', -- 何を位置の基準とするか: editor/win/cursor/mouse
+    anchor = 'NW', -- どの角を基準位置に合わせるか
+    -- 'NW' : 左上
+    -- 'NE' : 右上
+    -- 'SW' : 左下
+    -- 'SE' : 右下
+  },
+
   normalize = {
     -- Normal モードか Visual モードにおいては、使用するキーボードの言語に関わらず、入力モードは常に半角英数であるべきです。
     -- 本プラグインは、ユーザーが Insert モードから Normal モードに変更する際に、自動で入力モードを半角英数に切り替えることができます。
