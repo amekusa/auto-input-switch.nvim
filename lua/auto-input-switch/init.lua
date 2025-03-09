@@ -155,6 +155,7 @@ function M.setup(opts)
 			col = popup.col,
 			anchor = popup.anchor,
 			border = popup.border,
+			zindex = popup.zindex,
 			height = 1,
 			style = 'minimal',
 			focusable = false,

@@ -18,6 +18,7 @@ return {
 
 		-- Popup window settings (See `:help nvim_open_win()`)
 		border = 'none', -- Style of the window border
+		zindex = 50, -- Rendering priority
 		row = 1, -- Horizontal offset
 		col = 0, -- Vertical offset
 		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
