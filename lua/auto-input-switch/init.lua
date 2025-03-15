@@ -140,6 +140,7 @@ function M.setup(opts)
 		local win_set_config = api.nvim_win_set_config
 		local set_option     = api.nvim_set_option_value
 		local new_timer      = vim.uv.new_timer
+		local schedule       = vim.schedule
 		local schedule_wrap  = vim.schedule_wrap
 
 		local duration = popup.duration
@@ -179,25 +180,27 @@ function M.setup(opts)
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
 		show_popup = function(str)
-			hide_popup()
+			schedule(function()
+				hide_popup()
 
-			-- buffer
-			str = pad..str..pad
-			buf_lines[1] = str
-			if not buf or not buf_is_valid(buf) then
-				buf = buf_create(false, true)
-			end
-			buf_set_lines(buf, 0, 1, false, buf_lines)
+				-- buffer
+				str = pad..str..pad
+				buf_lines[1] = str
+				if not buf or not buf_is_valid(buf) then
+					buf = buf_create(false, true)
+				end
+				buf_set_lines(buf, 0, 1, false, buf_lines)
 
-			-- window
-			win_opts.width = #str
-			win = win_open(buf, false, win_opts)
-			whl_scope.win = win
-			set_option(whl, whl_group, whl_scope)
+				-- window
+				win_opts.width = #str
+				win = win_open(buf, false, win_opts)
+				whl_scope.win = win
+				set_option(whl, whl_group, whl_scope)
 
-			-- timer
-			timer = new_timer()
-			timer:start(duration, 0, schedule_wrap(hide_popup))
+				-- timer
+				timer = new_timer()
+				timer:start(duration, 0, schedule_wrap(hide_popup))
+			end)
 		end
 
 		-- popup position updater
