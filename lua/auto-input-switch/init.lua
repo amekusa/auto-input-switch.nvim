@@ -135,6 +135,7 @@ function M.setup(opts)
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
+		local win_is_valid   = api.nvim_win_is_valid
 		local win_open       = api.nvim_open_win
 		local win_hide       = api.nvim_win_hide
 		local win_set_config = api.nvim_win_set_config
@@ -162,6 +163,7 @@ function M.setup(opts)
 			focusable = false,
 		}
 
+		local updater
 		local timer
 
 		local hide_popup = function()
@@ -170,12 +172,17 @@ function M.setup(opts)
 				timer:close()
 				timer = nil
 			end
+			if updater then
+				api.nvim_del_autocmd(updater)
+				updater = nil
+			end
 			if win then
 				win_hide(win)
 				win = nil
 			end
 		end
 
+		local update_on = {'CursorMoved', 'CursorMovedI'}
 		local whl = 'winhighlight'
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
@@ -183,7 +190,7 @@ function M.setup(opts)
 			schedule(function()
 				hide_popup()
 
-				-- buffer
+				-- initialize buffer
 				str = pad..str..pad
 				buf_lines[1] = str
 				if not buf or not buf_is_valid(buf) then
@@ -191,26 +198,26 @@ function M.setup(opts)
 				end
 				buf_set_lines(buf, 0, 1, false, buf_lines)
 
-				-- window
+				-- initialize window
 				win_opts.width = #str
 				win = win_open(buf, false, win_opts)
 				whl_scope.win = win
 				set_option(whl, whl_group, whl_scope)
+
+				-- position updater
+				updater = api.nvim_create_autocmd(update_on, {
+					callback = schedule_wrap(function()
+						if win and win_is_valid(win) then
+							win_set_config(win, win_opts)
+						end
+					end)
+				})
 
 				-- timer
 				timer = new_timer()
 				timer:start(duration, 0, schedule_wrap(hide_popup))
 			end)
 		end
-
-		-- popup position updater
-		api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
-			callback = function()
-				if win then
-					win_set_config(win, win_opts)
-				end
-			end
-		})
 	end
 
 	-- #normalize
