@@ -76,6 +76,9 @@ function M.setup(opts)
 	local active = opts.activate
 	local async  = opts.async
 
+	local autocmd = api.nvim_create_autocmd
+	local usercmd = api.nvim_create_user_command
+
 	-- Returns whether AIS is active or not.
 	-- @return boolean
 	function M.is_active()
@@ -88,7 +91,7 @@ function M.setup(opts)
 		active = x
 	end
 
-	api.nvim_create_user_command('AutoInputSwitch',
+	usercmd('AutoInputSwitch',
 		function(cmd)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
@@ -163,7 +166,13 @@ function M.setup(opts)
 			focusable = false,
 		}
 
+		local whl = 'winhighlight'
+		local whl_group = 'NormalFloat:'..popup.hl_group
+		local whl_scope = {win = nil}
+
 		local updater
+		local update_on = {'CursorMoved', 'CursorMovedI'}
+
 		local timer
 
 		local hide_popup = function()
@@ -182,10 +191,6 @@ function M.setup(opts)
 			end
 		end
 
-		local update_on = {'CursorMoved', 'CursorMovedI'}
-		local whl = 'winhighlight'
-		local whl_group = 'NormalFloat:'..popup.hl_group
-		local whl_scope = {win = nil}
 		show_popup = function(str)
 			schedule(function()
 				hide_popup()
@@ -205,7 +210,7 @@ function M.setup(opts)
 				set_option(whl, whl_group, whl_scope)
 
 				-- position updater
-				updater = api.nvim_create_autocmd(update_on, {
+				updater = autocmd(update_on, {
 					callback = schedule_wrap(function()
 						if win and win_is_valid(win) then
 							win_set_config(win, win_opts)
@@ -226,7 +231,7 @@ function M.setup(opts)
 			local set_input_n = function(r)
 				input_n = trim(r.stdout)
 			end
-			api.nvim_create_autocmd('InsertEnter', {
+			autocmd('InsertEnter', {
 				pattern = normalize.file_pattern,
 				callback = function()
 					exec_get(cmd_get, set_input_n)
@@ -255,7 +260,7 @@ function M.setup(opts)
 			end
 		end
 
-		api.nvim_create_user_command('AutoInputSwitchNormalize',
+		usercmd('AutoInputSwitchNormalize',
 			M.normalize, {
 				desc = 'Normalize the input source',
 				nargs = 0
@@ -263,7 +268,7 @@ function M.setup(opts)
 		)
 
 		if normalize.on then
-			api.nvim_create_autocmd(normalize.on, {
+			autocmd(normalize.on, {
 				pattern = normalize.file_pattern,
 				callback = M.normalize
 			})
@@ -331,7 +336,7 @@ function M.setup(opts)
 				end
 			end
 
-			api.nvim_create_user_command('AutoInputSwitchRestore',
+			usercmd('AutoInputSwitchRestore',
 				function() M.restore() end, {
 					desc = 'Restore the input source to the state before tha last normalization',
 					nargs = 0
@@ -339,7 +344,7 @@ function M.setup(opts)
 			)
 
 			if restore.on then
-				api.nvim_create_autocmd(restore.on, {
+				autocmd(restore.on, {
 					pattern = restore.file_pattern,
 					callback = M.restore
 				})
@@ -445,7 +450,7 @@ function M.setup(opts)
 				end
 			end
 
-			api.nvim_create_user_command('AutoInputSwitchMatch',
+			usercmd('AutoInputSwitchMatch',
 				function() M.match() end, {
 					desc = 'Match the input source with the characters near the cursor',
 					nargs = 0
@@ -453,7 +458,7 @@ function M.setup(opts)
 			)
 
 			if match.on then
-				api.nvim_create_autocmd(match.on, {
+				autocmd(match.on, {
 					pattern = match.file_pattern,
 					callback = M.match
 				})
