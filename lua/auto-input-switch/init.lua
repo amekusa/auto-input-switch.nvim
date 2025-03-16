@@ -150,10 +150,10 @@ function M.setup(opts)
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
 
-		local buf
+		local buf = -1
 		local buf_lines = {''}
 
-		local win
+		local win = -1
 		local win_opts = {
 			relative = popup.relative,
 			row = popup.row,
@@ -185,9 +185,9 @@ function M.setup(opts)
 				api.nvim_del_autocmd(updater)
 				updater = nil
 			end
-			if win then
+			if win_is_valid(win) then
 				win_hide(win)
-				win = nil
+				win = -1
 			end
 		end
 
@@ -198,7 +198,7 @@ function M.setup(opts)
 				-- initialize buffer
 				str = pad..str..pad
 				buf_lines[1] = str
-				if not buf or not buf_is_valid(buf) then
+				if not buf_is_valid(buf) then
 					buf = buf_create(false, true)
 				end
 				buf_set_lines(buf, 0, 1, false, buf_lines)
@@ -212,7 +212,7 @@ function M.setup(opts)
 				-- position updater
 				updater = autocmd(update_on, {
 					callback = schedule_wrap(function()
-						if win and win_is_valid(win) then
+						if win_is_valid(win) then
 							win_set_config(win, win_opts)
 						end
 					end)
