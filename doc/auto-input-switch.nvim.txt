@@ -1,4 +1,4 @@
-*auto-input-switch.nvim.txt*          For           Last change: 2025 March 07
+*auto-input-switch.nvim.txt*          For           Last change: 2025 March 19
 
 ==============================================================================
 Table of Contents                   *auto-input-switch.nvim-table-of-contents*
@@ -32,8 +32,19 @@ For example, it can:
 1. Version History                    *auto-input-switch.nvim-version-history*
 
 >
-    v3.2.0 - New feature "Popup"
-    v3.1.0 - New option `match.lines`
+    v3.3.0 - Now `os_settings.*.normal_input` supports a table value like this:
+               normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+             The 1st string is the name of the input source, which should match with the output of `cmd_get`.
+             The 2nd string is what is actually passed to `cmd_set`.
+    
+           - Each entry of `os_settings.*.lang_inputs` also supports a table just like `normal_input`.
+           - New option `prefix`.
+           - New option `popup.zindex`.
+           - Fixed the issue that popup may interfere opening other floating windows.
+           - Fixed the errors on `AutoInputSwitchRestore` and `AutoInputSwitchMatch` commands.
+    
+    v3.2.0 - New feature "Popup".
+    v3.1.0 - New option `match.lines`.
     v3.0.0 - New feature "Match".
     v2.2.0 - Support `async` option.
     v2.0.0 - Added/Removed some options.
@@ -99,6 +110,8 @@ Default options:
       --  true: Runs asynchronously.
       --        No lags, but less reliable than synchronous.
     
+      prefix = 'AutoInputSwitch', -- Prefix of the command names
+    
       popup = {
         -- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
     
@@ -107,8 +120,9 @@ Default options:
         pad = true, -- Whether to add leading & trailing spaces
         hl_group = 'PmenuSel', -- Highlight group
     
-        -- Popup window settings (See `:help nvim_open_win()`)
+        -- Popup window settings (:h nvim_open_win())
         border = 'none', -- Style of the window border
+        zindex = 50, -- Rendering priority
         row = 1, -- Horizontal offset
         col = 0, -- Vertical offset
         relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
@@ -208,8 +222,14 @@ Default options:
           -- normal_input = 'com.apple.keylayout.US',
           -- normal_input = 'com.apple.keylayout.USExtended',
     
+          -- You can also use a table like this:
+          -- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+          --   The 1st string is the name of the input source, which should match with the output of `cmd_get`.
+          --   The 2nd string is what is actually passed to `cmd_set`.
+    
           lang_inputs = {
             -- The input sources corresponding to `match.languages` for each.
+            -- You can also use a table for each entry just like `normal_input`.
             Ru = 'com.apple.keylayout.Russian',
             Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
             Zh = 'com.apple.inputmethod.SCIM.ITABC',
@@ -239,7 +259,7 @@ Default options:
 6. Configuration Examples      *auto-input-switch.nvim-configuration-examples*
 
 >lua
-    -- Enable to match Japanese, Chinese, Korean languages
+    -- Enable to match Japanese, Chinese, and Korean languages
     require('auto-input-switch').setup({
       restore = { enable = false },
       match = {
