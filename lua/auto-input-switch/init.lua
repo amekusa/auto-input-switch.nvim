@@ -52,6 +52,16 @@ local function detect_os()
 	return 'linux'
 end
 
+local function sanitize_input(input)
+	if not input then
+		return {nil}
+	end
+	if type(input) == 'table'
+		then return input
+		else return {input}
+	end
+end
+
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
@@ -65,7 +75,7 @@ function M.setup(opts)
 
 	local cmd_get = oss.cmd_get
 	local cmd_set = oss.cmd_set
-	local input_n = oss.normal_input
+	local input_n = sanitize_input(oss.normal_input)
 	local input_i
 
 	local popup     = opts.popup.enable     and opts.popup
@@ -227,14 +237,13 @@ function M.setup(opts)
 
 	-- #normalize
 	if normalize then
-		if not input_n then
-			local set_input_n = function(r)
-				input_n = trim(r.stdout)
-			end
+		if not input_n[1] then
 			autocmd('InsertEnter', {
 				pattern = normalize.file_pattern,
 				callback = function()
-					exec_get(cmd_get, set_input_n)
+					exec_get(cmd_get, function(r)
+						input_n[1] = trim(r.stdout)
+					end)
 					return true -- oneshot
 				end
 			})
@@ -252,8 +261,8 @@ function M.setup(opts)
 				exec_get(cmd_get, save_input)
 			end
 			-- switch to input_n
-			if input_n and (async or input_n ~= input_i) then
-				exec(cmd_set:format(input_n))
+			if input_n[1] and (async or input_n[1] ~= input_i) then
+				exec(cmd_set:format(input_n[2] or input_n[1]))
 				if popup_text then
 					show_popup(popup_text)
 				end
@@ -302,7 +311,11 @@ function M.setup(opts)
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 
-		local lang_inputs = oss.lang_inputs
+		-- sanitize entries of lang_inputs
+		local lang_inputs = {}
+		for k,v in pairs(oss.lang_inputs) do
+			lang_inputs[k] = sanitize_input(v)
+		end
 
 		-- #restore
 		if restore then
@@ -311,7 +324,9 @@ function M.setup(opts)
 			local langs; if popup then
 				langs = {}
 				for k,v in pairs(lang_inputs) do
-					langs[v] = k
+					if v[1] then
+						langs[v[1]] = k
+					end
 				end
 			end
 
@@ -320,7 +335,7 @@ function M.setup(opts)
 				if not active or not valid_context(ctx) then return end
 
 				-- restore input_i that was saved on the last normalize
-				if input_i and (input_i ~= input_n) then
+				if input_i and (input_i ~= input_n[1]) then
 					if excludes then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(ctx.buf, row - 1, row, true)[1]
@@ -353,6 +368,7 @@ function M.setup(opts)
 
 		-- #match
 		if match then
+
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
@@ -369,6 +385,7 @@ function M.setup(opts)
 					return a.priority > b.priority
 				end)
 			end
+
 			-- returns `name` of the item of `map`, matched with the given string
 			local map_len = #map
 			local function find_in_map(str)
@@ -379,7 +396,7 @@ function M.setup(opts)
 					end
 				end
 			end
-			-- main function
+
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local printable = '%S'
@@ -399,7 +416,7 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							exec(cmd_set:format(input))
+							exec(cmd_set:format(input[2] or input[1]))
 							if popup then
 								show_popup(found)
 							end
@@ -439,7 +456,7 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								exec(cmd_set:format(input))
+								exec(cmd_set:format(input[2] or input[1]))
 								if popup then
 									show_popup(found)
 								end
