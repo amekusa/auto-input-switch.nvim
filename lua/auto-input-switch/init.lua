@@ -52,6 +52,16 @@ local function detect_os()
 	return 'linux'
 end
 
+local function sanitize_input(input)
+	if not input then
+		return {nil}
+	end
+	if type(input) == 'table'
+		then return input
+		else return {input}
+	end
+end
+
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
@@ -65,7 +75,7 @@ function M.setup(opts)
 
 	local cmd_get = oss.cmd_get
 	local cmd_set = oss.cmd_set
-	local input_n = oss.normal_input
+	local input_n = sanitize_input(oss.normal_input)
 	local input_i
 
 	local popup     = opts.popup.enable     and opts.popup
@@ -75,6 +85,13 @@ function M.setup(opts)
 
 	local active = opts.activate
 	local async  = opts.async
+	local prefix = opts.prefix
+
+	local autocmd = api.nvim_create_autocmd
+	local usercmd = api.nvim_create_user_command
+
+	local schedule      = vim.schedule
+	local schedule_wrap = vim.schedule_wrap
 
 	-- Returns whether AIS is active or not.
 	-- @return boolean
@@ -88,7 +105,7 @@ function M.setup(opts)
 		active = x
 	end
 
-	api.nvim_create_user_command('AutoInputSwitch',
+	usercmd(prefix,
 		function(cmd)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
@@ -135,30 +152,38 @@ function M.setup(opts)
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
+		local win_is_valid   = api.nvim_win_is_valid
 		local win_open       = api.nvim_open_win
 		local win_hide       = api.nvim_win_hide
 		local win_set_config = api.nvim_win_set_config
 		local set_option     = api.nvim_set_option_value
 		local new_timer      = vim.uv.new_timer
-		local schedule_wrap  = vim.schedule_wrap
 
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
 
-		local buf
+		local buf = -1
 		local buf_lines = {''}
 
-		local win
+		local win = -1
 		local win_opts = {
 			relative = popup.relative,
 			row = popup.row,
 			col = popup.col,
 			anchor = popup.anchor,
 			border = popup.border,
+			zindex = popup.zindex,
 			height = 1,
 			style = 'minimal',
 			focusable = false,
 		}
+
+		local whl = 'winhighlight'
+		local whl_group = 'NormalFloat:'..popup.hl_group
+		local whl_scope = {win = nil}
+
+		local updater
+		local update_on = {'CursorMoved', 'CursorMovedI'}
 
 		local timer
 
@@ -168,57 +193,59 @@ function M.setup(opts)
 				timer:close()
 				timer = nil
 			end
-			if win then
+			if updater then
+				api.nvim_del_autocmd(updater)
+				updater = nil
+			end
+			if win_is_valid(win) then
 				win_hide(win)
-				win = nil
+				win = -1
 			end
 		end
 
-		local whl = 'winhighlight'
-		local whl_group = 'NormalFloat:'..popup.hl_group
-		local whl_scope = {win = nil}
 		show_popup = function(str)
-			hide_popup()
+			schedule(function()
+				hide_popup()
 
-			-- buffer
-			str = pad..str..pad
-			buf_lines[1] = str
-			if not buf or not buf_is_valid(buf) then
-				buf = buf_create(false, true)
-			end
-			buf_set_lines(buf, 0, 1, false, buf_lines)
-
-			-- window
-			win_opts.width = #str
-			win = win_open(buf, false, win_opts)
-			whl_scope.win = win
-			set_option(whl, whl_group, whl_scope)
-
-			-- timer
-			timer = new_timer()
-			timer:start(duration, 0, schedule_wrap(hide_popup))
-		end
-
-		-- popup position updater
-		api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
-			callback = function()
-				if win then
-					win_set_config(win, win_opts)
+				-- initialize buffer
+				str = pad..str..pad
+				buf_lines[1] = str
+				if not buf_is_valid(buf) then
+					buf = buf_create(false, true)
 				end
-			end
-		})
+				buf_set_lines(buf, 0, 1, false, buf_lines)
+
+				-- initialize window
+				win_opts.width = #str
+				win = win_open(buf, false, win_opts)
+				whl_scope.win = win
+				set_option(whl, whl_group, whl_scope)
+
+				-- position updater
+				updater = autocmd(update_on, {
+					callback = schedule_wrap(function()
+						if win_is_valid(win) then
+							win_set_config(win, win_opts)
+						end
+					end)
+				})
+
+				-- timer
+				timer = new_timer()
+				timer:start(duration, 0, schedule_wrap(hide_popup))
+			end)
+		end
 	end
 
 	-- #normalize
 	if normalize then
-		if not input_n then
-			local set_input_n = function(r)
-				input_n = trim(r.stdout)
-			end
-			api.nvim_create_autocmd('InsertEnter', {
+		if not input_n[1] then
+			autocmd('InsertEnter', {
 				pattern = normalize.file_pattern,
 				callback = function()
-					exec_get(cmd_get, set_input_n)
+					exec_get(cmd_get, function(r)
+						input_n[1] = trim(r.stdout)
+					end)
 					return true -- oneshot
 				end
 			})
@@ -236,15 +263,15 @@ function M.setup(opts)
 				exec_get(cmd_get, save_input)
 			end
 			-- switch to input_n
-			if input_n and (async or input_n ~= input_i) then
-				exec(cmd_set:format(input_n))
+			if input_n[1] and (async or input_n[1] ~= input_i) then
+				exec(cmd_set:format(input_n[2] or input_n[1]))
 				if popup_text then
 					show_popup(popup_text)
 				end
 			end
 		end
 
-		api.nvim_create_user_command('AutoInputSwitchNormalize',
+		usercmd(prefix..'Normalize',
 			M.normalize, {
 				desc = 'Normalize the input source',
 				nargs = 0
@@ -252,7 +279,7 @@ function M.setup(opts)
 		)
 
 		if normalize.on then
-			api.nvim_create_autocmd(normalize.on, {
+			autocmd(normalize.on, {
 				pattern = normalize.file_pattern,
 				callback = M.normalize
 			})
@@ -268,12 +295,12 @@ function M.setup(opts)
 			local get_option = api.nvim_get_option_value
 			local get_option_key = 'buflisted'
 			local get_option_scope = {buf = 0}
-			valid_context = function(ctx)
-				if ctx then
-					if ctx.event ~= event and get_mode().mode ~= mode then
+			valid_context = function(c)
+				if c then
+					if c.event ~= event and get_mode().mode ~= mode then
 						return false
 					end
-					get_option_scope.buf = ctx.buf
+					get_option_scope.buf = c.buf
 				end
 				return get_option(get_option_key, get_option_scope)
 			end
@@ -286,57 +313,18 @@ function M.setup(opts)
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 
-		local lang_inputs = oss.lang_inputs
-
-		-- #restore
-		if restore then
-
-			-- create a reverse-lookup table of lang_inputs
-			local langs; if popup then
-				langs = {}
-				for k,v in pairs(lang_inputs) do
-					langs[v] = k
-				end
-			end
-
-			local excludes = restore.exclude_pattern
-			M.restore = function(ctx)
-				if not active or not valid_context(ctx) then return end
-
-				-- restore input_i that was saved on the last normalize
-				if input_i and (input_i ~= input_n) then
-					if excludes then -- check if the chars before & after the cursor are alphanumeric
-						local row, col = unpack(win_get_cursor(0))
-						local line = buf_get_lines(ctx.buf, row - 1, row, true)[1]
-						if line:sub(col, col + 1):find(excludes) then return end
-					end
-					exec(cmd_set:format(input_i))
-					if popup then
-						local lang = langs[input_i]
-						if lang then
-							show_popup(lang)
-						end
-					end
-				end
-			end
-
-			api.nvim_create_user_command('AutoInputSwitchRestore',
-				function() M.restore() end, {
-					desc = 'Restore the input source to the state before tha last normalization',
-					nargs = 0
-				}
-			)
-
-			if restore.on then
-				api.nvim_create_autocmd(restore.on, {
-					pattern = restore.file_pattern,
-					callback = M.restore
-				})
-			end
+		-- sanitize entries of lang_inputs
+		local lang_inputs = {}
+		for k,v in pairs(oss.lang_inputs) do
+			lang_inputs[k] = sanitize_input(v)
 		end
+
+		-- flag for prevending `restore` from executing after `match` in the same frame
+		local matched = false
 
 		-- #match
 		if match then
+
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
@@ -353,6 +341,7 @@ function M.setup(opts)
 					return a.priority > b.priority
 				end)
 			end
+
 			-- returns `name` of the item of `map`, matched with the given string
 			local map_len = #map
 			local function find_in_map(str)
@@ -363,17 +352,22 @@ function M.setup(opts)
 					end
 				end
 			end
-			-- main function
+
+			-- schedule this:
+			local function reset_matched()
+				matched = false
+			end
+
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local printable = '%S'
-			M.match = function(ctx)
-				if not active or not valid_context(ctx) then return end
+			M.match = function(c)
+				if not active or not valid_context(c) then return end
 
 				local found -- language name to find
 				local row, col = unpack(win_get_cursor(0)) -- cusor position
 				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
-				local lines = buf_get_lines(ctx.buf, row_top - 1, row + lines_below, false) -- lines to search in
+				local lines = buf_get_lines(c and c.buf or 0, row_top - 1, row + lines_below, false) -- lines to search in
 				local n_lines = #lines
 				local cur = row - row_top + 1 -- the index of the current line in `lines`
 				local line = lines[cur] -- current line
@@ -383,7 +377,8 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							exec(cmd_set:format(input))
+							matched = true; schedule(reset_matched)
+							exec(cmd_set:format(input[2] or input[1]))
 							if popup then
 								show_popup(found)
 							end
@@ -423,7 +418,8 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								exec(cmd_set:format(input))
+								matched = true; schedule(reset_matched)
+								exec(cmd_set:format(input[2] or input[1]))
 								if popup then
 									show_popup(found)
 								end
@@ -434,7 +430,7 @@ function M.setup(opts)
 				end
 			end
 
-			api.nvim_create_user_command('AutoInputSwitchMatch',
+			usercmd(prefix..'Match',
 				function() M.match() end, {
 					desc = 'Match the input source with the characters near the cursor',
 					nargs = 0
@@ -442,9 +438,58 @@ function M.setup(opts)
 			)
 
 			if match.on then
-				api.nvim_create_autocmd(match.on, {
+				autocmd(match.on, {
 					pattern = match.file_pattern,
 					callback = M.match
+				})
+			end
+		end
+
+		-- #restore
+		if restore then
+
+			-- create a reverse-lookup table of lang_inputs
+			local langs; if popup then
+				langs = {}
+				for k,v in pairs(lang_inputs) do
+					if v[1] then
+						langs[v[1]] = k
+					end
+				end
+			end
+
+			local excludes = restore.exclude_pattern
+			M.restore = function(c)
+				if not active or matched or not valid_context(c) then return end
+
+				-- restore input_i that was saved on the last normalize
+				if input_i and (input_i ~= input_n[1]) then
+					if excludes then -- check if the chars before & after the cursor are alphanumeric
+						local row, col = unpack(win_get_cursor(0))
+						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
+						if line:sub(col, col + 1):find(excludes) then return end
+					end
+					exec(cmd_set:format(input_i))
+					if popup then
+						local lang = langs[input_i]
+						if lang then
+							show_popup(lang)
+						end
+					end
+				end
+			end
+
+			usercmd(prefix..'Restore',
+				function() M.restore() end, {
+					desc = 'Restore the input source to the state before tha last normalization',
+					nargs = 0
+				}
+			)
+
+			if restore.on then
+				autocmd(restore.on, {
+					pattern = restore.file_pattern,
+					callback = M.restore
 				})
 			end
 		end

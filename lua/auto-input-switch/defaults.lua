@@ -8,6 +8,8 @@ return {
 	--  true: Runs asynchronously.
 	--        No lags, but less reliable than synchronous.
 
+	prefix = 'AutoInputSwitch', -- Prefix of the command names
+
 	popup = {
 		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
 
@@ -16,8 +18,9 @@ return {
 		pad = true, -- Whether to add leading & trailing spaces
 		hl_group = 'PmenuSel', -- Highlight group
 
-		-- Popup window settings (See `:help nvim_open_win()`)
+		-- Popup window settings (:h nvim_open_win())
 		border = 'none', -- Style of the window border
+		zindex = 50, -- Rendering priority
 		row = 1, -- Horizontal offset
 		col = 0, -- Vertical offset
 		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
@@ -117,8 +120,14 @@ return {
 			-- normal_input = 'com.apple.keylayout.US',
 			-- normal_input = 'com.apple.keylayout.USExtended',
 
+			-- You can also use a table like this:
+			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+			--   The 1st string is the name of the input source, which should match with the output of `cmd_get`.
+			--   The 2nd string is what is actually passed to `cmd_set`.
+
 			lang_inputs = {
 				-- The input sources corresponding to `match.languages` for each.
+				-- You can also use a table for each entry just like `normal_input`.
 				Ru = 'com.apple.keylayout.Russian',
 				Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
 				Zh = 'com.apple.inputmethod.SCIM.ITABC',
