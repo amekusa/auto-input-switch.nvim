@@ -295,12 +295,12 @@ function M.setup(opts)
 			local get_option = api.nvim_get_option_value
 			local get_option_key = 'buflisted'
 			local get_option_scope = {buf = 0}
-			valid_context = function(ctx)
-				if ctx then
-					if ctx.event ~= event and get_mode().mode ~= mode then
+			valid_context = function(c)
+				if c then
+					if c.event ~= event and get_mode().mode ~= mode then
 						return false
 					end
-					get_option_scope.buf = ctx.buf
+					get_option_scope.buf = c.buf
 				end
 				return get_option(get_option_key, get_option_scope)
 			end
@@ -361,13 +361,13 @@ function M.setup(opts)
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local printable = '%S'
-			M.match = function(ctx)
-				if not active or not valid_context(ctx) then return end
+			M.match = function(c)
+				if not active or not valid_context(c) then return end
 
 				local found -- language name to find
 				local row, col = unpack(win_get_cursor(0)) -- cusor position
 				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
-				local lines = buf_get_lines(ctx.buf, row_top - 1, row + lines_below, false) -- lines to search in
+				local lines = buf_get_lines(c and c.buf or 0, row_top - 1, row + lines_below, false) -- lines to search in
 				local n_lines = #lines
 				local cur = row - row_top + 1 -- the index of the current line in `lines`
 				local line = lines[cur] -- current line
@@ -459,14 +459,14 @@ function M.setup(opts)
 			end
 
 			local excludes = restore.exclude_pattern
-			M.restore = function(ctx)
-				if not active or matched or not valid_context(ctx) then return end
+			M.restore = function(c)
+				if not active or matched or not valid_context(c) then return end
 
 				-- restore input_i that was saved on the last normalize
 				if input_i and (input_i ~= input_n[1]) then
 					if excludes then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
-						local line = buf_get_lines(ctx.buf, row - 1, row, true)[1]
+						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
 						if line:sub(col, col + 1):find(excludes) then return end
 					end
 					exec(cmd_set:format(input_i))
