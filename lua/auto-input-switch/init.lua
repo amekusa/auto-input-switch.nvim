@@ -89,8 +89,8 @@ function M.setup(opts)
 	local autocmd = api.nvim_create_autocmd
 	local usercmd = api.nvim_create_user_command
 
-	local schedule       = vim.schedule
-	local schedule_wrap  = vim.schedule_wrap
+	local schedule      = vim.schedule
+	local schedule_wrap = vim.schedule_wrap
 
 	-- Returns whether AIS is active or not.
 	-- @return boolean
@@ -318,6 +318,9 @@ function M.setup(opts)
 			lang_inputs[k] = sanitize_input(v)
 		end
 
+		-- flag for prevending `restore` from executing after `match` in the same frame
+		local matched = false
+
 		-- #match
 		if match then
 
@@ -349,6 +352,11 @@ function M.setup(opts)
 				end
 			end
 
+			-- schedule this:
+			local function reset_matched()
+				matched = false
+			end
+
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local printable = '%S'
@@ -368,6 +376,7 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
+							matched = true; schedule(reset_matched)
 							exec(cmd_set:format(input[2] or input[1]))
 							if popup then
 								show_popup(found)
@@ -408,6 +417,7 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
+								matched = true; schedule(reset_matched)
 								exec(cmd_set:format(input[2] or input[1]))
 								if popup then
 									show_popup(found)
@@ -449,9 +459,7 @@ function M.setup(opts)
 
 			local excludes = restore.exclude_pattern
 			M.restore = function(ctx)
-				if not active or not valid_context(ctx) then return end
-
-				vim.print('MATCHED: '..(matched and 'true' or 'false'))
+				if not active or matched or not valid_context(ctx) then return end
 
 				-- restore input_i that was saved on the last normalize
 				if input_i and (input_i ~= input_n[1]) then
