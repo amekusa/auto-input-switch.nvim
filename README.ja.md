@@ -18,6 +18,17 @@
 ## バージョン履歴
 
 ```
+v3.3.0 - `os_settings.*.normal_input` にテーブルが指定可能になりました。
+         例: normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+         1 番目の文字列は入力モードの名前であり、`cmd_get` の出力結果と一致している必要があります。
+         2 番目の文字列は実際に `cmd_set` に渡される文字列です。
+
+       - `os_settings.*.lang_inputs` の各値にも `normal_input` 同様にテーブルが指定可能です。
+       - `prefix` オプションを追加しました。
+       - `popup.zindex` オプションを追加しました。
+       - ポップアップが他のフローティングウィンドウが開くのを阻害することがある問題を修正しました。
+       - `AutoInputSwitchRestore` と `AutoInputSwitchMatch` コマンドのエラーを修正しました。
+
 v3.2.0 - "Popup" 機能を追加しました。
 v3.1.0 - `match.lines` オプションを追加しました。
 v3.0.0 - "Match" 機能を追加しました。
@@ -63,17 +74,18 @@ require('lazy').setup({
 
 ```lua
 require('auto-input-switch').setup({
-  activate = true, -- 本プラグインの機能を有効にするか否か。
+  activate = true, -- 本プラグインの機能を有効にするか否か
   -- このフラグは `AutoInputSwitch on|off` コマンドでいつでも切り替え可能です。
 
-  async = false, -- `cmd_get` & `cmd_set` の実行を非同期で行うか否か。
-  -- false: 同期実行。(推奨)
+  async = false, -- `cmd_get` & `cmd_set` の実行を非同期で行うか否か
+  -- false: 同期実行(推奨)
   --        Insert モードと Normal モード間の切り替えを素早く繰り返した際などに僅かなラグが発生する場合があります。
-  --  true: 非同期実行。
+  --  true: 非同期実行
   --        ラグは発生しませんが、同期実行よりも信頼性に劣ります。
 
+  prefix = 'AutoInputSwitch', -- コマンド名のプリフィックス
+
   popup = {
-    -- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
     -- プラグインによって入力モードが変更された際、現在の入力モードの言語をポップアップ表示で知らせます。
 
     enable = true, -- ポップアップ表示を有効にするか否か
@@ -81,8 +93,9 @@ require('auto-input-switch').setup({
     pad = true, -- 表示言語の前後に空白文字を入れるか否か
     hl_group = 'PmenuSel', -- ハイライトグループ
 
-    -- ポップアップウィンドウの設定 (:help nvim_open_win())
+    -- ポップアップウィンドウの設定 (:h nvim_open_win())
     border = 'none', -- ウィンドウの枠のスタイル
+    zindex = 50, -- レンダリングの優先度
     row = 1, -- 横位置のオフセット
     col = 0, -- 縦位置のオフセット
     relative = 'cursor', -- 何を位置の基準とするか: editor/win/cursor/mouse
@@ -98,17 +111,19 @@ require('auto-input-switch').setup({
     -- 本プラグインは、ユーザーが Insert モードから Normal モードに変更する際に、自動で入力モードを半角英数に切り替えることができます。
     -- この機能を "Normalize" と呼称します。
 
-    enable = true, -- Normalize を有効にするか否か。
-    on = { -- Normalize のトリガーとなるイベント。(:h events)
+    enable = true, -- Normalize を有効にするか否か
+    on = { -- Normalize のトリガーとなるイベント (:h events)
       'InsertLeave',
       'BufLeave',
       'WinLeave',
       'FocusLost',
       'ExitPre',
     },
-    file_pattern = nil, -- Normalize が有効となるファイル名のパターン。 (nil は全ファイル)
+    file_pattern = nil, -- Normalize が有効となるファイル名のパターン (nil は全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
+
+    popup = 'ABC', -- Normalize 時にポップアップ表示するテキスト (nil で非表示)
   },
 
   restore = {
@@ -116,12 +131,12 @@ require('auto-input-switch').setup({
     -- そしてユーザーが次に Insert モードに移行した瞬間、記憶していた入力モードを自動的に復元することができます。
     -- この機能を "Restore" と呼称します。
 
-    enable = true, -- Restore を有効にするか否か。
-    on = { -- Restore のトリガーとなるイベント。(:h events)
+    enable = true, -- Restore を有効にするか否か
+    on = { -- Restore のトリガーとなるイベント (:h events)
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- Restore が有効となるファイル名のパターン。(nil は全ファイル)
+    file_pattern = nil, -- Restore が有効となるファイル名のパターン (nil は全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -140,12 +155,12 @@ require('auto-input-switch').setup({
     -- Match を有効にする場合、`restore.enable` を false にすることが推奨されます。
     -- Match はデフォルトでは無効に設定されています。
 
-    enable = false, -- Match を有効にするか否か。
-    on = { -- Match のトリガーとなるイベント。(:h events)
+    enable = false, -- Match を有効にするか否か
+    on = { -- Match のトリガーとなるイベント (:h events)
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- Match が有効となるファイル名のパターン。(nil は全ファイル)
+    file_pattern = nil, -- Match が有効となるファイル名のパターン (nil は全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -162,25 +177,31 @@ require('auto-input-switch').setup({
 
     lines = {
       -- 現在の行が空か空白文字のみを含んでいる場合、そこから上下の行に対して Match を行います。
-      above = 2, -- 上に何行分 Match を行うか。
-      below = 1, -- 下に何行分 Match を行うか。
+      above = 2, -- 上に何行分 Match を行うか
+      below = 1, -- 下に何行分 Match を行うか
     },
   },
 
-  os = nil, -- 'macos', 'windows', 'linux', または nil で自動判別。
-  os_settings = { -- OS 毎の設定。
+  os = nil, -- 'macos', 'windows', 'linux', または nil で自動判別
+  os_settings = { -- OS 毎の設定
     macos = {
       enable = true,
-      cmd_get = 'im-select', -- 現在の入力モードを取得するコマンド。
-      cmd_set = 'im-select %s', -- 入力モードを変更するコマンド。(`%s` が入力モードで置換されます)
-      normal_input = nil, -- Normalize で使用する入力モード。(nil で自動判別)
+      cmd_get = 'im-select', -- 現在の入力モードを取得するコマンド
+      cmd_set = 'im-select %s', -- 入力モードを変更するコマンド (`%s` が入力モードで置換されます)
+      normal_input = nil, -- Normalize で使用する入力モード (nil で自動判別)
       -- 例:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
       -- normal_input = 'com.apple.keylayout.USExtended',
 
+      -- 以下のようにテーブルを指定することも可能です:
+      -- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+      --   1 番目の文字列は入力モードの名前であり、`cmd_get` の出力結果と一致している必要があります。
+      --   2 番目の文字列は実際に `cmd_set` に渡される文字列です。
+
       lang_inputs = {
         -- `match.languages` 内の各言語に対応する入力モードのリスト。
+        -- `normal_input` 同様、各値にテーブルを指定することも可能です。
         Ru = 'com.apple.keylayout.Russian',
         Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
         Zh = 'com.apple.inputmethod.SCIM.ITABC',
@@ -209,7 +230,7 @@ require('auto-input-switch').setup({
 ## 設定例
 
 ```lua
--- 日本語, 中国語, 韓国語の Match を有効にする。
+-- 日本語, 中国語, 韓国語の Match を有効にする
 require('auto-input-switch').setup({
   restore = { enable = false },
   match = {
