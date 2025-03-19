@@ -89,6 +89,9 @@ function M.setup(opts)
 	local autocmd = api.nvim_create_autocmd
 	local usercmd = api.nvim_create_user_command
 
+	local schedule       = vim.schedule
+	local schedule_wrap  = vim.schedule_wrap
+
 	-- Returns whether AIS is active or not.
 	-- @return boolean
 	function M.is_active()
@@ -154,8 +157,6 @@ function M.setup(opts)
 		local win_set_config = api.nvim_win_set_config
 		local set_option     = api.nvim_set_option_value
 		local new_timer      = vim.uv.new_timer
-		local schedule       = vim.schedule
-		local schedule_wrap  = vim.schedule_wrap
 
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
@@ -317,55 +318,6 @@ function M.setup(opts)
 			lang_inputs[k] = sanitize_input(v)
 		end
 
-		-- #restore
-		if restore then
-
-			-- create a reverse-lookup table of lang_inputs
-			local langs; if popup then
-				langs = {}
-				for k,v in pairs(lang_inputs) do
-					if v[1] then
-						langs[v[1]] = k
-					end
-				end
-			end
-
-			local excludes = restore.exclude_pattern
-			M.restore = function(ctx)
-				if not active or not valid_context(ctx) then return end
-
-				-- restore input_i that was saved on the last normalize
-				if input_i and (input_i ~= input_n[1]) then
-					if excludes then -- check if the chars before & after the cursor are alphanumeric
-						local row, col = unpack(win_get_cursor(0))
-						local line = buf_get_lines(ctx.buf, row - 1, row, true)[1]
-						if line:sub(col, col + 1):find(excludes) then return end
-					end
-					exec(cmd_set:format(input_i))
-					if popup then
-						local lang = langs[input_i]
-						if lang then
-							show_popup(lang)
-						end
-					end
-				end
-			end
-
-			usercmd('AutoInputSwitchRestore',
-				function() M.restore() end, {
-					desc = 'Restore the input source to the state before tha last normalization',
-					nargs = 0
-				}
-			)
-
-			if restore.on then
-				autocmd(restore.on, {
-					pattern = restore.file_pattern,
-					callback = M.restore
-				})
-			end
-		end
-
 		-- #match
 		if match then
 
@@ -478,6 +430,57 @@ function M.setup(opts)
 				autocmd(match.on, {
 					pattern = match.file_pattern,
 					callback = M.match
+				})
+			end
+		end
+
+		-- #restore
+		if restore then
+
+			-- create a reverse-lookup table of lang_inputs
+			local langs; if popup then
+				langs = {}
+				for k,v in pairs(lang_inputs) do
+					if v[1] then
+						langs[v[1]] = k
+					end
+				end
+			end
+
+			local excludes = restore.exclude_pattern
+			M.restore = function(ctx)
+				if not active or not valid_context(ctx) then return end
+
+				vim.print('MATCHED: '..(matched and 'true' or 'false'))
+
+				-- restore input_i that was saved on the last normalize
+				if input_i and (input_i ~= input_n[1]) then
+					if excludes then -- check if the chars before & after the cursor are alphanumeric
+						local row, col = unpack(win_get_cursor(0))
+						local line = buf_get_lines(ctx.buf, row - 1, row, true)[1]
+						if line:sub(col, col + 1):find(excludes) then return end
+					end
+					exec(cmd_set:format(input_i))
+					if popup then
+						local lang = langs[input_i]
+						if lang then
+							show_popup(lang)
+						end
+					end
+				end
+			end
+
+			usercmd('AutoInputSwitchRestore',
+				function() M.restore() end, {
+					desc = 'Restore the input source to the state before tha last normalization',
+					nargs = 0
+				}
+			)
+
+			if restore.on then
+				autocmd(restore.on, {
+					pattern = restore.file_pattern,
+					callback = M.restore
 				})
 			end
 		end
