@@ -85,6 +85,7 @@ function M.setup(opts)
 
 	local active = opts.activate
 	local async  = opts.async
+	local prefix = opts.prefix
 
 	local autocmd = api.nvim_create_autocmd
 	local usercmd = api.nvim_create_user_command
@@ -104,7 +105,7 @@ function M.setup(opts)
 		active = x
 	end
 
-	usercmd('AutoInputSwitch',
+	usercmd(prefix,
 		function(cmd)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
@@ -270,7 +271,7 @@ function M.setup(opts)
 			end
 		end
 
-		usercmd('AutoInputSwitchNormalize',
+		usercmd(prefix..'Normalize',
 			M.normalize, {
 				desc = 'Normalize the input source',
 				nargs = 0
@@ -429,7 +430,7 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd('AutoInputSwitchMatch',
+			usercmd(prefix..'Match',
 				function() M.match() end, {
 					desc = 'Match the input source with the characters near the cursor',
 					nargs = 0
@@ -478,7 +479,7 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd('AutoInputSwitchRestore',
+			usercmd(prefix..'Restore',
 				function() M.restore() end, {
 					desc = 'Restore the input source to the state before tha last normalization',
 					nargs = 0
