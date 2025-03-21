@@ -107,8 +107,7 @@ require('auto-input-switch').setup({
   },
 
   normalize = {
-    -- Normal モードか Visual モードにおいては、使用するキーボードの言語に関わらず、入力モードは常に半角英数であるべきです。
-    -- 本プラグインは、ユーザーが Insert モードから Normal モードに変更する際に、自動で入力モードを半角英数に切り替えることができます。
+    -- Insert モード以外のモード時、入力モードを強制的に半角英数に切り替えることができます。
     -- この機能を "Normalize" と呼称します。
 
     enable = true, -- Normalize を有効にするか否か
