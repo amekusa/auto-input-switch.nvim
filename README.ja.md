@@ -3,16 +3,16 @@
 
 [English](README.md) / **日本語**
 
-これはキーボードの入力モードを様々なタイミングにおいて自動で切り替える Neovim プラグインです。
+これはキーボードの入力言語を様々なタイミングにおいて自動で切り替える Neovim プラグインです。
 英語以外の言語によるライティング・エクスペリエンスを向上させます。
 
 例えば、以下のようなことが実現可能です:
 
-- Normal モード時は自動で入力モードを US（英数）にする。
-- カーソル付近の文字の言語を判別し、対応する入力モードに自動で切り替える。
-- Insert モードに入った際、自動で日本語入力モードに戻る。（直前に日本語入力モードを使っていた場合）
-- Neovim のウィンドウがフォーカスされた時に自動で入力モードを US（英数）にする。
-- Neovim を終了した時に自動で入力モードを US（英数）にする。
+- Normal モード時は自動で入力言語を US（英数）にする。
+- カーソル付近の文字の言語を判別し、対応する入力言語に自動で切り替える。
+- Insert モードに入った際、自動で日本語入力に切り替える。（直前に日本語入力を使っていた場合）
+- Neovim のウィンドウがフォーカスされた時に自動で入力言語を US（英数）にする。
+- Neovim を終了した時に自動で入力言語を US（英数）にする。
 
 
 ## バージョン履歴
@@ -20,7 +20,7 @@
 ```
 v3.3.0 - `os_settings.*.normal_input` にテーブルが指定可能になりました。
          例: normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
-         1 番目の文字列は入力モードの名前であり、`cmd_get` の出力結果と一致している必要があります。
+         1 番目の文字列は入力言語の名前であり、`cmd_get` の出力結果と一致している必要があります。
          2 番目の文字列は実際に `cmd_set` に渡される文字列です。
 
        - `os_settings.*.lang_inputs` の各値にも `normal_input` 同様にテーブルが指定可能です。
@@ -86,7 +86,7 @@ require('auto-input-switch').setup({
   prefix = 'AutoInputSwitch', -- コマンド名のプリフィックス
 
   popup = {
-    -- プラグインによって入力モードが変更された際、現在の入力モードの言語をポップアップ表示で知らせます。
+    -- プラグインによって入力言語が変更された際、現在の入力言語名をポップアップ表示で知らせます。
 
     enable = true, -- ポップアップ表示を有効にするか否か
     duration = 1500, -- ポップアップを表示する時間 (ms)
@@ -107,7 +107,7 @@ require('auto-input-switch').setup({
   },
 
   normalize = {
-    -- Insert モード以外のモード時、入力モードを強制的に半角英数に切り替えることができます。
+    -- Insert モード以外のモード時、入力言語を強制的に半角英数に切り替えることができます。
     -- この機能を "Normalize" と呼称します。
 
     enable = true, -- Normalize を有効にするか否か
@@ -126,8 +126,8 @@ require('auto-input-switch').setup({
   },
 
   restore = {
-    -- "Normalize" が実行される際、本プラグインによって直前の入力モードが記憶されます。
-    -- そしてユーザーが次に Insert モードに移行した瞬間、記憶していた入力モードを自動的に復元することができます。
+    -- "Normalize" が実行される際、本プラグインによって直前の入力言語が記憶されます。
+    -- そしてユーザーが次に Insert モードに移行した瞬間、記憶していた入力言語を自動的に復元することができます。
     -- この機能を "Restore" と呼称します。
 
     enable = true, -- Restore を有効にするか否か
@@ -149,7 +149,7 @@ require('auto-input-switch').setup({
 
   match = {
     -- Insert モードに入った際、本プラグインはカーソル付近の文字の言語を判別し、
-    -- その言語に対応した入力モードに自動で切り替えることができます。
+    -- その言語に対応した入力言語に自動で切り替えることができます。
     -- この機能を "Match" と呼称します。
     -- Match を有効にする場合、`restore.enable` を false にすることが推奨されます。
     -- Match はデフォルトでは無効に設定されています。
@@ -167,7 +167,7 @@ require('auto-input-switch').setup({
       -- カーソル付近の文字と照合させる言語のリスト。使用したい言語の `enable` を true にしてください。
       -- `pattern` は正規表現の文字列です。その言語に対応するユニコードの範囲を指定すると良いでしょう。
       -- ユーザーが任意の言語を追加することも可能です。
-      -- その場合は `os_settings[あなたのOS].lang_inputs` に、対応する入力モードも併せて追加する必要があります。
+      -- その場合は `os_settings[あなたのOS].lang_inputs` に、対応する入力言語も併せて追加する必要があります。
       Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
       Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
       Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
@@ -185,9 +185,9 @@ require('auto-input-switch').setup({
   os_settings = { -- OS 毎の設定
     macos = {
       enable = true,
-      cmd_get = 'im-select', -- 現在の入力モードを取得するコマンド
-      cmd_set = 'im-select %s', -- 入力モードを変更するコマンド (`%s` が入力モードで置換されます)
-      normal_input = nil, -- Normalize で使用する入力モード (nil で自動判別)
+      cmd_get = 'im-select', -- 現在の入力言語を取得するコマンド
+      cmd_set = 'im-select %s', -- 入力言語を変更するコマンド (`%s` が入力言語で置換されます)
+      normal_input = nil, -- Normalize で使用する入力言語 (nil で自動判別)
       -- 例:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
@@ -195,11 +195,11 @@ require('auto-input-switch').setup({
 
       -- 以下のようにテーブルを指定することも可能です:
       -- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
-      --   1 番目の文字列は入力モードの名前であり、`cmd_get` の出力結果と一致している必要があります。
+      --   1 番目の文字列は入力言語の名前であり、`cmd_get` の出力結果と一致している必要があります。
       --   2 番目の文字列は実際に `cmd_set` に渡される文字列です。
 
       lang_inputs = {
-        -- `match.languages` 内の各言語に対応する入力モードのリスト。
+        -- `match.languages` 内の各言語に対応する入力言語のリスト。
         -- `normal_input` 同様、各値にテーブルを指定することも可能です。
         Ru = 'com.apple.keylayout.Russian',
         Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
@@ -256,17 +256,17 @@ require('auto-input-switch').setup({
 
 `:AutoInputSwitchNormalize`
 
-入力モードを手動で Normalize します。
+入力言語を手動で Normalize します。
 
 
 `:AutoInputSwitchRestore`
 
-入力モードを手動で Restore します。
+入力言語を手動で Restore します。
 
 
 `:AutoInputSwitchMatch`
 
-入力モードを手動で Match します。
+入力言語を手動で Match します。
 
 
 ## ライセンス
