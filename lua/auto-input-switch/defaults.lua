@@ -32,8 +32,7 @@ return {
 	},
 
 	normalize = {
-		-- In Normal-mode or Visual-mode, you always want the input source to be alphanumeric, regardless of your keyboard's locale.
-		-- The plugin can automatically switch the input source to the alphanumeric one when you escape from Insert-mode to Normal-mode.
+		-- Outside of Insert-mode, the plugin can force your input source to be the latin one.
 		-- We call this feature "Normalize".
 
 		enable = true, -- Enable Normalize?
@@ -53,7 +52,7 @@ return {
 
 	restore = {
 		-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
-		-- And the next time you enter Insert-mode, it can automatically restore the saved state.
+		-- Then, the next time you enter Insert-mode, the plugin can automatically restore the saved state.
 		-- We call this feature "Restore".
 
 		enable = true, -- Enable Restore?
