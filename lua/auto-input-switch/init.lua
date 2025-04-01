@@ -241,7 +241,7 @@ function M.setup(opts)
 	if normalize then
 		if not input_n[1] then
 			autocmd('InsertEnter', {
-				pattern = normalize.file_pattern,
+				pattern = normalize.file_pattern or nil,
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
@@ -280,7 +280,7 @@ function M.setup(opts)
 
 		if normalize.on then
 			autocmd(normalize.on, {
-				pattern = normalize.file_pattern,
+				pattern = normalize.file_pattern or nil,
 				callback = M.normalize
 			})
 		end
@@ -439,7 +439,7 @@ function M.setup(opts)
 
 			if match.on then
 				autocmd(match.on, {
-					pattern = match.file_pattern,
+					pattern = match.file_pattern or nil,
 					callback = M.match
 				})
 			end
@@ -488,7 +488,7 @@ function M.setup(opts)
 
 			if restore.on then
 				autocmd(restore.on, {
-					pattern = restore.file_pattern,
+					pattern = restore.file_pattern or nil,
 					callback = M.restore
 				})
 			end
