@@ -44,7 +44,7 @@ return {
 			'FocusLost',
 			'ExitPre',
 		},
-		file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
+		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
 
@@ -61,7 +61,7 @@ return {
 			'InsertEnter',
 			'FocusGained',
 		},
-		file_pattern = nil, -- File pattern to enable Restore (nil to any file)
+		file_pattern = false, -- File pattern to enable Restore (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
 
@@ -85,7 +85,7 @@ return {
 			'InsertEnter',
 			'FocusGained',
 		},
-		file_pattern = nil, -- File pattern to enable Match (nil to any file)
+		file_pattern = false, -- File pattern to enable Match (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
 
@@ -108,13 +108,13 @@ return {
 		},
 	},
 
-	os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
+	os = false, -- 'macos', 'windows', 'linux', or false to auto-detect
 	os_settings = { -- OS-specific settings
 		macos = {
 			enable = true,
 			cmd_get = 'im-select', -- Command to get the current input source
 			cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
-			normal_input = nil, -- Name of the input source for Normalize (Set nil to auto-detect)
+			normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
 			-- Examples:
 			-- normal_input = 'com.apple.keylayout.ABC',
 			-- normal_input = 'com.apple.keylayout.US',
@@ -138,14 +138,14 @@ return {
 			enable = true,
 			cmd_get = 'im-select.exe',
 			cmd_set = 'im-select.exe %s',
-			normal_input = nil,
+			normal_input = false,
 			lang_inputs = {},
 		},
 		linux = {
 			enable = true,
 			cmd_get = 'ibus engine',
 			cmd_set = 'ibus engine %s',
-			normal_input = nil,
+			normal_input = false,
 			lang_inputs = {},
 		},
 	},
