@@ -48,7 +48,7 @@ return {
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
 
-		popup = 'ABC', -- Popup text to show when normalize (nil to disable)
+		popup = 'ABC', -- Popup text to show when normalize (Set false to disable)
 	},
 
 	restore = {
@@ -70,7 +70,7 @@ return {
 		-- And if any of the characters before & after the position match with `exclude_pattern`,
 		-- the plugin cancel to restore the input source and leave it as it is.
 		-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
-		-- Set nil to disable this feature.
+		-- Set false to disable this feature.
 	},
 
 	match = {
