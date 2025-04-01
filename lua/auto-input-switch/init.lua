@@ -56,10 +56,10 @@ local function sanitize_input(input)
 	if not input then
 		return {nil}
 	end
-	if type(input) == 'table'
-		then return input
-		else return {input}
+	if type(input) == 'table' then
+		return input
 	end
+	return {input}
 end
 
 local M = {}
