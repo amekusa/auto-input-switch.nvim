@@ -9,6 +9,7 @@ return {
 	--        No lags, but less reliable than synchronous.
 
 	prefix = 'AutoInputSwitch', -- Prefix of the command names
+	-- prefix = 'AIS', -- Shorter prefix
 
 	popup = {
 		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
