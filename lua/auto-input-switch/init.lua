@@ -389,33 +389,46 @@ function M.setup(opts)
 				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
 					local j, above_done, below_done, found_i
 					for i = 1, n_lines do
-						if not above_done then
+
+						-- search up
+						if above_done then
+							if below_done then return end
+						else
 							j = cur - i
-							if j > 0 and not (exclude and exclude:match_str(lines[j])) then
-								found, found_i = find_in_map(lines[j])
-							elseif below_done then
-								return
+							if j > 0 then
+								if lines[j]:find(printable) then -- not an empty line
+									above_done = true -- found or not, no more searching up
+									if not (exclude and exclude:match_str(lines[j])) then
+										found, found_i = find_in_map(lines[j])
+									end
+								end
 							else
-								above_done = true
+								above_done = true -- no more lines to search in
 							end
 						end
+
+						-- search down
 						if not below_done then
 							j = cur + i
-							if j <= n_lines and not (exclude and exclude:match_str(lines[j])) then
-								if found then -- already found in the line above
-									local _found, _found_i = find_in_map(lines[j])
-									if _found and _found_i < found_i then -- more prioritized lang found
-										found = _found
+							if j <= n_lines then
+								if lines[j]:find(printable) then -- not an empty line
+									below_done = true -- found or not, no more searching down
+									if not (exclude and exclude:match_str(lines[j])) then
+										if found then -- already found in the lines above
+											local _found, _found_i = find_in_map(lines[j])
+											if _found and _found_i < found_i then -- more prioritized language is found
+												found = _found
+											end
+										else
+											found = find_in_map(lines[j])
+										end
 									end
-								else
-									found = find_in_map(lines[j])
 								end
-							elseif above_done then
-								return
 							else
-								below_done = true
+								below_done = true -- no more lines to search in
 							end
 						end
+
 						if found then
 							local input = lang_inputs[found]
 							if input then
