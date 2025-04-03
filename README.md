@@ -18,6 +18,10 @@ For example, it can:
 ## Version History
 
 ```
+v3.4.0 - New option `match.lines.exclude_pattern`.
+       - Corrected a wrong behavior of `match.lines` functionality.
+         Now the searching stops on reaching a non-empty line regardless of whether the languages are found or not.
+
 v3.3.0 - Now `os_settings.*.normal_input` supports a table value like this:
            normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
          The 1st string is the name of the input source, which should match with the output of `cmd_get`.
@@ -177,9 +181,15 @@ require('auto-input-switch').setup({
 
     lines = {
       -- If the current line is empty or has only whitespace characters,
-      -- the plugin can also checks the lines above/below the current line that if they have any characters match `languages`.
-      above = 2, -- How many lines above the current line to check
-      below = 1, -- How many lines below the current line to check
+      -- the plugin also searches the languages in the lines above/below the current line.
+      above = 2, -- How many lines above the current line to search in
+      below = 1, -- How many lines below the current line to search in
+
+      exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
+      -- If one of the lines above/below match with this regex pattern,
+      -- the plugin cancels searching the languages and leave the input source as it is.
+      -- This is useful for writing lists, tables, or blockquotes in a markdown document.
+      -- Set false to disable this feature.
     },
   },
 
