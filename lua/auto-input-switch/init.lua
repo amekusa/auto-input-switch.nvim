@@ -459,16 +459,16 @@ function M.setup(opts)
 				end
 			end
 
-			local excludes = restore.exclude_pattern
+			local exclude = restore.exclude_pattern
 			M.restore = function(c)
 				if not active or matched or not valid_context(c) then return end
 
 				-- restore input_i that was saved on the last normalize
 				if input_i and (input_i ~= input_n[1]) then
-					if excludes then -- check if the chars before & after the cursor are alphanumeric
+					if exclude then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
-						if line:sub(col, col + 1):find(excludes) then return end
+						if line:sub(col, col + 1):find(exclude) then return end
 					end
 					exec(cmd_set:format(input_i))
 					if popup then
