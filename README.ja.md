@@ -18,6 +18,10 @@
 ## バージョン履歴
 
 ```
+v3.4.0 - オプション追加: `match.lines.exclude_pattern`.
+       - `match.lines` 機能の正しくない振る舞いを修正しました。
+         行検索中、言語が照合するか否かに関わらず、空行以外の行に到達時に検索を終了するようになりました。
+
 v3.3.0 - `os_settings.*.normal_input` にテーブルが指定可能になりました。
          例: normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
          1 番目の文字列は入力言語の名前であり、`cmd_get` の出力結果と一致している必要があります。
@@ -84,6 +88,7 @@ require('auto-input-switch').setup({
   --        ラグは発生しませんが、同期実行よりも信頼性に劣ります。
 
   prefix = 'AutoInputSwitch', -- コマンド名のプリフィックス
+  -- prefix = 'AIS', -- 短いプリフィックス
 
   popup = {
     -- プラグインによって入力言語が変更された際、現在の入力言語名をポップアップ表示で知らせます。
@@ -118,11 +123,11 @@ require('auto-input-switch').setup({
       'FocusLost',
       'ExitPre',
     },
-    file_pattern = nil, -- Normalize が有効となるファイル名のパターン (nil は全ファイル)
+    file_pattern = false, -- Normalize が有効となるファイル名のパターン (false なら全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
-    popup = 'ABC', -- Normalize 時にポップアップ表示するテキスト (nil で非表示)
+    popup = 'ABC', -- Normalize 時にポップアップ表示するテキスト (false なら非表示)
   },
 
   restore = {
@@ -135,7 +140,7 @@ require('auto-input-switch').setup({
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- Restore が有効となるファイル名のパターン (nil は全ファイル)
+    file_pattern = false, -- Restore が有効となるファイル名のパターン (false なら全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -144,7 +149,7 @@ require('auto-input-switch').setup({
     -- そして、その位置と隣接する 2 文字のいずれかが `exclude_pattern` に含まれていた場合、
     -- Restore の実行をキャンセルします。
     -- `exclude_pattern` のデフォルト値は半角英数と一般的な半角記号です。
-    -- この機能を無効にするには nil をセットしてください。
+    -- この機能を無効にするには false をセットしてください。
   },
 
   match = {
@@ -159,7 +164,7 @@ require('auto-input-switch').setup({
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- Match が有効となるファイル名のパターン (nil は全ファイル)
+    file_pattern = false, -- Match が有効となるファイル名のパターン (false なら全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -175,19 +180,26 @@ require('auto-input-switch').setup({
     },
 
     lines = {
-      -- 現在の行が空か空白文字のみを含んでいる場合、そこから上下の行に対して Match を行います。
-      above = 2, -- 上に何行分 Match を行うか
-      below = 1, -- 下に何行分 Match を行うか
+      -- 現在の行が空か空白文字のみを含んでいる場合、
+      -- 現在の行から上下の行に対して各言語の検索を行います。
+      above = 2, -- 上に何行分、言語の検索を行うか
+      below = 1, -- 下に何行分、言語の検索を行うか
+
+      exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
+      -- 検索対象の行が一つでもこの正規表現にマッチした場合、
+      -- 言語の検索がただちにキャンセルされ、入力言語の変更も行われません。
+      -- この機能は、マークダウン文書のリストやテーブル, 引用ブロック等を記述する際に有用です。
+      -- false をセットすることでこの機能を無効にすることができます。
     },
   },
 
-  os = nil, -- 'macos', 'windows', 'linux', または nil で自動判別
+  os = false, -- 'macos', 'windows', 'linux', または false で自動判別
   os_settings = { -- OS 毎の設定
     macos = {
       enable = true,
       cmd_get = 'im-select', -- 現在の入力言語を取得するコマンド
       cmd_set = 'im-select %s', -- 入力言語を変更するコマンド (`%s` が入力言語で置換されます)
-      normal_input = nil, -- Normalize で使用する入力言語 (nil で自動判別)
+      normal_input = false, -- Normalize で使用する入力言語 (false なら自動判別)
       -- 例:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
@@ -211,14 +223,14 @@ require('auto-input-switch').setup({
       enable = true,
       cmd_get = 'im-select.exe',
       cmd_set = 'im-select.exe %s',
-      normal_input = nil,
+      normal_input = false,
       lang_inputs = {},
     },
     linux = {
       enable = true,
       cmd_get = 'ibus engine',
       cmd_set = 'ibus engine %s',
-      normal_input = nil,
+      normal_input = false,
       lang_inputs = {},
     },
   },

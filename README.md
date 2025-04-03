@@ -18,6 +18,10 @@ For example, it can:
 ## Version History
 
 ```
+v3.4.0 - New option `match.lines.exclude_pattern`.
+       - Corrected a wrong behavior of `match.lines` functionality.
+         Now the searching stops on reaching a non-empty line regardless of whether the languages are found or not.
+
 v3.3.0 - Now `os_settings.*.normal_input` supports a table value like this:
            normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
          The 1st string is the name of the input source, which should match with the output of `cmd_get`.
@@ -84,6 +88,7 @@ require('auto-input-switch').setup({
   --        No lags, but less reliable than synchronous.
 
   prefix = 'AutoInputSwitch', -- Prefix of the command names
+  -- prefix = 'AIS', -- Shorter prefix
 
   popup = {
     -- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
@@ -118,11 +123,11 @@ require('auto-input-switch').setup({
       'FocusLost',
       'ExitPre',
     },
-    file_pattern = nil, -- File pattern to enable Normalize (nil to any file)
+    file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
     -- Example:
     -- file_pattern = { '*.md', '*.txt' },
 
-    popup = 'ABC', -- Popup text to show when normalize (nil to disable)
+    popup = 'ABC', -- Popup text to show when normalize (Set false to disable)
   },
 
   restore = {
@@ -135,7 +140,7 @@ require('auto-input-switch').setup({
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- File pattern to enable Restore (nil to any file)
+    file_pattern = false, -- File pattern to enable Restore (Set false to any file)
     -- Example:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -144,7 +149,7 @@ require('auto-input-switch').setup({
     -- And if any of the characters before & after the position match with `exclude_pattern`,
     -- the plugin cancel to restore the input source and leave it as it is.
     -- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
-    -- Set nil to disable this feature.
+    -- Set false to disable this feature.
   },
 
   match = {
@@ -159,7 +164,7 @@ require('auto-input-switch').setup({
       'InsertEnter',
       'FocusGained',
     },
-    file_pattern = nil, -- File pattern to enable Match (nil to any file)
+    file_pattern = false, -- File pattern to enable Match (Set false to any file)
     -- Example:
     -- file_pattern = { '*.md', '*.txt' },
 
@@ -176,19 +181,25 @@ require('auto-input-switch').setup({
 
     lines = {
       -- If the current line is empty or has only whitespace characters,
-      -- the plugin can also checks the lines above/below the current line that if they have any characters match `languages`.
-      above = 2, -- How meany lines above the current line to check
-      below = 1, -- How meany lines below the current line to check
+      -- the plugin also searches the languages in the lines above/below the current line.
+      above = 2, -- How many lines above the current line to search in
+      below = 1, -- How many lines below the current line to search in
+
+      exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
+      -- If one of the lines above/below match with this regex pattern,
+      -- the plugin cancels searching the languages and leave the input source as it is.
+      -- This is useful for writing lists, tables, or blockquotes in a markdown document.
+      -- Set false to disable this feature.
     },
   },
 
-  os = nil, -- 'macos', 'windows', 'linux', or nil to auto-detect
+  os = false, -- 'macos', 'windows', 'linux', or false to auto-detect
   os_settings = { -- OS-specific settings
     macos = {
       enable = true,
       cmd_get = 'im-select', -- Command to get the current input source
       cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
-      normal_input = nil, -- Name of the input source for Normalize (Set nil to auto-detect)
+      normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
       -- Examples:
       -- normal_input = 'com.apple.keylayout.ABC',
       -- normal_input = 'com.apple.keylayout.US',
@@ -212,14 +223,14 @@ require('auto-input-switch').setup({
       enable = true,
       cmd_get = 'im-select.exe',
       cmd_set = 'im-select.exe %s',
-      normal_input = nil,
+      normal_input = false,
       lang_inputs = {},
     },
     linux = {
       enable = true,
       cmd_get = 'ibus engine',
       cmd_set = 'ibus engine %s',
-      normal_input = nil,
+      normal_input = false,
       lang_inputs = {},
     },
   },
