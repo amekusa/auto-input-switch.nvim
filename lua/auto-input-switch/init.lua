@@ -23,6 +23,7 @@
 local ns = (...)
 local vim = vim
 local api = vim.api
+local regex = vim.regex
 
 -- lua 5.1 vs 5.2 compatibility
 local unpack = unpack or table.unpack
@@ -327,7 +328,6 @@ function M.setup(opts)
 
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
-				local regex = vim.regex
 				for k,v in pairs(match.languages) do
 					if v.enable then
 						table.insert(map, {
@@ -360,6 +360,7 @@ function M.setup(opts)
 
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
+			local exclude = match.lines.exclude_pattern and regex(match.lines.exclude_pattern)
 			local printable = '%S'
 			M.match = function(c)
 				if not active or not valid_context(c) then return end
@@ -390,7 +391,7 @@ function M.setup(opts)
 					for i = 1, n_lines do
 						if not above_done then
 							j = cur - i
-							if j > 0 then
+							if j > 0 and not (exclude and exclude:match_str(lines[j])) then
 								found, found_i = find_in_map(lines[j])
 							elseif below_done then
 								return
@@ -400,7 +401,7 @@ function M.setup(opts)
 						end
 						if not below_done then
 							j = cur + i
-							if j <= n_lines then
+							if j <= n_lines and not (exclude and exclude:match_str(lines[j])) then
 								if found then -- already found in the line above
 									local _found, _found_i = find_in_map(lines[j])
 									if _found and _found_i < found_i then -- more prioritized lang found

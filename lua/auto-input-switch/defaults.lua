@@ -105,6 +105,12 @@ return {
 			-- the plugin can also checks the lines above/below the current line that if they have any characters match `languages`.
 			above = 2, -- How many lines above the current line to check
 			below = 1, -- How many lines below the current line to check
+
+			exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
+			-- If one of the lines above/below match with this regex pattern,
+			-- the plugin cancels searching the languages and leave the input source as it is.
+			-- This is useful for writing lists, tables, or blockquotes in a markdown document.
+			-- Set false to disable this feature.
 		},
 	},
 
