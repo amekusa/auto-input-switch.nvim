@@ -387,19 +387,19 @@ function M.setup(opts)
 					end
 
 				elseif n_lines > 1 then -- current line is empty. search in the lines above/below
-					local j, above_done, below_done, found_i
+					local above_done, below_done, found_i
 					for i = 1, n_lines do
 
 						-- search up
 						if above_done then
 							if below_done then return end
 						else
-							j = cur - i
-							if j > 0 then
-								if lines[j]:find(printable) then -- not an empty line
+							line = lines[cur - i]
+							if line then
+								if line:find(printable) then -- not an empty line
 									above_done = true -- found or not, no more searching up
-									if not (exclude and exclude:match_str(lines[j])) then
-										found, found_i = find_in_map(lines[j])
+									if not (exclude and exclude:match_str(line)) then
+										found, found_i = find_in_map(line)
 									end
 								end
 							else
@@ -409,18 +409,18 @@ function M.setup(opts)
 
 						-- search down
 						if not below_done then
-							j = cur + i
-							if j <= n_lines then
-								if lines[j]:find(printable) then -- not an empty line
+							line = lines[cur + i]
+							if line then
+								if line:find(printable) then -- not an empty line
 									below_done = true -- found or not, no more searching down
-									if not (exclude and exclude:match_str(lines[j])) then
+									if not (exclude and exclude:match_str(line)) then
 										if found then -- already found in the lines above
-											local _found, _found_i = find_in_map(lines[j])
+											local _found, _found_i = find_in_map(line)
 											if _found and _found_i < found_i then -- more prioritized language is found
 												found = _found
 											end
 										else
-											found = find_in_map(lines[j])
+											found = find_in_map(line)
 										end
 									end
 								end
