@@ -204,12 +204,12 @@ function M.setup(opts)
 			end
 		end
 
-		show_popup = function(content)
+		show_popup = function(label)
 			schedule(function()
 				hide_popup()
 
-				local str = content[1]
-				local len = content[2]
+				local str = label[1]
+				local len = label[2]
 
 				-- initialize buffer
 				str = pad..str..pad
