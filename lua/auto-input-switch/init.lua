@@ -208,8 +208,8 @@ function M.setup(opts)
 			schedule(function()
 				hide_popup()
 
-				local str   = content[1]
-				local width = content[2]
+				local str = content[1]
+				local len = content[2]
 
 				-- initialize buffer
 				str = pad..str..pad
@@ -220,7 +220,7 @@ function M.setup(opts)
 				buf_set_lines(buf, 0, 1, false, buf_lines)
 
 				-- initialize window
-				win_opts.width = width + (pad and 2 or 0)
+				win_opts.width = len + (pad and 2 or 0)
 				win = win_open(buf, false, win_opts)
 				whl_scope.win = win
 				set_option(whl, whl_group, whl_scope)
