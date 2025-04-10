@@ -149,9 +149,7 @@ function M.setup(opts)
 	end
 
 	-- #popup
-	local show_popup
-	local lang_labels
-	if popup then
+	local show_popup; if popup then
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
@@ -164,8 +162,6 @@ function M.setup(opts)
 
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
-
-		lang_labels = popup.labels.lang_inputs
 
 		local buf = -1
 		local buf_lines = {''}
@@ -326,6 +322,8 @@ function M.setup(opts)
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
+
+		local lang_labels = popup and popup.labels.lang_inputs
 
 		-- sanitize entries of lang_inputs
 		local lang_inputs = {}
