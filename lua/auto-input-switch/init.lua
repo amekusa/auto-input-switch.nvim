@@ -149,7 +149,9 @@ function M.setup(opts)
 	end
 
 	-- #popup
-	local show_popup; if popup then
+	local show_popup
+	local lang_labels
+	if popup then
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
@@ -162,6 +164,8 @@ function M.setup(opts)
 
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
+
+		lang_labels = popup.labels.lang_inputs
 
 		local buf = -1
 		local buf_lines = {''}
@@ -204,9 +208,12 @@ function M.setup(opts)
 			end
 		end
 
-		show_popup = function(str)
+		show_popup = function(content)
 			schedule(function()
 				hide_popup()
+
+				local str   = content[1]
+				local width = content[2]
 
 				-- initialize buffer
 				str = pad..str..pad
@@ -217,7 +224,7 @@ function M.setup(opts)
 				buf_set_lines(buf, 0, 1, false, buf_lines)
 
 				-- initialize window
-				win_opts.width = #str
+				win_opts.width = width + (pad and 2 or 0)
 				win = win_open(buf, false, win_opts)
 				whl_scope.win = win
 				set_option(whl, whl_group, whl_scope)
@@ -252,7 +259,7 @@ function M.setup(opts)
 			})
 		end
 
-		local popup_text = popup and normalize.popup
+		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
@@ -266,8 +273,14 @@ function M.setup(opts)
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
 				exec(cmd_set:format(input_n[2] or input_n[1]))
-				if popup_text then
-					show_popup(popup_text)
+				if label then
+					if type(label) ~= 'table' then
+						if type(label) == 'string'
+							then label = {label, #label}
+							else label = {'A', 1}
+						end
+					end
+					show_popup(label)
 				end
 			end
 		end
@@ -381,7 +394,15 @@ function M.setup(opts)
 							matched = true; schedule(reset_matched)
 							exec(cmd_set:format(input[2] or input[1]))
 							if popup then
-								show_popup(found)
+								local label = lang_labels[found]
+								if type(label) ~= 'table' then
+									if type(label) == 'string'
+										then label = {label, #label}
+										else label = {found, #found}
+									end
+									lang_labels[found] = label
+								end
+								show_popup(label)
 							end
 						end
 					end
@@ -435,7 +456,15 @@ function M.setup(opts)
 								matched = true; schedule(reset_matched)
 								exec(cmd_set:format(input[2] or input[1]))
 								if popup then
-									show_popup(found)
+									local label = lang_labels[found]
+									if type(label) ~= 'table' then
+										if type(label) == 'string'
+											then label = {label, #label}
+											else label = {found, #found}
+										end
+										lang_labels[found] = label
+									end
+									show_popup(label)
 								end
 							end
 							return
@@ -487,7 +516,15 @@ function M.setup(opts)
 					if popup then
 						local lang = langs[input_i]
 						if lang then
-							show_popup(lang)
+							local label = lang_labels[lang]
+							if type(label) ~= 'table' then
+								if type(label) == 'string'
+									then label = {label, #label}
+									else label = {lang, #lang}
+								end
+								lang_labels[lang] = label
+							end
+							show_popup(label)
 						end
 					end
 				end

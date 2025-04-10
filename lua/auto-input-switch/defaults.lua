@@ -30,6 +30,21 @@ return {
 		-- 'NE' : Northeast
 		-- 'SW' : Southwest
 		-- 'SE' : Southeast
+
+		labels = {
+			normal_input = { 'A', 1 },
+			-- Popup text to show on "Normalize". Set false to disable it.
+			-- The 1st value is the content string.
+			-- The 2nd value is the length the content string.
+
+			lang_inputs = {
+				-- Popup texts to show on "Restore" and "Match".
+				-- The format of each entry is the same as that of `popup.labels.normal_input`.
+				Ja = { 'あ', 2 }, -- For Japanese
+				Zh = { '拼', 2 }, -- For Chinese
+				Ko = { '한', 2 }, -- For Korean
+			},
+		},
 	},
 
 	normalize = {
@@ -47,8 +62,6 @@ return {
 		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
-
-		popup = 'ABC', -- Popup text to show when normalize (Set false to disable)
 	},
 
 	restore = {
