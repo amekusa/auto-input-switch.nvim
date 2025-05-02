@@ -163,6 +163,11 @@ function M.setup(opts)
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
 
+		local state = 0
+		-- 0: IDLE
+		-- 1: SCHEDULED
+		-- 2: ACTIVE
+
 		local buf = -1
 		local buf_lines = {''}
 
@@ -183,12 +188,15 @@ function M.setup(opts)
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
 
-		local update_on = {'CursorMoved', 'CursorMovedI'}
-
-		local state = 0
-		-- 0: IDLE
-		-- 1: SCHEDULED
-		-- 2: ACTIVE
+		local updater_ev = {'CursorMoved', 'CursorMovedI'}
+		local updater_opts = {
+			callback = function()
+				if state == 2 and win_is_valid(win)
+					then win_set_config(win, win_opts)
+					else return true
+				end
+			end
+		}
 
 		local timer
 		local reset = function()
@@ -204,6 +212,32 @@ function M.setup(opts)
 		end
 
 		local str, len
+		local activate = function()
+			state = 2 -- state >> ACTIVE
+
+			-- initialize timer
+			timer = new_timer()
+			timer:start(duration, 0, on_timeout)
+
+			-- initialize buffer
+			buf_lines[1] = str
+			if not buf_is_valid(buf) then
+				buf = buf_create(false, true)
+			end
+			buf_set_lines(buf, 0, 1, false, buf_lines)
+
+			-- initialize window
+			if win_is_valid(win) then
+				win_hide(win)
+			end
+			win_opts.width = len
+			win = win_open(buf, false, win_opts)
+			whl_scope.win = win
+			set_option(whl, whl_group, whl_scope)
+
+			-- position updater
+			autocmd(updater_ev, updater_opts)
+		end
 		show_popup = function(label)
 			if pad then
 				str = pad..label[1]..pad
@@ -218,39 +252,7 @@ function M.setup(opts)
 			end
 			state = 1 -- state >> SCHEDULED
 
-			timer = new_timer()
-			timer:start(duration, 0, on_timeout)
-
-			schedule(function()
-				state = 2 -- state >> ACTIVE
-
-				-- initialize buffer
-				buf_lines[1] = str
-				if not buf_is_valid(buf) then
-					buf = buf_create(false, true)
-				end
-				buf_set_lines(buf, 0, 1, false, buf_lines)
-
-				-- initialize window
-				if win_is_valid(win) then
-					win_hide(win)
-				end
-				win_opts.width = len
-				win = win_open(buf, false, win_opts)
-				whl_scope.win = win
-				set_option(whl, whl_group, whl_scope)
-
-				-- position updater
-				autocmd(update_on, {
-					callback = function()
-						if state == 2 and win_is_valid(win) then
-							win_set_config(win, win_opts)
-						else
-							return true
-						end
-					end
-				})
-			end)
+			schedule(activate)
 		end
 	end
 
