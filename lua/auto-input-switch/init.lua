@@ -183,36 +183,48 @@ function M.setup(opts)
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
 
-		local updater
 		local update_on = {'CursorMoved', 'CursorMovedI'}
 
-		local timer
+		local state = 0
+		-- 0: IDLE
+		-- 1: SCHEDULED
+		-- 2: ACTIVE
 
-		local hide_popup = function()
-			if timer then
-				timer:stop()
-				timer:close()
-				timer = nil
-			end
-			if updater then
-				api.nvim_del_autocmd(updater)
-				updater = nil
-			end
+		local timer
+		local reset = function()
+			state = 0 -- state >> IDLE
 			if win_is_valid(win) then
 				win_hide(win)
 				win = -1
 			end
 		end
+		local on_timeout = function()
+			timer:stop()
+			schedule(reset)
+		end
 
+		local str, len
 		show_popup = function(label)
-			schedule(function()
-				hide_popup()
+			if pad then
+				str = pad..label[1]..pad
+				len = label[2] + 2
+			else
+				str = label[1]
+				len = label[2]
+			end
+			if state == 1 then return end -- state == SCHEDULED
+			if state == 2 then -- state == ACTIVE
+				timer:stop()
+			end
+			state = 1 -- state >> SCHEDULED
 
-				local str = label[1]
-				local len = label[2]
+			timer = new_timer()
+			timer:start(duration, 0, on_timeout)
+
+			schedule(function()
+				state = 2 -- state >> ACTIVE
 
 				-- initialize buffer
-				str = pad..str..pad
 				buf_lines[1] = str
 				if not buf_is_valid(buf) then
 					buf = buf_create(false, true)
@@ -220,23 +232,24 @@ function M.setup(opts)
 				buf_set_lines(buf, 0, 1, false, buf_lines)
 
 				-- initialize window
-				win_opts.width = len + (pad and 2 or 0)
+				if win_is_valid(win) then
+					win_hide(win)
+				end
+				win_opts.width = len
 				win = win_open(buf, false, win_opts)
 				whl_scope.win = win
 				set_option(whl, whl_group, whl_scope)
 
 				-- position updater
-				updater = autocmd(update_on, {
-					callback = schedule_wrap(function()
-						if win_is_valid(win) then
+				autocmd(update_on, {
+					callback = function()
+						if state == 2 and win_is_valid(win) then
 							win_set_config(win, win_opts)
+						else
+							return true
 						end
-					end)
+					end
 				})
-
-				-- timer
-				timer = new_timer()
-				timer:start(duration, 0, schedule_wrap(hide_popup))
 			end)
 		end
 	end
