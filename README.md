@@ -3,7 +3,7 @@
 
 **English** / [日本語](README.ja.md)
 
-![demo](demo.gif)
+<img src="https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif">
 
 This is a Neovim plugin that automatically switches the input sources (aka input methods) of your keyboard on various occasions,
 improving your writing experience in non-English languages.

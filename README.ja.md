@@ -3,7 +3,7 @@
 
 [English](README.md) / **日本語**
 
-![demo](demo.gif)
+<img src="https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif">
 
 これはキーボードの入力言語を様々なタイミングにおいて自動で切り替える Neovim プラグインです。
 英語以外の言語によるライティング・エクスペリエンスを向上させます。
