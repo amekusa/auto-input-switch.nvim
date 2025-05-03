@@ -35,7 +35,7 @@ return {
 			normal_input = { 'A', 1 },
 			-- Popup text to show on "Normalize". Set false to disable it.
 			-- The 1st value is the content string.
-			-- The 2nd value is the length the content string.
+			-- The 2nd value is the length of the content string.
 
 			lang_inputs = {
 				-- Popup texts to show on "Restore" and "Match".
