@@ -188,12 +188,15 @@ function M.setup(opts)
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
 
+		local updater = -1
 		local updater_ev = {'CursorMoved', 'CursorMovedI'}
 		local updater_opts = {
 			callback = function()
-				if state == 2 and win_is_valid(win)
-					then win_set_config(win, win_opts)
-					else return true
+				if state == 2 and win_is_valid(win) then
+					win_set_config(win, win_opts)
+				else
+					updater = -1
+					return true
 				end
 			end
 		}
@@ -236,7 +239,9 @@ function M.setup(opts)
 			set_option(whl, whl_group, whl_scope)
 
 			-- position updater
-			autocmd(updater_ev, updater_opts)
+			if updater < 0 then
+				updater = autocmd(updater_ev, updater_opts)
+			end
 		end
 		show_popup = function(label)
 			if pad then
@@ -251,7 +256,6 @@ function M.setup(opts)
 				timer:stop()
 			end
 			state = 1 -- state >> SCHEDULED
-
 			schedule(activate)
 		end
 	end
