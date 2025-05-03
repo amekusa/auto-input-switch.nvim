@@ -3,6 +3,8 @@
 
 **English** / [日本語](README.ja.md)
 
+![demo](demo.gif)
+
 This is a Neovim plugin that automatically switches the input sources (aka input methods) of your keyboard on various occasions,
 improving your writing experience in non-English languages.
 
@@ -18,6 +20,13 @@ For example, it can:
 ## Version History
 
 ```
+v4.0.0 - New option `popup.labels`.
+         Now you can totally customize the popup labels for input sources.
+       - Removed the option `normalize.popup`.
+         Now it's replaced with `popup.labels.normal_input` option.
+       - Fixed some minor bugs in the popup functionality.
+       - Slightly improved the performance of the popups.
+
 v3.4.0 - New option `match.lines.exclude_pattern`.
        - Corrected a wrong behavior of `match.lines` functionality.
          Now the searching stops on reaching a non-empty line regardless of whether the languages are found or not.
@@ -109,6 +118,21 @@ require('auto-input-switch').setup({
     -- 'NE' : Northeast
     -- 'SW' : Southwest
     -- 'SE' : Southeast
+
+    labels = {
+      normal_input = { 'A', 1 },
+      -- Popup text to show on "Normalize". Set false to disable it.
+      -- The 1st value is the content string.
+      -- The 2nd value is the length of the content string.
+
+      lang_inputs = {
+        -- Popup texts to show on "Restore" and "Match".
+        -- The format of each entry is the same as that of `popup.labels.normal_input`.
+        Ja = { 'あ', 2 }, -- For Japanese
+        Zh = { '拼', 2 }, -- For Chinese
+        Ko = { '한', 2 }, -- For Korean
+      },
+    },
   },
 
   normalize = {
@@ -126,8 +150,6 @@ require('auto-input-switch').setup({
     file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
     -- Example:
     -- file_pattern = { '*.md', '*.txt' },
-
-    popup = 'ABC', -- Popup text to show when normalize (Set false to disable)
   },
 
   restore = {

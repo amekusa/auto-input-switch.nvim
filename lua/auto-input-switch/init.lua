@@ -163,6 +163,11 @@ function M.setup(opts)
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
 
+		local state = 0
+		-- 0: IDLE
+		-- 1: SCHEDULED
+		-- 2: ACTIVE
+
 		local buf = -1
 		local buf_lines = {''}
 
@@ -183,58 +188,75 @@ function M.setup(opts)
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
 
-		local updater
-		local update_on = {'CursorMoved', 'CursorMovedI'}
+		local updater = -1
+		local updater_ev = {'CursorMoved', 'CursorMovedI'}
+		local updater_opts = {
+			callback = function()
+				if state == 2 and win_is_valid(win) then
+					win_set_config(win, win_opts)
+				else
+					updater = -1
+					return true
+				end
+			end
+		}
 
 		local timer
-
-		local hide_popup = function()
-			if timer then
-				timer:stop()
-				timer:close()
-				timer = nil
-			end
-			if updater then
-				api.nvim_del_autocmd(updater)
-				updater = nil
-			end
+		local reset = function()
+			state = 0 -- state >> IDLE
 			if win_is_valid(win) then
 				win_hide(win)
 				win = -1
 			end
 		end
+		local on_timeout = function()
+			timer:stop()
+			schedule(reset)
+		end
 
-		show_popup = function(str)
-			schedule(function()
-				hide_popup()
+		local str, len
+		local activate = function()
+			state = 2 -- state >> ACTIVE
 
-				-- initialize buffer
-				str = pad..str..pad
-				buf_lines[1] = str
-				if not buf_is_valid(buf) then
-					buf = buf_create(false, true)
-				end
-				buf_set_lines(buf, 0, 1, false, buf_lines)
+			-- initialize timer
+			timer = new_timer()
+			timer:start(duration, 0, on_timeout)
 
-				-- initialize window
-				win_opts.width = #str
-				win = win_open(buf, false, win_opts)
-				whl_scope.win = win
-				set_option(whl, whl_group, whl_scope)
+			-- initialize buffer
+			buf_lines[1] = str
+			if not buf_is_valid(buf) then
+				buf = buf_create(false, true)
+			end
+			buf_set_lines(buf, 0, 1, false, buf_lines)
 
-				-- position updater
-				updater = autocmd(update_on, {
-					callback = schedule_wrap(function()
-						if win_is_valid(win) then
-							win_set_config(win, win_opts)
-						end
-					end)
-				})
+			-- initialize window
+			if win_is_valid(win) then
+				win_hide(win)
+			end
+			win_opts.width = len
+			win = win_open(buf, false, win_opts)
+			whl_scope.win = win
+			set_option(whl, whl_group, whl_scope)
 
-				-- timer
-				timer = new_timer()
-				timer:start(duration, 0, schedule_wrap(hide_popup))
-			end)
+			-- position updater
+			if updater < 0 then
+				updater = autocmd(updater_ev, updater_opts)
+			end
+		end
+		show_popup = function(label)
+			if pad then
+				str = pad..label[1]..pad
+				len = label[2] + 2
+			else
+				str = label[1]
+				len = label[2]
+			end
+			if state == 1 then return end -- state == SCHEDULED
+			if state == 2 then -- state == ACTIVE
+				timer:stop()
+			end
+			state = 1 -- state >> SCHEDULED
+			schedule(activate)
 		end
 	end
 
@@ -252,7 +274,7 @@ function M.setup(opts)
 			})
 		end
 
-		local popup_text = popup and normalize.popup
+		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
@@ -266,8 +288,14 @@ function M.setup(opts)
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
 				exec(cmd_set:format(input_n[2] or input_n[1]))
-				if popup_text then
-					show_popup(popup_text)
+				if label then
+					if type(label) ~= 'table' then
+						if type(label) == 'string'
+							then label = {label, #label}
+							else label = {'A', 1}
+						end
+					end
+					show_popup(label)
 				end
 			end
 		end
@@ -313,6 +341,8 @@ function M.setup(opts)
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
+
+		local lang_labels = popup and popup.labels.lang_inputs
 
 		-- sanitize entries of lang_inputs
 		local lang_inputs = {}
@@ -381,7 +411,15 @@ function M.setup(opts)
 							matched = true; schedule(reset_matched)
 							exec(cmd_set:format(input[2] or input[1]))
 							if popup then
-								show_popup(found)
+								local label = lang_labels[found]
+								if type(label) ~= 'table' then
+									if type(label) == 'string'
+										then label = {label, #label}
+										else label = {found, #found}
+									end
+									lang_labels[found] = label
+								end
+								show_popup(label)
 							end
 						end
 					end
@@ -435,7 +473,15 @@ function M.setup(opts)
 								matched = true; schedule(reset_matched)
 								exec(cmd_set:format(input[2] or input[1]))
 								if popup then
-									show_popup(found)
+									local label = lang_labels[found]
+									if type(label) ~= 'table' then
+										if type(label) == 'string'
+											then label = {label, #label}
+											else label = {found, #found}
+										end
+										lang_labels[found] = label
+									end
+									show_popup(label)
 								end
 							end
 							return
@@ -487,7 +533,15 @@ function M.setup(opts)
 					if popup then
 						local lang = langs[input_i]
 						if lang then
-							show_popup(lang)
+							local label = lang_labels[lang]
+							if type(label) ~= 'table' then
+								if type(label) == 'string'
+									then label = {label, #label}
+									else label = {lang, #lang}
+								end
+								lang_labels[lang] = label
+							end
+							show_popup(label)
 						end
 					end
 				end

@@ -3,6 +3,8 @@
 
 [English](README.md) / **日本語**
 
+![demo](demo.gif)
+
 これはキーボードの入力言語を様々なタイミングにおいて自動で切り替える Neovim プラグインです。
 英語以外の言語によるライティング・エクスペリエンスを向上させます。
 
@@ -18,7 +20,14 @@
 ## バージョン履歴
 
 ```
-v3.4.0 - オプション追加: `match.lines.exclude_pattern`.
+v4.0.0 - オプション追加: `popup.labels`
+         これにより入力言語毎にポップアップ表示するラベルをカスタマイズすることが可能になりました。
+       - オプション削除: `normalize.popup`
+         新オプション `popup.labels.normal_input` に置き換えられました。
+       - ポップアップ周りの軽微なバグを修正しました。
+       - ポップアップ表示のパフォーマンスを改善しました。
+
+v3.4.0 - オプション追加: `match.lines.exclude_pattern`
        - `match.lines` 機能の正しくない振る舞いを修正しました。
          行検索中、言語が照合するか否かに関わらず、空行以外の行に到達時に検索を終了するようになりました。
 
@@ -109,6 +118,21 @@ require('auto-input-switch').setup({
     -- 'NE' : 右上
     -- 'SW' : 左下
     -- 'SE' : 右下
+
+    labels = {
+      normal_input = { 'A', 1 },
+      -- Normalize 時に表示するポップアップのラベル。false で非表示。
+      -- 1 つ目の値はラベルの文字列
+      -- 2 つ目の値はラベルの文字列の長さ
+
+      lang_inputs = {
+        -- Restore と Match 時に表示するポップアップのラベル。各言語ごとに設定。
+        -- フォーマットは `popup.labels.normal_input` と同様。
+        Ja = { 'あ', 2 }, -- 日本語
+        Zh = { '拼', 2 }, -- 中国語
+        Ko = { '한', 2 }, -- 韓国語
+      },
+    },
   },
 
   normalize = {
@@ -126,8 +150,6 @@ require('auto-input-switch').setup({
     file_pattern = false, -- Normalize が有効となるファイル名のパターン (false なら全ファイル)
     -- 例:
     -- file_pattern = { '*.md', '*.txt' },
-
-    popup = 'ABC', -- Normalize 時にポップアップ表示するテキスト (false なら非表示)
   },
 
   restore = {
