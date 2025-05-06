@@ -165,8 +165,9 @@ function M.setup(opts)
 
 		local state = 0
 		-- 0: IDLE
-		-- 1: SCHEDULED
+		-- 1: ACTIVATING
 		-- 2: ACTIVE
+		-- 3: DEACTIVATING
 
 		local buf = -1
 		local buf_lines = {''}
@@ -192,7 +193,7 @@ function M.setup(opts)
 		local updater_ev = {'CursorMoved', 'CursorMovedI'}
 		local updater_opts = {
 			callback = function()
-				if state == 2 and win_is_valid(win) then
+				if state == 2 and win_is_valid(win) then -- state == ACTIVE
 					win_set_config(win, win_opts)
 				else
 					updater = -1
@@ -202,7 +203,7 @@ function M.setup(opts)
 		}
 
 		local timer
-		local reset = function()
+		local deactivate = function()
 			state = 0 -- state >> IDLE
 			if win_is_valid(win) then
 				win_hide(win)
@@ -210,8 +211,10 @@ function M.setup(opts)
 			end
 		end
 		local on_timeout = function()
+			state = 3 -- state >> DEACTIVATING
 			timer:stop()
-			schedule(reset)
+			timer:close()
+			schedule(deactivate)
 		end
 
 		local str, len
@@ -251,9 +254,10 @@ function M.setup(opts)
 				str = label[1]
 				len = label[2]
 			end
-			if state == 1 then return end -- state == SCHEDULED
+			if state == 1 then return end -- state == ACTIVATING
 			if state == 2 then -- state == ACTIVE
 				timer:stop()
+				timer:close()
 			end
 			state = 1 -- state >> SCHEDULED
 			schedule(activate)
