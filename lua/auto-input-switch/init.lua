@@ -150,6 +150,7 @@ function M.setup(opts)
 
 	-- #popup
 	local show_popup; if popup then
+		local del_autocmd    = api.nvim_del_autocmd
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
@@ -195,9 +196,6 @@ function M.setup(opts)
 			callback = function()
 				if state == 2 and win_is_valid(win) then -- state == ACTIVE
 					win_set_config(win, win_opts)
-				else
-					updater = -1
-					return true
 				end
 			end
 		}
@@ -205,6 +203,10 @@ function M.setup(opts)
 		local timer
 		local deactivate = function()
 			state = 0 -- state >> IDLE
+			if updater >= 0 then
+				del_autocmd(updater)
+				updater = -1
+			end
 			if win_is_valid(win) then
 				win_hide(win)
 				win = -1
@@ -220,10 +222,6 @@ function M.setup(opts)
 		local str, len
 		local activate = function()
 			state = 2 -- state >> ACTIVE
-
-			-- initialize timer
-			timer = new_timer()
-			timer:start(duration, 0, on_timeout)
 
 			-- initialize buffer
 			buf_lines[1] = str
@@ -259,7 +257,9 @@ function M.setup(opts)
 				timer:stop()
 				timer:close()
 			end
-			state = 1 -- state >> SCHEDULED
+			state = 1 -- state >> ACTIVATING
+			timer = new_timer()
+			timer:start(duration, 0, on_timeout)
 			schedule(activate)
 		end
 	end
