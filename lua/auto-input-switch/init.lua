@@ -191,7 +191,7 @@ function M.setup(opts)
 		local whl_scope = {win = nil}
 
 		local updater = -1
-		local updater_ev = {'CursorMoved', 'CursorMovedI'}
+		local updater_ev = {'CursorMoved', 'CursorMovedI', 'WinScrolled'}
 		local updater_opts = {
 			callback = function()
 				if state == 2 and win_is_valid(win) then -- state == ACTIVE
