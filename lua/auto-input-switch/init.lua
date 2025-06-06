@@ -35,7 +35,7 @@ local unpack = unpack or table.unpack
 --   - TRACE
 --   - WARN
 --   - OFF
-local function log(msg, level)
+local function notify(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
@@ -111,12 +111,12 @@ function M.setup(opts)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
 				active = true
-				log('activated')
+				notify('activated')
 			elseif arg == 'off' then
 				active = false
-				log('deactivated')
+				notify('deactivated')
 			else
-				log('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
+				notify('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
 			end
 		end,
 		{
