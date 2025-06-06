@@ -39,6 +39,31 @@ local function notify(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
+local function log(...)
+	local args = {...}
+	local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
+	local f = io.open(out, 'a+')
+	if not f then
+		notify('cannot open the log file: '..out, 'WARN')
+		return
+	end
+	local inspect = vim.inspect
+	local msg = '['..os.date('%Y-%m-%d %X')..']'
+	for i = 1, #args do
+		local item = args[i]
+		local t = type(item)
+		if t ~= 'string' then
+			if t == 'table'
+				then item = inspect(item)
+				else item = '<'..t..':'..item..'>'
+			end
+		end
+		msg = msg..' '..item
+	end
+	f:write(msg..'\n')
+	f:close()
+end
+
 local function trim(str)
 	return str:gsub('^%s*(.-)%s*$', '%1')
 end
