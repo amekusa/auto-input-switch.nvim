@@ -11,6 +11,11 @@ return {
 	prefix = 'AutoInputSwitch', -- Prefix of the command names
 	-- prefix = 'AIS', -- Shorter prefix
 
+	log = false, -- Output logs to a file?
+	-- This is useful for debugging `cmd_get/cmd_set`.
+	-- The log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
+	--                    ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
+
 	popup = {
 		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
 
