@@ -8,15 +8,15 @@ return {
 	--  true: Runs asynchronously.
 	--        No lags, but less reliable than synchronous.
 
-	prefix = 'AutoInputSwitch', -- Prefix of the command names
-	-- If you prefer shorter command names, use this:
-	-- prefix = 'AIS',
-
 	log = false, -- Output logs to a file?
 	-- This is useful for debugging `cmd_get/cmd_set`.
 	-- The log file gets wiped out every time the plugin's setup() function is called.
 	-- The log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
 	--                    ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
+
+	prefix = 'AutoInputSwitch', -- Prefix of the command names
+	-- If you prefer shorter command names, use this:
+	-- prefix = 'AIS',
 
 	popup = {
 		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
