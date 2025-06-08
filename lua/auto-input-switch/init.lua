@@ -39,31 +39,6 @@ local function notify(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
-local function log(...)
-	local args = {...}
-	local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
-	local f = io.open(out, 'a+')
-	if not f then
-		notify('cannot open the log file: '..out, 'WARN')
-		return
-	end
-	local inspect = vim.inspect
-	local msg = '['..os.date('%Y-%m-%d %X')..']'
-	for i = 1, #args do
-		local item = args[i]
-		local t = type(item)
-		if t ~= 'string' then
-			if t == 'table'
-				then item = inspect(item)
-				else item = '<'..t..':'..item..'>'
-			end
-		end
-		msg = msg..' '..item
-	end
-	f:write(msg..'\n')
-	f:close()
-end
-
 local function trim(str)
 	return str:gsub('^%s*(.-)%s*$', '%1')
 end
@@ -98,6 +73,44 @@ function M.setup(opts)
 
 	local oss = opts.os_settings[opts.os or detect_os()]
 	if not oss.enable then return end
+
+	local log; if opts.log then
+		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
+
+		-- initialize the log file
+		local f = io.open(out, 'w')
+		if f then
+			f:write('# auto-input-switch.nvim log\n# Initialized at '..os.date('%Y-%m-%d %X')..'\n\n')
+			f:close()
+
+			log = function(...)
+				local args = {...}
+				f = io.open(out, 'a+')
+				if not f then
+					notify('cannot open the log file: '..out, 'WARN')
+					return
+				end
+				local msg = '['..os.date('%Y-%m-%d %X')..']'
+				local inspect = vim.inspect
+				local item, t
+				for i = 1, #args do
+					item = args[i]
+					t = type(item)
+					if t ~= 'string' then
+						if t == 'table'
+							then item = inspect(item)
+							else item = t..'('..item..')'
+						end
+					end
+					msg = msg..' '..item
+				end
+				f:write(msg..'\n')
+				f:close()
+			end
+		else
+			notify('cannot open the log file: '..out, 'WARN')
+		end
+	end
 
 	local cmd_get = oss.cmd_get
 	local cmd_set = oss.cmd_set
@@ -153,22 +166,38 @@ function M.setup(opts)
 		}
 	)
 
+	-- functions to handle shell-commands
 	local exec, exec_get; do
 		local split = vim.split
 		local split_sep = ' '
 		local system = vim.system
 		local system_opts = {text = true}
-		if async then -- asynchronous implementation
-			exec = function(cmd)
-				system(split(cmd, split_sep))
+
+		local log_pre, log_post; if log then
+			log_pre = function(cmd)
+				log('start exec:', cmd)
+				return cmd
+			end
+			log_post = function(cmd, r)
+				log(' done exec:', cmd, '\nresult:', r)
+				return r
 			end
 			exec_get = function(cmd, handler)
 				system(split(cmd, split_sep), system_opts, handler)
 			end
 		else -- synchronous implementation
-			exec = os.execute
-			exec_get = function(cmd, handler)
-				handler(system(split(cmd, split_sep), system_opts):wait())
+			if log then -- with logging
+				exec = function(cmd)
+					log_post(cmd, system(split(log_pre(cmd), split_sep)):wait())
+				end
+				exec_get = function(cmd, handler)
+					handler(log_post(cmd, system(split(log_pre(cmd), split_sep), system_opts):wait()))
+				end
+			else -- without logging
+				exec = os.execute
+				exec_get = function(cmd, handler)
+					handler(system(split(cmd, split_sep), system_opts):wait())
+				end
 			end
 		end
 	end
