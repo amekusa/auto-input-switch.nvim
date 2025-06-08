@@ -2,17 +2,19 @@ return {
 	activate = true, -- Activate the plugin?
 	-- You can toggle this with `AutoInputSwitch on|off` command at any time.
 
-	async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
+	async = false, -- Run the shell-commands (`cmd_get/cmd_set`) to switch inputs asynchronously?
 	-- false: Runs synchronously. (Recommended)
 	--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
 	--  true: Runs asynchronously.
 	--        No lags, but less reliable than synchronous.
 
 	prefix = 'AutoInputSwitch', -- Prefix of the command names
-	-- prefix = 'AIS', -- Shorter prefix
+	-- If you prefer shorter command names, use this:
+	-- prefix = 'AIS',
 
 	log = false, -- Output logs to a file?
 	-- This is useful for debugging `cmd_get/cmd_set`.
+	-- The log file gets wiped out every time the plugin's setup() function is called.
 	-- The log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
 	--                    ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
 
@@ -30,7 +32,7 @@ return {
 		row = 1, -- Horizontal offset
 		col = 0, -- Vertical offset
 		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
-		anchor = 'NW', -- Which corner is a popup window aligned to?
+		anchor = 'NW', -- Which corner should be used to align a popup window?
 		-- 'NW' : Northwest
 		-- 'NE' : Northeast
 		-- 'SW' : Southwest
@@ -71,7 +73,7 @@ return {
 
 	restore = {
 		-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
-		-- Then, the next time you enter Insert-mode, the plugin can automatically restore the saved state.
+		-- Then, the next time you enter Insert-mode, the plugin automatically restores the saved state.
 		-- We call this feature "Restore".
 
 		enable = true, -- Enable Restore?
@@ -136,8 +138,8 @@ return {
 	os_settings = { -- OS-specific settings
 		macos = {
 			enable = true,
-			cmd_get = 'im-select', -- Command to get the current input source
-			cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
+			cmd_get = 'im-select', -- Shell-command to get the current input source
+			cmd_set = 'im-select %s', -- Shell-command to set the input source (Use `%s` as a placeholder for the input source)
 			normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
 			-- Examples:
 			-- normal_input = 'com.apple.keylayout.ABC',
