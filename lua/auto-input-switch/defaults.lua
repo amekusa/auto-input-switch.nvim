@@ -139,7 +139,7 @@ return {
 		macos = {
 			enable = true,
 			cmd_get = 'im-select', -- Shell-command to get the current input source
-			cmd_set = 'im-select %s', -- Shell-command to set the input source (Use `%s` as a placeholder for the input source)
+			cmd_set = 'im-select %s', -- Shell-command to set the new input source (Use `%s` as a placeholder for the input source)
 			normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
 			-- Examples:
 			-- normal_input = 'com.apple.keylayout.ABC',
