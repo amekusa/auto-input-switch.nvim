@@ -182,8 +182,26 @@ function M.setup(opts)
 				log(' done exec:', cmd, '\nresult:', r)
 				return r
 			end
-			exec_get = function(cmd, handler)
-				system(split(cmd, split_sep), system_opts, handler)
+		end
+		if async then -- asynchronous implementation
+			if log then -- with logging
+				exec = function(cmd)
+					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+						log_post(cmd, r)
+					end)
+				end
+				exec_get = function(cmd, handler)
+					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+						handler(log_post(cmd, r))
+					end)
+				end
+			else -- without logging
+				exec = function(cmd)
+					system(split(cmd, split_sep))
+				end
+				exec_get = function(cmd, handler)
+					system(split(cmd, split_sep), system_opts, handler)
+				end
 			end
 		else -- synchronous implementation
 			if log then -- with logging
