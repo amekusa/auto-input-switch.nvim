@@ -20,6 +20,12 @@
 ## バージョン履歴
 
 ```
+v4.1.0 - オプション追加: `os_settings.*.normal_input.cmd_set`,
+                         `os_settings.*.lang_inputs.*.cmd_set`
+
+         これらのオプションを設定することで、
+         `os_settings.*.cmd_set` の値を入力言語毎にオーバーライドすることが可能になりました。
+
 v4.0.0 - オプション追加: `popup.labels`
          これにより入力言語毎にポップアップ表示するラベルをカスタマイズすることが可能になりました。
        - オプション削除: `normalize.popup`

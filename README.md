@@ -20,6 +20,12 @@ For example, it can:
 ## Version History
 
 ```
+v4.1.0 - New options: `os_settings.*.normal_input.cmd_set`,
+                      `os_settings.*.lang_inputs.*.cmd_set`
+
+         By setting these options,
+         you can override `os_settings.*.cmd_set` for each input source.
+
 v4.0.0 - New option `popup.labels`.
          Now you can totally customize the popup labels for input sources.
        - Removed the option `normalize.popup`.
