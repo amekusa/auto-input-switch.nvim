@@ -137,7 +137,6 @@ function M.setup(opts)
 	local usercmd = api.nvim_create_user_command
 
 	local schedule      = vim.schedule
-	local schedule_wrap = vim.schedule_wrap
 
 	-- Returns whether AIS is active or not.
 	-- @return boolean
