@@ -53,16 +53,6 @@ local function detect_os()
 	return 'linux'
 end
 
-local function sanitize_input(input)
-	if not input then
-		return {nil}
-	end
-	if type(input) == 'table' then
-		return input
-	end
-	return {input}
-end
-
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
@@ -76,8 +66,6 @@ function M.setup(opts)
 
 	local log; if opts.log then
 		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
-
-		-- initialize the log file
 		local f = io.open(out, 'w')
 		if f then
 			f:write('# auto-input-switch.nvim log\n# Initialized at '..os.date('%Y-%m-%d %X')..'\n\n')
@@ -114,6 +102,25 @@ function M.setup(opts)
 
 	local cmd_get = oss.cmd_get
 	local cmd_set = oss.cmd_set
+
+	----
+	-- input format: {
+	--   [1] = <InputName>,
+	--   [2] = <inputNameAlt>,
+	--   [3] = <CmdSetFormatted>,
+	--   cmd_set = <CmdSet>,
+	-- }
+	local function sanitize_input(input)
+		if not input then
+			return {false, false, ''}
+		end
+		if type(input) == 'table' then
+			input[3] = (input.cmd_set or cmd_set or ''):format(input[2] or input[1] or '')
+			return input
+		end
+		return {input, false, cmd_set:format(input)}
+	end
+
 	local input_n = sanitize_input(oss.normal_input)
 	local input_i
 
@@ -338,12 +345,15 @@ function M.setup(opts)
 
 	-- #normalize
 	if normalize then
+
+		--- auto-detect normal-input
 		if not input_n[1] then
 			autocmd('InsertEnter', {
 				pattern = normalize.file_pattern or nil,
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
+						sanitize_input(input_n)
 					end)
 					return true -- oneshot
 				end
@@ -363,7 +373,7 @@ function M.setup(opts)
 			end
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
-				exec(cmd_set:format(input_n[2] or input_n[1]))
+				exec(input_n[3])
 				if label then
 					if type(label) ~= 'table' then
 						if type(label) == 'string'
@@ -485,7 +495,7 @@ function M.setup(opts)
 						local input = lang_inputs[found]
 						if input then
 							matched = true; schedule(reset_matched)
-							exec(cmd_set:format(input[2] or input[1]))
+							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
 								if type(label) ~= 'table' then
@@ -547,7 +557,7 @@ function M.setup(opts)
 							local input = lang_inputs[found]
 							if input then
 								matched = true; schedule(reset_matched)
-								exec(cmd_set:format(input[2] or input[1]))
+								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
 									if type(label) ~= 'table' then
@@ -585,11 +595,11 @@ function M.setup(opts)
 		if restore then
 
 			-- create a reverse-lookup table of lang_inputs
-			local langs; if popup then
-				langs = {}
+			local lang_lookup; if popup then
+				lang_lookup = {}
 				for k,v in pairs(lang_inputs) do
 					if v[1] then
-						langs[v[1]] = k
+						lang_lookup[v[1]] = k
 					end
 				end
 			end
@@ -605,10 +615,11 @@ function M.setup(opts)
 						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
 						if line:sub(col, col + 1):find(exclude) then return end
 					end
-					exec(cmd_set:format(input_i))
-					if popup then
-						local lang = langs[input_i]
-						if lang then
+					local lang = lang_lookup[input_i]
+					if lang then
+						local input = lang_inputs[lang]
+						exec(input[3])
+						if popup then
 							local label = lang_labels[lang]
 							if type(label) ~= 'table' then
 								if type(label) == 'string'
@@ -619,6 +630,8 @@ function M.setup(opts)
 							end
 							show_popup(label)
 						end
+					else -- unknown input
+						exec(cmd_set:format(input_i))
 					end
 				end
 			end
