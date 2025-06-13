@@ -150,6 +150,9 @@ return {
 			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
 			--   The 1st string is the name of the input source, which should match with the output of `cmd_get`.
 			--   The 2nd string is what is actually passed to `cmd_set`.
+			--
+			-- Additionally, you can override `cmd_set` like this:
+			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu', cmd_set = 'some-alternative-command %s' },
 
 			lang_inputs = {
 				-- The input sources corresponding to `match.languages` for each.
