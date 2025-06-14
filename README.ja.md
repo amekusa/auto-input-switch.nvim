@@ -20,6 +20,12 @@
 ## バージョン履歴
 
 ```
+v4.1.0 - オプション追加: `os_settings.*.normal_input.cmd_set`,
+                         `os_settings.*.lang_inputs.*.cmd_set`
+
+         これらのオプションを設定することで、
+         `os_settings.*.cmd_set` の値を入力言語毎にオーバーライドすることが可能になりました。
+
 v4.0.0 - オプション追加: `popup.labels`
          これにより入力言語毎にポップアップ表示するラベルをカスタマイズすることが可能になりました。
        - オプション削除: `normalize.popup`
@@ -52,7 +58,7 @@ v1.0.0 - リリース。
 
 
 ## 互換性
-NVIM v0.10.2
+NVIM v0.10.2+
 
 ### OS
 - macOS
@@ -90,14 +96,21 @@ require('auto-input-switch').setup({
   activate = true, -- 本プラグインの機能を有効にするか否か
   -- このフラグは `AutoInputSwitch on|off` コマンドでいつでも切り替え可能です。
 
-  async = false, -- `cmd_get` & `cmd_set` の実行を非同期で行うか否か
+  async = false, -- 入力言語切り替え時にシェルコマンド (`cmd_get/cmd_set`) の実行を非同期で行うか否か
   -- false: 同期実行(推奨)
   --        Insert モードと Normal モード間の切り替えを素早く繰り返した際などに僅かなラグが発生する場合があります。
   --  true: 非同期実行
   --        ラグは発生しませんが、同期実行よりも信頼性に劣ります。
 
+  log = false, -- ログをファイルに出力するか否か
+  -- `cmd_get/cmd_set` のデバッグに有用です。
+  -- ログファイルは本プラグインの setup() 関数が呼び出される度に初期化されます。
+  -- ログファイルのパス: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
+  --                     ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
+
   prefix = 'AutoInputSwitch', -- コマンド名のプリフィックス
-  -- prefix = 'AIS', -- 短いプリフィックス
+  -- コマンド名を短くしたい場合、以下の設定を推奨:
+  -- prefix = 'AIS',
 
   popup = {
     -- プラグインによって入力言語が変更された際、現在の入力言語名をポップアップ表示で知らせます。
@@ -154,7 +167,7 @@ require('auto-input-switch').setup({
 
   restore = {
     -- "Normalize" が実行される際、本プラグインによって直前の入力言語が記憶されます。
-    -- そしてユーザーが次に Insert モードに移行した瞬間、記憶していた入力言語を自動的に復元することができます。
+    -- そしてユーザーが次に Insert モードに移行した瞬間、記憶していた入力言語を自動的に復元します。
     -- この機能を "Restore" と呼称します。
 
     enable = true, -- Restore を有効にするか否か
@@ -219,8 +232,8 @@ require('auto-input-switch').setup({
   os_settings = { -- OS 毎の設定
     macos = {
       enable = true,
-      cmd_get = 'im-select', -- 現在の入力言語を取得するコマンド
-      cmd_set = 'im-select %s', -- 入力言語を変更するコマンド (`%s` が入力言語で置換されます)
+      cmd_get = 'im-select', -- 現在の入力言語を取得するシェルコマンド
+      cmd_set = 'im-select %s', -- 入力言語を変更するシェルコマンド (`%s` が入力言語で置換されます)
       normal_input = false, -- Normalize で使用する入力言語 (false なら自動判別)
       -- 例:
       -- normal_input = 'com.apple.keylayout.ABC',
@@ -231,6 +244,9 @@ require('auto-input-switch').setup({
       -- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
       --   1 番目の文字列は入力言語の名前であり、`cmd_get` の出力結果と一致している必要があります。
       --   2 番目の文字列は実際に `cmd_set` に渡される文字列です。
+      --
+	  -- また、`cmd_set` をオーバーライドすることも可能です:
+      -- normal_input = { 'com.apple.keylayout.ABC', 'eisu', cmd_set = 'some-alternative-command %s' },
 
       lang_inputs = {
         -- `match.languages` 内の各言語に対応する入力言語のリスト。

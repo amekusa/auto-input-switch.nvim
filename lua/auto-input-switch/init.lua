@@ -35,7 +35,7 @@ local unpack = unpack or table.unpack
 --   - TRACE
 --   - WARN
 --   - OFF
-local function log(msg, level)
+local function notify(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
@@ -53,16 +53,6 @@ local function detect_os()
 	return 'linux'
 end
 
-local function sanitize_input(input)
-	if not input then
-		return {nil}
-	end
-	if type(input) == 'table' then
-		return input
-	end
-	return {input}
-end
-
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
@@ -74,8 +64,63 @@ function M.setup(opts)
 	local oss = opts.os_settings[opts.os or detect_os()]
 	if not oss.enable then return end
 
+	local log; if opts.log then
+		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
+		local f = io.open(out, 'w')
+		if f then
+			f:write('# auto-input-switch.nvim log\n# Initialized at '..os.date('%Y-%m-%d %X')..'\n\n')
+			f:close()
+
+			log = function(...)
+				local args = {...}
+				f = io.open(out, 'a+')
+				if not f then
+					notify('cannot open the log file: '..out, 'WARN')
+					return
+				end
+				local msg = '['..os.date('%Y-%m-%d %X')..']'
+				local inspect = vim.inspect
+				local item, t
+				for i = 1, #args do
+					item = args[i]
+					t = type(item)
+					if t ~= 'string' then
+						if t == 'table'
+							then item = inspect(item)
+							else item = t..'('..item..')'
+						end
+					end
+					msg = msg..' '..item
+				end
+				f:write(msg..'\n')
+				f:close()
+			end
+		else
+			notify('cannot open the log file: '..out, 'WARN')
+		end
+	end
+
 	local cmd_get = oss.cmd_get
 	local cmd_set = oss.cmd_set
+
+	----
+	-- input format: {
+	--   [1] = <InputName>,
+	--   [2] = <inputNameAlt>,
+	--   [3] = <CmdSetFormatted>,
+	--   cmd_set = <CmdSet>,
+	-- }
+	local function sanitize_input(input)
+		if not input then
+			return {false, false, ''}
+		end
+		if type(input) == 'table' then
+			input[3] = (input.cmd_set or cmd_set or ''):format(input[2] or input[1] or '')
+			return input
+		end
+		return {input, false, cmd_set:format(input)}
+	end
+
 	local input_n = sanitize_input(oss.normal_input)
 	local input_i
 
@@ -92,7 +137,6 @@ function M.setup(opts)
 	local usercmd = api.nvim_create_user_command
 
 	local schedule      = vim.schedule
-	local schedule_wrap = vim.schedule_wrap
 
 	-- Returns whether AIS is active or not.
 	-- @return boolean
@@ -111,12 +155,12 @@ function M.setup(opts)
 			local arg = cmd.fargs[1]
 			if arg == 'on' then
 				active = true
-				log('activated')
+				notify('activated')
 			elseif arg == 'off' then
 				active = false
-				log('deactivated')
+				notify('deactivated')
 			else
-				log('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
+				notify('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
 			end
 		end,
 		{
@@ -128,22 +172,56 @@ function M.setup(opts)
 		}
 	)
 
+	-- functions to handle shell-commands
 	local exec, exec_get; do
 		local split = vim.split
 		local split_sep = ' '
 		local system = vim.system
 		local system_opts = {text = true}
-		if async then -- asynchronous implementation
-			exec = function(cmd)
-				system(split(cmd, split_sep))
+
+		local log_pre, log_post; if log then
+			log_pre = function(cmd)
+				log('start exec:', cmd)
+				return cmd
 			end
-			exec_get = function(cmd, handler)
-				system(split(cmd, split_sep), system_opts, handler)
+			log_post = function(cmd, r)
+				log(' done exec:', cmd, '\nresult:', r)
+				return r
+			end
+		end
+		if async then -- asynchronous implementation
+			if log then -- with logging
+				exec = function(cmd)
+					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+						log_post(cmd, r)
+					end)
+				end
+				exec_get = function(cmd, handler)
+					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+						handler(log_post(cmd, r))
+					end)
+				end
+			else -- without logging
+				exec = function(cmd)
+					system(split(cmd, split_sep))
+				end
+				exec_get = function(cmd, handler)
+					system(split(cmd, split_sep), system_opts, handler)
+				end
 			end
 		else -- synchronous implementation
-			exec = os.execute
-			exec_get = function(cmd, handler)
-				handler(system(split(cmd, split_sep), system_opts):wait())
+			if log then -- with logging
+				exec = function(cmd)
+					log_post(cmd, system(split(log_pre(cmd), split_sep)):wait())
+				end
+				exec_get = function(cmd, handler)
+					handler(log_post(cmd, system(split(log_pre(cmd), split_sep), system_opts):wait()))
+				end
+			else -- without logging
+				exec = os.execute
+				exec_get = function(cmd, handler)
+					handler(system(split(cmd, split_sep), system_opts):wait())
+				end
 			end
 		end
 	end
@@ -266,12 +344,15 @@ function M.setup(opts)
 
 	-- #normalize
 	if normalize then
+
+		--- auto-detect normal-input
 		if not input_n[1] then
 			autocmd('InsertEnter', {
 				pattern = normalize.file_pattern or nil,
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
+						sanitize_input(input_n)
 					end)
 					return true -- oneshot
 				end
@@ -291,7 +372,7 @@ function M.setup(opts)
 			end
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
-				exec(cmd_set:format(input_n[2] or input_n[1]))
+				exec(input_n[3])
 				if label then
 					if type(label) ~= 'table' then
 						if type(label) == 'string'
@@ -413,7 +494,7 @@ function M.setup(opts)
 						local input = lang_inputs[found]
 						if input then
 							matched = true; schedule(reset_matched)
-							exec(cmd_set:format(input[2] or input[1]))
+							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
 								if type(label) ~= 'table' then
@@ -475,7 +556,7 @@ function M.setup(opts)
 							local input = lang_inputs[found]
 							if input then
 								matched = true; schedule(reset_matched)
-								exec(cmd_set:format(input[2] or input[1]))
+								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
 									if type(label) ~= 'table' then
@@ -513,11 +594,11 @@ function M.setup(opts)
 		if restore then
 
 			-- create a reverse-lookup table of lang_inputs
-			local langs; if popup then
-				langs = {}
+			local lang_lookup; if popup then
+				lang_lookup = {}
 				for k,v in pairs(lang_inputs) do
 					if v[1] then
-						langs[v[1]] = k
+						lang_lookup[v[1]] = k
 					end
 				end
 			end
@@ -533,10 +614,11 @@ function M.setup(opts)
 						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
 						if line:sub(col, col + 1):find(exclude) then return end
 					end
-					exec(cmd_set:format(input_i))
-					if popup then
-						local lang = langs[input_i]
-						if lang then
+					local lang = lang_lookup[input_i]
+					if lang then
+						local input = lang_inputs[lang]
+						exec(input[3])
+						if popup then
 							local label = lang_labels[lang]
 							if type(label) ~= 'table' then
 								if type(label) == 'string'
@@ -547,6 +629,8 @@ function M.setup(opts)
 							end
 							show_popup(label)
 						end
+					else -- unknown input
+						exec(cmd_set:format(input_i))
 					end
 				end
 			end

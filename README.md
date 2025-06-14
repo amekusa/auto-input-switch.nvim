@@ -5,13 +5,13 @@
 
 <img src="https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif">
 
-This is a Neovim plugin that automatically switches the input sources (aka input methods) of your keyboard on various occasions,
+This is a Neovim plugin that automatically switches the input source (aka input method) on various occasions,
 improving your writing experience in non-English languages.
 
 For example, it can:
 
 - Force the input source to be US in Normal-mode.
-- Detect the language of the characters near the cursor, and switch the input source to the one for the language.
+- Detect the language of the characters near the cursor, and switch the input source to the one for that language.
 - Switch the input source to Japanese on entering Insert-mode, if you previously used it.
 - Switch the input source to US when Neovim gains focus.
 - Switch the input source to US after exiting Neovim.
@@ -20,6 +20,12 @@ For example, it can:
 ## Version History
 
 ```
+v4.1.0 - New options: `os_settings.*.normal_input.cmd_set`,
+                      `os_settings.*.lang_inputs.*.cmd_set`
+
+         By setting these options,
+         you can override `os_settings.*.cmd_set` for each input source.
+
 v4.0.0 - New option `popup.labels`.
          Now you can totally customize the popup labels for input sources.
        - Removed the option `normalize.popup`.
@@ -52,7 +58,7 @@ v1.0.0 - Released.
 
 
 ## Compatibility 
-NVIM v0.10.2
+NVIM v0.10.2+
 
 ### OS
 - macOS
@@ -90,14 +96,21 @@ require('auto-input-switch').setup({
   activate = true, -- Activate the plugin?
   -- You can toggle this with `AutoInputSwitch on|off` command at any time.
 
-  async = false, -- Run `cmd_get` & `cmd_set` asynchronously?
+  async = false, -- Run the shell-commands (`cmd_get/cmd_set`) to switch inputs asynchronously?
   -- false: Runs synchronously. (Recommended)
   --        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
   --  true: Runs asynchronously.
   --        No lags, but less reliable than synchronous.
 
+  log = false, -- Output logs to a file?
+  -- This is useful for debugging `cmd_get/cmd_set`.
+  -- The log file gets wiped out every time the plugin's setup() function is called.
+  -- The log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
+  --                    ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
+
   prefix = 'AutoInputSwitch', -- Prefix of the command names
-  -- prefix = 'AIS', -- Shorter prefix
+  -- If you prefer shorter command names, use this:
+  -- prefix = 'AIS',
 
   popup = {
     -- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
@@ -113,7 +126,7 @@ require('auto-input-switch').setup({
     row = 1, -- Horizontal offset
     col = 0, -- Vertical offset
     relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
-    anchor = 'NW', -- Which corner is a popup window aligned to?
+    anchor = 'NW', -- Which corner should be used to align a popup window?
     -- 'NW' : Northwest
     -- 'NE' : Northeast
     -- 'SW' : Southwest
@@ -154,7 +167,7 @@ require('auto-input-switch').setup({
 
   restore = {
     -- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
-    -- Then, the next time you enter Insert-mode, the plugin can automatically restore the saved state.
+    -- Then, the next time you enter Insert-mode, the plugin automatically restores the saved state.
     -- We call this feature "Restore".
 
     enable = true, -- Enable Restore?
@@ -219,8 +232,8 @@ require('auto-input-switch').setup({
   os_settings = { -- OS-specific settings
     macos = {
       enable = true,
-      cmd_get = 'im-select', -- Command to get the current input source
-      cmd_set = 'im-select %s', -- Command to set the input source (Use `%s` as a placeholder for the input source)
+      cmd_get = 'im-select', -- Shell-command to get the current input source
+      cmd_set = 'im-select %s', -- Shell-command to set the new input source (Use `%s` as a placeholder for the input source)
       normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
       -- Examples:
       -- normal_input = 'com.apple.keylayout.ABC',
@@ -231,6 +244,9 @@ require('auto-input-switch').setup({
       -- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
       --   The 1st string is the name of the input source, which should match with the output of `cmd_get`.
       --   The 2nd string is what is actually passed to `cmd_set`.
+      --
+      -- Additionally, you can override `cmd_set` like this:
+      -- normal_input = { 'com.apple.keylayout.ABC', 'eisu', cmd_set = 'some-alternative-command %s' },
 
       lang_inputs = {
         -- The input sources corresponding to `match.languages` for each.
