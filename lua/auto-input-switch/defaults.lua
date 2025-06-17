@@ -1,5 +1,5 @@
 return {
-	activate = true, -- Activate the plugin?
+	activate = true, -- Enable the plugin?
 	-- You can toggle this with `AutoInputSwitch on|off` command at any time.
 
 	async = false, -- Run the shell-commands (`cmd_get/cmd_set`) to switch inputs asynchronously?
