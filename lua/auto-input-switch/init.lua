@@ -150,27 +150,24 @@ function M.setup(opts)
 		active = x
 	end
 
-	usercmd(prefix,
-		function(cmd)
-			local arg = cmd.fargs[1]
-			if arg == 'on' then
-				active = true
-				notify('activated')
-			elseif arg == 'off' then
-				active = false
-				notify('deactivated')
-			else
-				notify('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
-			end
-		end,
-		{
-			desc = 'Activate/Deactivate auto-input-switch',
-			nargs = 1,
-			complete = function()
-				return {'on', 'off'}
-			end
-		}
-	)
+	usercmd(prefix, function(cmd)
+		local arg = cmd.fargs[1]
+		if arg == 'on' then
+			active = true
+			notify('activated')
+		elseif arg == 'off' then
+			active = false
+			notify('deactivated')
+		else
+			notify('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
+		end
+	end, {
+		desc = 'Activate/Deactivate auto-input-switch',
+		nargs = 1,
+		complete = function()
+			return {'on', 'off'}
+		end
+	})
 
 	-- functions to handle shell-commands
 	local exec, exec_get; do
@@ -385,12 +382,12 @@ function M.setup(opts)
 			end
 		end
 
-		usercmd(prefix..'Normalize',
-			M.normalize, {
-				desc = 'Normalize the input source',
-				nargs = 0
-			}
-		)
+		usercmd(prefix..'Normalize', function()
+			M.normalize()
+		end, {
+			desc = 'Normalize the input source',
+			nargs = 0
+		})
 
 		if normalize.on then
 			autocmd(normalize.on, {
@@ -575,12 +572,12 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd(prefix..'Match',
-				function() M.match() end, {
-					desc = 'Match the input source with the characters near the cursor',
-					nargs = 0
-				}
-			)
+			usercmd(prefix..'Match', function()
+				M.match()
+			end, {
+				desc = 'Match the input source with the characters near the cursor',
+				nargs = 0
+			})
 
 			if match.on then
 				autocmd(match.on, {
@@ -635,12 +632,12 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd(prefix..'Restore',
-				function() M.restore() end, {
-					desc = 'Restore the input source to the state before tha last normalization',
-					nargs = 0
-				}
-			)
+			usercmd(prefix..'Restore', function()
+				M.restore()
+			end, {
+				desc = 'Restore the input source to the state before tha last normalization',
+				nargs = 0
+			})
 
 			if restore.on then
 				autocmd(restore.on, {
