@@ -135,6 +135,7 @@ function M.setup(opts)
 
 	local autocmd = api.nvim_create_autocmd
 	local usercmd = api.nvim_create_user_command
+	local get_mode = api.nvim_get_mode
 
 	local schedule      = vim.schedule
 
@@ -356,12 +357,16 @@ function M.setup(opts)
 			})
 		end
 
+		local exclude_i = normalize.exclude_insert_mode and function(c)
+			return c and c.event == 'InsertEnter' or get_mode().mode == 'i'
+		end
+
 		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
-		M.normalize = function()
-			if not active then return end
+		M.normalize = function(c)
+			if not active or exclude_i and exclude_i(c) then return end
 
 			-- save input to input_i before normalize
 			if save_input then
@@ -402,7 +407,6 @@ function M.setup(opts)
 		local valid_context; do
 			local event = 'InsertEnter'
 			local mode  = 'i'
-			local get_mode = api.nvim_get_mode
 			local get_option = api.nvim_get_option_value
 			local get_option_key = 'buflisted'
 			local get_option_scope = {buf = 0}
