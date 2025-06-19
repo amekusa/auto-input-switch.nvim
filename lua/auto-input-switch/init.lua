@@ -357,16 +357,12 @@ function M.setup(opts)
 			})
 		end
 
-		local exclude_i = normalize.exclude_insert_mode and function(c)
-			return c and c.event == 'InsertEnter' or get_mode().mode == 'i'
-		end
-
 		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function(c)
-			if not active or exclude_i and exclude_i(c) then return end
+			if not active or (c and c.event == 'InsertEnter') or get_mode().mode == 'i' then return end
 
 			-- save input to input_i before normalize
 			if save_input then

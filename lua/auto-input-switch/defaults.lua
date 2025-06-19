@@ -69,8 +69,6 @@ return {
 		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
-
-		exclude_insert_mode = true, -- If true, doesn't Normalize in Insert-mode
 	},
 
 	restore = {
