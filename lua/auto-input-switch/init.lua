@@ -139,6 +139,11 @@ function M.setup(opts)
 
 	local schedule      = vim.schedule
 
+	local ac_locked = false
+	local ac_unlock = function()
+		ac_locked = false
+	end
+
 	-- Returns whether AIS is active or not.
 	-- @return boolean
 	function M.is_active()
@@ -370,6 +375,7 @@ function M.setup(opts)
 			end
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
+				ac_locked = true; schedule(ac_unlock)
 				exec(input_n[3])
 				if label then
 					if type(label) ~= 'table' then
@@ -401,17 +407,17 @@ function M.setup(opts)
 	if restore or match then
 
 		local valid_context; do
-			local event = 'InsertEnter'
-			local mode  = 'i'
 			local get_option = api.nvim_get_option_value
 			local get_option_key = 'buflisted'
 			local get_option_scope = {buf = 0}
 			valid_context = function(c)
 				if c then
-					if c.event ~= event and get_mode().mode ~= mode then
+					if ac_locked or (c.event ~= 'InsertEnter' and get_mode().mode ~= 'i') then
 						return false
 					end
 					get_option_scope.buf = c.buf
+				else
+					get_option_scope.buf = 0
 				end
 				return get_option(get_option_key, get_option_scope)
 			end
@@ -431,9 +437,6 @@ function M.setup(opts)
 		for k,v in pairs(oss.lang_inputs) do
 			lang_inputs[k] = sanitize_input(v)
 		end
-
-		-- flag for prevending `restore` from executing after `match` in the same frame
-		local matched = false
 
 		-- #match
 		if match then
@@ -465,11 +468,6 @@ function M.setup(opts)
 				end
 			end
 
-			-- schedule this:
-			local function reset_matched()
-				matched = false
-			end
-
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local exclude = match.lines.exclude_pattern and regex(match.lines.exclude_pattern)
@@ -490,7 +488,7 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							matched = true; schedule(reset_matched)
+							ac_locked = true; schedule(ac_unlock)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
@@ -552,7 +550,7 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								matched = true; schedule(reset_matched)
+								ac_locked = true; schedule(ac_unlock)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
@@ -602,7 +600,7 @@ function M.setup(opts)
 
 			local exclude = restore.exclude_pattern
 			M.restore = function(c)
-				if not active or matched or not valid_context(c) then return end
+				if not active or not valid_context(c) then return end
 
 				-- restore input_i that was saved on the last normalize
 				if input_i and (input_i ~= input_n[1]) then
