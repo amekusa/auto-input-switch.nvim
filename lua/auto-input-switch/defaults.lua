@@ -128,7 +128,7 @@ return {
 
 			exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
 			-- If one of the lines above/below match with this regex pattern,
-			-- the plugin immediately stops searching languages, leaving the input source unchanged.
+			-- the plugin immediately stops searching the languages, leaving the input source unchanged.
 			-- This is useful for writing lists, tables, or blockquotes in a markdown document.
 			-- Set false to disable this feature.
 		},
