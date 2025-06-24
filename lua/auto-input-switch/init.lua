@@ -42,8 +42,15 @@ local function notify(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
-local function trim(str)
-	return str:gsub('^%s*(.-)%s*$', '%1')
+local trim; do
+	local str_match = string.match
+	local pat1 = '^()%s*$'
+	local pat2 = '^%s*(.*%S)'
+	trim = function(str)
+		return str_match(str, pat1) and str_empty or str_match(str, pat2)
+	end
+	-- NOTE: Other implementations:
+	--       http://lua-users.org/wiki/StringTrim
 end
 
 local function detect_os()
