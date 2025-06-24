@@ -23,7 +23,10 @@
 local ns = (...)
 local vim = vim
 local api = vim.api
-local regex = vim.regex
+
+local str_empty = ''
+local type_tbl = 'table'
+local type_str = 'string'
 
 -- lua 5.1 vs 5.2 compatibility
 local unpack = unpack or table.unpack
@@ -56,7 +59,7 @@ end
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
-	if opts and type(opts) == 'table'
+	if opts and type(opts) == type_tbl
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
 	end
@@ -84,8 +87,8 @@ function M.setup(opts)
 				for i = 1, #args do
 					item = args[i]
 					t = type(item)
-					if t ~= 'string' then
-						if t == 'table'
+					if t ~= type_str then
+						if t == type_tbl
 							then item = inspect(item)
 							else item = t..'('..item..')'
 						end
@@ -112,10 +115,10 @@ function M.setup(opts)
 	-- }
 	local function sanitize_input(input)
 		if not input then
-			return {false, false, ''}
+			return {false, false, str_empty}
 		end
-		if type(input) == 'table' then
-			input[3] = (input.cmd_set or cmd_set or ''):format(input[2] or input[1] or '')
+		if type(input) == type_tbl then
+			input[3] = (input.cmd_set or cmd_set or str_empty):format(input[2] or input[1] or str_empty)
 			return input
 		end
 		return {input, false, cmd_set:format(input)}
@@ -133,11 +136,13 @@ function M.setup(opts)
 	local async  = opts.async
 	local prefix = opts.prefix
 
-	local autocmd = api.nvim_create_autocmd
-	local usercmd = api.nvim_create_user_command
+	local schedule = vim.schedule
+	local usercmd  = api.nvim_create_user_command
+	local autocmd  = api.nvim_create_autocmd
 	local get_mode = api.nvim_get_mode
 
-	local schedule      = vim.schedule
+	local ev_enter_i = 'InsertEnter'
+	local mode_i = 'i'
 
 	local ac_locked = false
 	local ac_unlock = function()
@@ -252,7 +257,7 @@ function M.setup(opts)
 		-- 3: DEACTIVATING
 
 		local buf = -1
-		local buf_lines = {''}
+		local buf_lines = {str_empty}
 
 		local win = -1
 		local win_opts = {
@@ -350,7 +355,7 @@ function M.setup(opts)
 
 		--- auto-detect normal-input
 		if not input_n[1] then
-			autocmd('InsertEnter', {
+			autocmd(ev_enter_i, {
 				pattern = normalize.file_pattern or nil,
 				callback = function()
 					exec_get(cmd_get, function(r)
@@ -367,7 +372,7 @@ function M.setup(opts)
 			input_i = trim(r.stdout)
 		end
 		M.normalize = function(c)
-			if not active or (c and c.event == 'InsertEnter') or get_mode().mode == 'i' then return end
+			if not active or (c and c.event == ev_enter_i) or get_mode().mode == mode_i then return end
 
 			-- save input to input_i before normalize
 			if save_input then
@@ -378,8 +383,8 @@ function M.setup(opts)
 				ac_locked = true; schedule(ac_unlock)
 				exec(input_n[3])
 				if label then
-					if type(label) ~= 'table' then
-						if type(label) == 'string'
+					if type(label) ~= type_tbl then
+						if type(label) == type_str
 							then label = {label, #label}
 							else label = {'A', 1}
 						end
@@ -408,18 +413,18 @@ function M.setup(opts)
 
 		local valid_context; do
 			local get_option = api.nvim_get_option_value
-			local get_option_key = 'buflisted'
-			local get_option_scope = {buf = 0}
+			local buflisted = 'buflisted'
+			local scope = {buf = 0}
 			valid_context = function(c)
 				if c then
-					if ac_locked or (c.event ~= 'InsertEnter' and get_mode().mode ~= 'i') then
+					if ac_locked or (c.event ~= ev_enter_i and get_mode().mode ~= mode_i) then
 						return false
 					end
-					get_option_scope.buf = c.buf
+					scope.buf = c.buf
 				else
-					get_option_scope.buf = 0
+					scope.buf = 0
 				end
-				return get_option(get_option_key, get_option_scope)
+				return get_option(buflisted, scope)
 			end
 		end
 
@@ -443,6 +448,7 @@ function M.setup(opts)
 
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
+				local regex = vim.regex
 				for k,v in pairs(match.languages) do
 					if v.enable then
 						table.insert(map, {
@@ -470,7 +476,7 @@ function M.setup(opts)
 
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
-			local exclude = match.lines.exclude_pattern and regex(match.lines.exclude_pattern)
+			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
 			local printable = '%S'
 			M.match = function(c)
 				if not active or not valid_context(c) then return end
@@ -492,8 +498,8 @@ function M.setup(opts)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
-								if type(label) ~= 'table' then
-									if type(label) == 'string'
+								if type(label) ~= type_tbl then
+									if type(label) == type_str
 										then label = {label, #label}
 										else label = {found, #found}
 									end
@@ -554,8 +560,8 @@ function M.setup(opts)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
-									if type(label) ~= 'table' then
-										if type(label) == 'string'
+									if type(label) ~= type_tbl then
+										if type(label) == type_str
 											then label = {label, #label}
 											else label = {found, #found}
 										end
@@ -615,8 +621,8 @@ function M.setup(opts)
 						exec(input[3])
 						if popup then
 							local label = lang_labels[lang]
-							if type(label) ~= 'table' then
-								if type(label) == 'string'
+							if type(label) ~= type_tbl then
+								if type(label) == type_str
 									then label = {label, #label}
 									else label = {lang, #lang}
 								end
