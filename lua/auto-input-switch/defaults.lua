@@ -126,7 +126,7 @@ return {
 			above = 2, -- How many lines above the current line to search in
 			below = 1, -- How many lines below the current line to search in
 
-			exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
+			exclude_pattern = [[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]],
 			-- If any of the lines above/below in the searching range match with this regex pattern,
 			-- the plugin immediately stops searching the languages, leaving the input source unchanged.
 			-- This is useful for writing lists, tables, or blockquotes in a markdown document.
