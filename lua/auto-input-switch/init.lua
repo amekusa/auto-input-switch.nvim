@@ -75,7 +75,8 @@ function M.setup(opts)
 	local oss = opts.os_settings[opts.os or detect_os()]
 	if not oss.enable then return end
 
-	local log; if opts.log then
+	local log, mem1, mem2
+	if opts.log then
 		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
 		local f = io.open(out, 'w')
 		if f then
@@ -109,6 +110,10 @@ function M.setup(opts)
 		else
 			notify('cannot open the log file: '..out, 'WARN')
 		end
+
+		collectgarbage('collect')
+		mem1 = collectgarbage('count')
+		log('memory usage before setup:', mem1..' kb')
 	end
 
 	local cmd_get = oss.cmd_get
@@ -663,6 +668,12 @@ function M.setup(opts)
 	end
 
 	oss = nil -- #GC
+
+	if log then
+		collectgarbage('collect')
+		mem2 = collectgarbage('count')
+		log('memory usage  after setup:', mem2..' kb', '(diff: '..(mem2 - mem1)..' kb)')
+	end
 end
 
 return M
