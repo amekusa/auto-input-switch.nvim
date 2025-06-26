@@ -446,6 +446,8 @@ function M.setup(opts)
 			return a > b and a or b
 		end
 
+		local sub = string.sub
+
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 
@@ -488,6 +490,7 @@ function M.setup(opts)
 				end
 			end
 
+			local find = string.find
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
@@ -503,8 +506,8 @@ function M.setup(opts)
 				local cur = row - row_top + 1 -- the index of the current line in `lines`
 				local line = lines[cur] -- current line
 
-				if line:find(printable) then -- search in the current line
-					found = find_in_map(line:sub(max(1, col - 2), col + 3))
+				if find(line, printable) then -- search in the current line
+					found = find_in_map(sub(line, max(1, col - 2), col + 3))
 					if found then
 						local input = lang_inputs[found]
 						if input then
@@ -534,7 +537,7 @@ function M.setup(opts)
 						else
 							line = lines[cur - i]
 							if line then
-								if line:find(printable) then -- not an empty line
+								if find(line, printable) then -- not an empty line
 									above_done = true -- found or not, no more searching up
 									if not (exclude and exclude:match_str(line)) then
 										found, found_i = find_in_map(line)
@@ -549,7 +552,7 @@ function M.setup(opts)
 						if not below_done then
 							line = lines[cur + i]
 							if line then
-								if line:find(printable) then -- not an empty line
+								if find(line, printable) then -- not an empty line
 									below_done = true -- found or not, no more searching down
 									if not (exclude and exclude:match_str(line)) then
 										if found then -- already found in the lines above
@@ -627,7 +630,7 @@ function M.setup(opts)
 					if exclude then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
-						if line:sub(col, col + 1):find(exclude) then return end
+						if exclude:match_str(sub(line, col, col + 1)) then return end
 					end
 					local lang = lang_lookup[input_i]
 					if lang then
