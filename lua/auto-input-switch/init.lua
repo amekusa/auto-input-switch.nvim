@@ -70,6 +70,7 @@ function M.setup(opts)
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
 	end
+	defaults = nil -- #GC
 
 	local oss = opts.os_settings[opts.os or detect_os()]
 	if not oss.enable then return end
@@ -113,7 +114,7 @@ function M.setup(opts)
 	local cmd_get = oss.cmd_get
 	local cmd_set = oss.cmd_set
 
-	----
+	-- #NOTE:
 	-- input format: {
 	--   [1] = <InputName>,
 	--   [2] = <inputNameAlt>,
@@ -142,6 +143,7 @@ function M.setup(opts)
 	local active = opts.activate
 	local async  = opts.async
 	local prefix = opts.prefix
+	opts = nil -- #GC
 
 	local schedule = vim.schedule
 	local usercmd  = api.nvim_create_user_command
@@ -659,6 +661,8 @@ function M.setup(opts)
 		end
 
 	end
+
+	oss = nil -- #GC
 end
 
 return M
