@@ -24,9 +24,9 @@ local ns = (...)
 local vim = vim
 local api = vim.api
 
-local str_empty = ''
-local type_tbl = 'table'
-local type_str = 'string'
+local s_empty = ''
+local type_t = 'table'
+local type_s = 'string'
 
 -- lua 5.1 vs 5.2 compatibility
 local unpack = unpack or table.unpack
@@ -43,11 +43,11 @@ local function notify(msg, level)
 end
 
 local trim; do
-	local str_match = string.match
+	local s_match = string.match
 	local pat1 = '^()%s*$'
 	local pat2 = '^%s*(.*%S)'
 	trim = function(str)
-		return str_match(str, pat1) and str_empty or str_match(str, pat2)
+		return s_match(str, pat1) and s_empty or s_match(str, pat2)
 	end
 	-- NOTE: Other implementations:
 	--       http://lua-users.org/wiki/StringTrim
@@ -66,7 +66,7 @@ end
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
-	if opts and type(opts) == type_tbl
+	if opts and type(opts) == type_t
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
 	end
@@ -96,8 +96,8 @@ function M.setup(opts)
 				for i = 1, #args do
 					item = args[i]
 					t = type(item)
-					if t ~= type_str then
-						if t == type_tbl
+					if t ~= type_s then
+						if t == type_t
 							then item = inspect(item)
 							else item = t..'('..item..')'
 						end
@@ -128,10 +128,10 @@ function M.setup(opts)
 	-- }
 	local function sanitize_input(input)
 		if not input then
-			return {false, false, str_empty}
+			return {false, false, s_empty}
 		end
-		if type(input) == type_tbl then
-			input[3] = (input.cmd_set or cmd_set or str_empty):format(input[2] or input[1] or str_empty)
+		if type(input) == type_t then
+			input[3] = (input.cmd_set or cmd_set or s_empty):format(input[2] or input[1] or s_empty)
 			return input
 		end
 		return {input, false, cmd_set:format(input)}
@@ -271,7 +271,7 @@ function M.setup(opts)
 		-- 3: DEACTIVATING
 
 		local buf = -1
-		local buf_lines = {str_empty}
+		local buf_lines = {s_empty}
 
 		local win = -1
 		local win_opts = {
@@ -397,8 +397,8 @@ function M.setup(opts)
 				ac_locked = true; schedule(ac_unlock)
 				exec(input_n[3])
 				if label then
-					if type(label) ~= type_tbl then
-						if type(label) == type_str
+					if type(label) ~= type_t then
+						if type(label) == type_s
 							then label = {label, #label}
 							else label = {'A', 1}
 						end
@@ -515,8 +515,8 @@ function M.setup(opts)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
-								if type(label) ~= type_tbl then
-									if type(label) == type_str
+								if type(label) ~= type_t then
+									if type(label) == type_s
 										then label = {label, #label}
 										else label = {found, #found}
 									end
@@ -577,8 +577,8 @@ function M.setup(opts)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
-									if type(label) ~= type_tbl then
-										if type(label) == type_str
+									if type(label) ~= type_t then
+										if type(label) == type_s
 											then label = {label, #label}
 											else label = {found, #found}
 										end
@@ -638,8 +638,8 @@ function M.setup(opts)
 						exec(input[3])
 						if popup then
 							local label = lang_labels[lang]
-							if type(label) ~= type_tbl then
-								if type(label) == type_str
+							if type(label) ~= type_t then
+								if type(label) == type_s
 									then label = {label, #label}
 									else label = {lang, #lang}
 								end
