@@ -72,7 +72,7 @@ return {
 	},
 
 	restore = {
-		-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
+		-- When a Normalize is about to happen, the plugin saves the state of the input source at the moment.
 		-- Then, the next time you enter Insert-mode, the plugin automatically restores the saved state.
 		-- We call this feature "Restore".
 
@@ -86,10 +86,10 @@ return {
 		-- file_pattern = { '*.md', '*.txt' },
 
 		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
-		-- When you switch to Insert-mode, the plugin checks the cursor position at the moment.
-		-- And if any of the characters before & after the position match with `exclude_pattern`,
-		-- the plugin cancel to restore the input source and leave it as it is.
-		-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
+		-- When a Restore is about to happen, the plugin checks the characters near the cursor at the moment.
+		-- And if the characters match with this pattern (NOT regex, but Lua's standard string pattern),
+		-- the plugin cancels the Restore, leaving the input source unchanged.
+		-- The default pattern includes a whole alphanumeric characters and common punctuation symbols with a few exceptions.
 		-- Set false to disable this feature.
 	},
 
@@ -97,7 +97,8 @@ return {
 		-- When you enter Insert-mode, the plugin can detect the language of the characters adjacent to the cursor at the moment.
 		-- Then, it can automatically switch the input source to the one that matches the detected language.
 		-- We call this feature "Match".
-		-- If you enable this feature, we recommend to set `restore.enable` to false.
+		-- If both Match and Restore happen at the same time, Match is always prioritized.
+		-- To avoid confusion, we recommend to set `restore.enable` to false.
 		-- This feature is disabled by default.
 
 		enable = false, -- Enable Match?
