@@ -85,7 +85,7 @@ return {
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
 
-		exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
+		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
 		-- When you switch to Insert-mode, the plugin checks the cursor position at the moment.
 		-- And if any of the characters before & after the position match with `exclude_pattern`,
 		-- the plugin cancel to restore the input source and leave it as it is.
