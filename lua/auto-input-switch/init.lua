@@ -446,7 +446,8 @@ function M.setup(opts)
 			return a > b and a or b
 		end
 
-		local sub = string.sub
+		local find = string.find
+		local sub  = string.sub
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
@@ -490,7 +491,6 @@ function M.setup(opts)
 				end
 			end
 
-			local find = string.find
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
@@ -630,7 +630,7 @@ function M.setup(opts)
 					if exclude then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
-						if exclude:match_str(sub(line, col, col + 1)) then return end
+						if find(sub(line, col, col + 1), exclude) then return end
 					end
 					local lang = lang_lookup[input_i]
 					if lang then
