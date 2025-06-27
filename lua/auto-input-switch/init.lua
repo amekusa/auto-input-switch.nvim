@@ -24,7 +24,7 @@ local ns = (...)
 local vim = vim
 local api = vim.api
 
-local s_empty = ''
+local emp = ''
 local type_t = 'table'
 local type_s = 'string'
 
@@ -43,11 +43,11 @@ local function notify(msg, level)
 end
 
 local trim; do
-	local s_match = string.match
-	local pat1 = '^()%s*$'
-	local pat2 = '^%s*(.*%S)'
+	local m = string.match
+	local p1 = '^()%s*$'
+	local p2 = '^%s*(.*%S)'
 	trim = function(str)
-		return s_match(str, pat1) and s_empty or s_match(str, pat2)
+		return m(str, p1) and emp or m(str, p2)
 	end
 	-- NOTE: Other implementations:
 	--       http://lua-users.org/wiki/StringTrim
@@ -128,10 +128,10 @@ function M.setup(opts)
 	-- }
 	local function sanitize_input(input)
 		if not input then
-			return {false, false, s_empty}
+			return {false, false, emp}
 		end
 		if type(input) == type_t then
-			input[3] = (input.cmd_set or cmd_set or s_empty):format(input[2] or input[1] or s_empty)
+			input[3] = (input.cmd_set or cmd_set or emp):format(input[2] or input[1] or emp)
 			return input
 		end
 		return {input, false, cmd_set:format(input)}
@@ -271,7 +271,7 @@ function M.setup(opts)
 		-- 3: DEACTIVATING
 
 		local buf = -1
-		local buf_lines = {s_empty}
+		local buf_lines = {emp}
 
 		local win = -1
 		local win_opts = {
