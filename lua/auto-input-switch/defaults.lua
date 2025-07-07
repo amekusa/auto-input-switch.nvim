@@ -66,6 +66,7 @@ return {
 			'FocusLost',
 			'ExitPre',
 		},
+		on_mode_change = '[iR]:n',
 		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },

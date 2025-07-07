@@ -418,7 +418,22 @@ function M.setup(opts)
 		if normalize.on then
 			autocmd(normalize.on, {
 				pattern = normalize.file_pattern or nil,
-				callback = M.normalize
+				callback = function()
+					if active then
+						M.normalize()
+					end
+				end
+			})
+		end
+
+		if normalize.on_mode_change then
+			autocmd('ModeChanged', {
+				pattern = normalize.on_mode_change,
+				callback = vim.schedule_wrap(function()
+					if active then
+						M.normalize()
+					end
+				end)
 			})
 		end
 	end
