@@ -66,7 +66,15 @@ return {
 			'FocusLost',
 			'ExitPre',
 		},
-		on_mode_change = '[iR]:n',
+		on_mode_change = {
+			-- If this is not false, Normalize is triggered by `ModeChanged` event.
+			-- This option determines what modes switched from/to can trigger Normalize.
+			-- For the syntax, see:
+			--   :h autocmd-pattern
+			--   :h ModeChanged
+			--   :h mode()
+			'[iR]:n',
+		},
 		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
