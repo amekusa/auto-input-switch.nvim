@@ -150,6 +150,8 @@ function M.setup(opts)
 	local prefix = opts.prefix
 	opts = nil -- #GC
 
+	local find = string.find
+	local sub  = string.sub
 	local schedule = vim.schedule
 	local usercmd  = api.nvim_create_user_command
 	local autocmd  = api.nvim_create_autocmd
@@ -254,6 +256,8 @@ function M.setup(opts)
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
+		local win_get_curr   = api.nvim_get_current_win
+		local win_call       = api.nvim_win_call
 		local win_is_valid   = api.nvim_win_is_valid
 		local win_open       = api.nvim_open_win
 		local win_hide       = api.nvim_win_hide
@@ -274,6 +278,7 @@ function M.setup(opts)
 		local buf_lines = {emp}
 
 		local win = -1
+		local win_base = -1
 		local win_opts = {
 			relative = popup.relative,
 			row = popup.row,
@@ -291,15 +296,6 @@ function M.setup(opts)
 		local whl_scope = {win = nil}
 
 		local updater = -1
-		local updater_ev = {'CursorMoved', 'CursorMovedI', 'WinScrolled'}
-		local updater_opts = {
-			callback = function()
-				if state == 2 and win_is_valid(win) then -- state == ACTIVE
-					win_set_config(win, win_opts)
-				end
-			end
-		}
-
 		local timer
 		local deactivate = function()
 			state = 0 -- state >> IDLE
@@ -309,8 +305,9 @@ function M.setup(opts)
 			end
 			if win_is_valid(win) then
 				win_hide(win)
-				win = -1
 			end
+			win = -1
+			win_base = -1
 		end
 		local on_timeout = function()
 			state = 3 -- state >> DEACTIVATING
@@ -318,6 +315,21 @@ function M.setup(opts)
 			timer:close()
 			schedule(deactivate)
 		end
+		local updater_ev = {'CursorMoved', 'CursorMovedI', 'WinScrolled'}
+		local updater_fn = function()
+			win_set_config(win, win_opts)
+		end
+		local updater_opts = {
+			callback = function()
+				if state == 2 then -- state == ACTIVE
+					if win_is_valid(win_base) and win_is_valid(win) then
+						win_call(win_base, updater_fn)
+					else
+						on_timeout()
+					end
+				end
+			end
+		}
 
 		local str, len
 		local activate = function()
@@ -334,6 +346,7 @@ function M.setup(opts)
 			if win_is_valid(win) then
 				win_hide(win)
 			end
+			win_base = win_get_curr()
 			win_opts.width = len
 			win = win_open(buf, false, win_opts)
 			whl_scope.win = win
@@ -385,9 +398,7 @@ function M.setup(opts)
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
-		M.normalize = function(c)
-			if not active or (c and c.event == ev_enter_i) or get_mode().mode == mode_i then return end
-
+		M.normalize = function()
 			-- save input to input_i before normalize
 			if save_input then
 				exec_get(cmd_get, save_input)
@@ -408,9 +419,7 @@ function M.setup(opts)
 			end
 		end
 
-		usercmd(prefix..'Normalize', function()
-			M.normalize()
-		end, {
+		usercmd(prefix..'Normalize', M.normalize, {
 			desc = 'Normalize the input source',
 			nargs = 0
 		})
@@ -460,9 +469,6 @@ function M.setup(opts)
 		local max = function(a, b)
 			return a > b and a or b
 		end
-
-		local find = string.find
-		local sub  = string.sub
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
