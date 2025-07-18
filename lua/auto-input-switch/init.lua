@@ -438,11 +438,9 @@ function M.setup(opts)
 		if normalize.on_mode_change then
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
-				callback = vim.schedule_wrap(function()
-					if active then
-						M.normalize()
-					end
-				end)
+				callback = function()
+					if active then M.normalize() end
+				end
 			})
 		end
 	end
