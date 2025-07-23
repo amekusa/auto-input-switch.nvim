@@ -398,7 +398,7 @@ function M.setup(opts)
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
 		end
-		M.normalize = function()
+		local fn_normalize = function()
 			-- save input to input_i before normalize
 			if save_input then
 				exec_get(cmd_get, save_input)
@@ -419,7 +419,9 @@ function M.setup(opts)
 			end
 		end
 
-		usercmd(prefix..'Normalize', M.normalize, {
+		M.normalize = fn_normalize
+
+		usercmd(prefix..'Normalize', fn_normalize, {
 			desc = 'Normalize the input source',
 			nargs = 0
 		})
@@ -428,9 +430,7 @@ function M.setup(opts)
 			autocmd(normalize.on, {
 				pattern = normalize.file_pattern or nil,
 				callback = function()
-					if active then
-						M.normalize()
-					end
+					if active then fn_normalize() end
 				end
 			})
 		end
@@ -439,7 +439,7 @@ function M.setup(opts)
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
 				callback = function()
-					if active then M.normalize() end
+					if active then fn_normalize() end
 				end
 			})
 		end
@@ -514,7 +514,7 @@ function M.setup(opts)
 			local lines_below = match.lines.below
 			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
 			local printable = '%S'
-			M.match = function(c)
+			local fn_match = function(c)
 				if not valid_context(c) then return end
 
 				local found -- language name to find
@@ -612,9 +612,9 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd(prefix..'Match', function()
-				M.match()
-			end, {
+			M.match = fn_match
+
+			usercmd(prefix..'Match', fn_match, {
 				desc = 'Match the input source with the characters near the cursor',
 				nargs = 0
 			})
@@ -623,7 +623,7 @@ function M.setup(opts)
 				autocmd(match.on, {
 					pattern = match.file_pattern or nil,
 					callback = function()
-						if active then M.match() end
+						if active then fn_match() end
 					end
 				})
 			end
@@ -632,7 +632,7 @@ function M.setup(opts)
 				autocmd('ModeChanged', {
 					pattern = match.on_mode_change,
 					callback = function()
-						if active then M.match() end
+						if active then fn_match() end
 					end
 				})
 			end
@@ -652,7 +652,7 @@ function M.setup(opts)
 			end
 
 			local exclude = restore.exclude_pattern
-			M.restore = function(c)
+			local fn_restore = function(c)
 				if not active or not valid_context(c) then return end
 
 				-- restore input_i that was saved on the last normalize
@@ -683,9 +683,9 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd(prefix..'Restore', function()
-				M.restore()
-			end, {
+			M.restore = fn_restore
+
+			usercmd(prefix..'Restore', fn_restore, {
 				desc = 'Restore the input source to the state before tha last normalization',
 				nargs = 0
 			})
@@ -694,7 +694,7 @@ function M.setup(opts)
 				autocmd(restore.on, {
 					pattern = restore.file_pattern or nil,
 					callback = function()
-						if active then M.restore() end
+						if active then fn_restore() end
 					end
 				})
 			end
@@ -703,7 +703,7 @@ function M.setup(opts)
 				autocmd('ModeChanged', {
 					pattern = restore.on_mode_change,
 					callback = function()
-						if active then M.restore() end
+						if active then fn_restore() end
 					end
 				})
 			end
