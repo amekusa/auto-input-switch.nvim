@@ -515,7 +515,7 @@ function M.setup(opts)
 			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
 			local printable = '%S'
 			M.match = function(c)
-				if not active or not valid_context(c) then return end
+				if not valid_context(c) then return end
 
 				local found -- language name to find
 				local row, col = unpack(win_get_cursor(0)) -- cusor position
@@ -622,7 +622,18 @@ function M.setup(opts)
 			if match.on then
 				autocmd(match.on, {
 					pattern = match.file_pattern or nil,
-					callback = M.match
+					callback = function()
+						if active then M.match() end
+					end
+				})
+			end
+
+			if match.on_mode_change then
+				autocmd('ModeChanged', {
+					pattern = match.on_mode_change,
+					callback = function()
+						if active then M.match() end
+					end
 				})
 			end
 		end
@@ -682,7 +693,18 @@ function M.setup(opts)
 			if restore.on then
 				autocmd(restore.on, {
 					pattern = restore.file_pattern or nil,
-					callback = M.restore
+					callback = function()
+						if active then M.restore() end
+					end
+				})
+			end
+
+			if restore.on_mode_change then
+				autocmd('ModeChanged', {
+					pattern = restore.on_mode_change,
+					callback = function()
+						if active then M.restore() end
+					end
 				})
 			end
 		end
