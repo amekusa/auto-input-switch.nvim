@@ -75,6 +75,13 @@ function M.setup(opts)
 	local oss = opts.os_settings[opts.os or detect_os()]
 	if not oss.enable then return end
 
+	-- bit-wise operations module
+	local band, bor; do
+		local bit = require('bit')
+		band = bit.band
+		bor  = bit.bor
+	end
+
 	local log, mem1, mem2
 	if opts.log then
 		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
@@ -150,6 +157,7 @@ function M.setup(opts)
 	local prefix = opts.prefix
 	opts = nil -- #GC
 
+	local fmt  = string.format
 	local find = string.find
 	local sub  = string.sub
 	local schedule = vim.schedule
@@ -159,6 +167,19 @@ function M.setup(opts)
 
 	local ev_enter_i = 'InsertEnter'
 	local mode_i = 'i'
+
+	local buf_flags = {}
+	--   key: <int> buffer
+	-- value: <int> bitmask
+	--          01: activated
+	--         010: normalize enabled
+	--        0100: restore enabled
+	--       01000: match enabled
+
+	local buf_has_flags = function(buf, mask)
+		buf = buf and buf_flags[buf]
+		return buf and band(buf, mask) == mask
+	end
 
 	local ac_locked = false
 	local ac_unlock = function()
@@ -195,6 +216,60 @@ function M.setup(opts)
 			return {'on', 'off'}
 		end
 	})
+
+	do -- create AutoInputSwitchBuf* commands
+		local cmd_fn  = function(cmd, mask, label)
+			local buf = api.nvim_get_current_buf()
+			local flags = buf_flags[buf] or 1 -- 01
+			local arg = cmd.fargs[1]
+			if arg == 'on' then
+				buf_flags[buf] = bor(flags, mask)
+				if not cmd.bang then
+					if label
+						then notify(fmt('activated %s on current buffer', label))
+						else notify('activated on current buffer')
+					end
+				end
+			elseif arg == 'off' then
+				buf_flags[buf] = band(flags, flags - mask)
+				if not cmd.bang then
+					if label
+						then notify(fmt('deactivated %s on current buffer', label))
+						else notify('deactivated on current buffer')
+					end
+				end
+			else
+				notify(fmt('invalid argument: "%s"\nIt must be "on" or "off"', arg), 'ERROR')
+			end
+		end
+
+		local cmd_opts = {
+			nargs = 1,
+			complete = function()
+				return {'on', 'off'}
+			end
+		}
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch'
+		usercmd(prefix..'Buf', function(cmd)
+			cmd_fn(cmd, 1) -- 01
+		end, cmd_opts)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::normalize'
+		usercmd(prefix..'BufNormalize', function(cmd)
+			cmd_fn(cmd, 2, 'Normalize') -- 010
+		end, cmd_opts)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::restore'
+		usercmd(prefix..'BufRestore', function(cmd)
+			cmd_fn(cmd, 4, 'Restore') -- 0100
+		end, cmd_opts)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::match'
+		usercmd(prefix..'BufMatch', function(cmd)
+			cmd_fn(cmd, 8, 'Match') -- 01000
+		end, cmd_opts)
+	end
 
 	-- functions to handle shell-commands
 	local exec, exec_get; do
@@ -426,11 +501,26 @@ function M.setup(opts)
 			nargs = 0
 		})
 
+		-- set flag +010 to new buffer
+		autocmd({'BufNew', 'VimEnter'}, {
+			pattern = normalize.file_pattern or nil,
+			callback = function(ev)
+				local buf = ev.buf
+				if not buf then return end
+				local flags = buf_flags[buf]
+				if flags
+					then buf_flags[buf] = bor(flags, 2) -- +010
+					else buf_flags[buf] = 3 -- 011
+				end
+			end
+		})
+
 		if normalize.on then
 			autocmd(normalize.on, {
-				pattern = normalize.file_pattern or nil,
-				callback = function()
-					if active then fn_normalize() end
+				callback = function(ev)
+					if active and buf_has_flags(ev.buf, 2) and get_mode().mode ~= mode_i then
+						fn_normalize()
+					end
 				end
 			})
 		end
@@ -438,8 +528,10 @@ function M.setup(opts)
 		if normalize.on_mode_change then
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
-				callback = function()
-					if active then fn_normalize() end
+				callback = function(ev)
+					if active and buf_has_flags(ev.buf, 2) then
+						fn_normalize()
+					end
 				end
 			})
 		end
