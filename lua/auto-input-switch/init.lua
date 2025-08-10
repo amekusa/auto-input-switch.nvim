@@ -23,6 +23,7 @@
 local ns = (...)
 local vim = vim
 local api = vim.api
+local uv  = vim.uv or vim.loop
 
 local emp = ''
 local type_t = 'table'
@@ -54,7 +55,7 @@ local trim; do
 end
 
 local function detect_os()
-	local uname = vim.uv.os_uname().sysname:lower()
+	local uname = uv.os_uname().sysname:lower()
 	if uname:find('darwin') then
 		return 'macos'
 	elseif uname:find('windows') then
@@ -338,7 +339,7 @@ function M.setup(opts)
 		local win_hide       = api.nvim_win_hide
 		local win_set_config = api.nvim_win_set_config
 		local set_option     = api.nvim_set_option_value
-		local new_timer      = vim.uv.new_timer
+		local new_timer      = uv.new_timer
 
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
