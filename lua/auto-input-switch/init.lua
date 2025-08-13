@@ -219,28 +219,30 @@ function M.setup(opts)
 	})
 
 	do -- create AutoInputSwitchBuf* commands
-		local cmd_fn  = function(cmd, mask, label)
-			local buf = api.nvim_get_current_buf()
-			local flags = buf_flags[buf] or 1 -- 01
-			local arg = cmd.fargs[1]
-			if arg == 'on' then
-				buf_flags[buf] = bor(flags, mask)
-				if not cmd.bang then
-					if label
-						then notify(fmt('activated %s on current buffer', label))
-						else notify('activated on current buffer')
+		local cmd_fn = function(mask, label)
+			return function(cmd)
+				local buf = api.nvim_get_current_buf()
+				local flags = buf_flags[buf] or 1 -- 01
+				local arg = cmd.fargs[1]
+				if arg == 'on' then
+					buf_flags[buf] = bor(flags, mask)
+					if not cmd.bang then
+						if label
+							then notify(fmt('activated %s on current buffer', label))
+							else notify('activated on current buffer')
+						end
 					end
-				end
-			elseif arg == 'off' then
-				buf_flags[buf] = band(flags, flags - mask)
-				if not cmd.bang then
-					if label
-						then notify(fmt('deactivated %s on current buffer', label))
-						else notify('deactivated on current buffer')
+				elseif arg == 'off' then
+					buf_flags[buf] = band(flags, flags - mask)
+					if not cmd.bang then
+						if label
+							then notify(fmt('deactivated %s on current buffer', label))
+							else notify('deactivated on current buffer')
+						end
 					end
+				else
+					notify(fmt('invalid argument: "%s"\nIt must be "on" or "off"', arg), 'ERROR')
 				end
-			else
-				notify(fmt('invalid argument: "%s"\nIt must be "on" or "off"', arg), 'ERROR')
 			end
 		end
 
@@ -252,24 +254,16 @@ function M.setup(opts)
 		}
 
 		cmd_opts.desc = 'Activate/Deactivate auto-input-switch'
-		usercmd(prefix..'Buf', function(cmd)
-			cmd_fn(cmd, 1) -- 01
-		end, cmd_opts)
+		usercmd(prefix..'Buf', cmd_fn(1), cmd_opts)
 
 		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::normalize'
-		usercmd(prefix..'BufNormalize', function(cmd)
-			cmd_fn(cmd, 2, 'Normalize') -- 010
-		end, cmd_opts)
+		usercmd(prefix..'BufNormalize', cmd_fn(2, 'Normalize'), cmd_opts)
 
 		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::restore'
-		usercmd(prefix..'BufRestore', function(cmd)
-			cmd_fn(cmd, 4, 'Restore') -- 0100
-		end, cmd_opts)
+		usercmd(prefix..'BufRestore', cmd_fn(4, 'Restore'), cmd_opts)
 
 		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::match'
-		usercmd(prefix..'BufMatch', function(cmd)
-			cmd_fn(cmd, 8, 'Match') -- 01000
-		end, cmd_opts)
+		usercmd(prefix..'BufMatch', cmd_fn(8, 'Match'), cmd_opts)
 	end
 
 	-- functions to handle shell-commands
