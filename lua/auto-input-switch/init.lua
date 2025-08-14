@@ -177,14 +177,9 @@ function M.setup(opts)
 	--        0100: restore enabled
 	--       01000: match enabled
 
-	local buf_has_flags = function(buf, mask)
-		buf = buf and buf_flags[buf]
-		return buf and band(buf, mask) == mask
-	end
-
-	local ac_locked = false
-	local ac_unlock = function()
-		ac_locked = false
+	local ev_locked = false
+	local ev_unlock = function()
+		ev_locked = false
 	end
 
 	-- Returns whether AIS is active or not.
@@ -475,7 +470,7 @@ function M.setup(opts)
 			end
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
-				ac_locked = true; schedule(ac_unlock)
+				ev_locked = true; schedule(ev_unlock)
 				exec(input_n[3])
 				if label then
 					if type(label) ~= type_t then
@@ -540,7 +535,7 @@ function M.setup(opts)
 			local scope = {buf = 0}
 			valid_context = function(c)
 				if c then
-					if ac_locked or (c.event ~= ev_enter_i and get_mode().mode ~= mode_i) then
+					if ev_locked or (c.event ~= ev_enter_i and get_mode().mode ~= mode_i) then
 						return false
 					end
 					scope.buf = c.buf
@@ -617,7 +612,7 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							ac_locked = true; schedule(ac_unlock)
+							ev_locked = true; schedule(ev_unlock)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
@@ -679,7 +674,7 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								ac_locked = true; schedule(ac_unlock)
+								ev_locked = true; schedule(ev_unlock)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
