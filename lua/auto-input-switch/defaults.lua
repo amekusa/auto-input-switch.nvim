@@ -78,6 +78,8 @@ return {
 		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
 		-- Example:
 		-- file_pattern = { '*.md', '*.txt' },
+
+		debounce = 1000, -- Debounce time in milliseconds for performing multiple Normalizes in a row
 	},
 
 	restore = {

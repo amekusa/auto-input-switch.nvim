@@ -177,6 +177,11 @@ function M.setup(opts)
 	--        0100: restore enabled
 	--       01000: match enabled
 
+	local buf_has_flags = function(buf, mask)
+		buf = buf and buf_flags[buf]
+		return buf and band(buf, mask) == mask
+	end
+
 	local ev_unlocked = true
 	local ev_unlock = function()
 		ev_unlocked = true
@@ -442,6 +447,25 @@ function M.setup(opts)
 		end
 	end
 
+	local debounce; do
+		local now = uv.now
+		local ts = {0, 0, 0} -- timestamps for:
+		-- [1] Normalize
+		-- [2] Restore
+		-- [3] Match
+
+		debounce = function(ts_i, timeout)
+			local t = now()
+			if t > (ts[ts_i] + timeout) then
+				ts[1] = 0
+				ts[2] = 0
+				ts[3] = 0
+				ts[ts_i] = t
+				return true
+			end
+		end
+	end
+
 	-- #normalize
 	if normalize then
 
@@ -480,6 +504,7 @@ function M.setup(opts)
 					end
 					show_popup(label)
 				end
+				return true -- assume successful
 			end
 		end
 
@@ -504,11 +529,15 @@ function M.setup(opts)
 			end
 		})
 
+		local timeout = normalize.debounce
+
 		if normalize.on then
 			autocmd(normalize.on, {
 				callback = function(ev)
-					if active and buf_has_flags(ev.buf, 2) and get_mode().mode ~= mode_i then
-						fn_normalize()
+					if active and ev_unlocked and debounce(1, timeout) and buf_has_flags(ev.buf, 2) and get_mode().mode ~= mode_i then
+						if fn_normalize() then
+							ev_unlocked = false; schedule(ev_unlock)
+						end
 					end
 				end
 			})
@@ -518,8 +547,10 @@ function M.setup(opts)
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
 				callback = function(ev)
-					if active and buf_has_flags(ev.buf, 2) then
-						fn_normalize()
+					if active and ev_unlocked and debounce(1, timeout) and buf_has_flags(ev.buf, 2) then
+						if fn_normalize() then
+							ev_unlocked = false; schedule(ev_unlock)
+						end
 					end
 				end
 			})
