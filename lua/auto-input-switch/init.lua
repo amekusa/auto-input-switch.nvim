@@ -177,9 +177,9 @@ function M.setup(opts)
 	--        0100: restore enabled
 	--       01000: match enabled
 
-	local ev_locked = false
+	local ev_unlocked = true
 	local ev_unlock = function()
-		ev_locked = false
+		ev_unlocked = true
 	end
 
 	-- Returns whether AIS is active or not.
@@ -535,7 +535,7 @@ function M.setup(opts)
 			local scope = {buf = 0}
 			valid_context = function(c)
 				if c then
-					if ev_locked or (c.event ~= ev_enter_i and get_mode().mode ~= mode_i) then
+					if not ev_unlocked or (c.event ~= ev_enter_i and get_mode().mode ~= mode_i) then
 						return false
 					end
 					scope.buf = c.buf
@@ -612,7 +612,7 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							ev_locked = true; schedule(ev_unlock)
+							ev_unlocked = false; schedule(ev_unlock)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
@@ -674,7 +674,7 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								ev_locked = true; schedule(ev_unlock)
+								ev_unlocked = false; schedule(ev_unlock)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
