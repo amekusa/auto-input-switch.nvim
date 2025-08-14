@@ -470,7 +470,6 @@ function M.setup(opts)
 			end
 			-- switch to input_n
 			if input_n[1] and (async or input_n[1] ~= input_i) then
-				ev_locked = true; schedule(ev_unlock)
 				exec(input_n[3])
 				if label then
 					if type(label) ~= type_t then
