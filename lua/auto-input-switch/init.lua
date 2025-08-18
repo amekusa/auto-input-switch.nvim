@@ -606,7 +606,7 @@ function M.setup(opts)
 		-- #match
 		if match then
 
-			-- convert `match.languages` to `map`, which is an array sorted by `priority`
+			-- convert `match.languages` to more suitable form
 			local map = {}; do
 				local regex = vim.regex
 				local insert = table.insert
