@@ -177,11 +177,6 @@ function M.setup(opts)
 	--        0100: restore enabled
 	--       01000: match enabled
 
-	local buf_has_flags = function(buf, mask)
-		buf = buf and buf_flags[buf]
-		return buf and band(buf, mask) == mask
-	end
-
 	local ev_unlocked = true
 	local ev_unlock = function()
 		ev_unlocked = true
@@ -447,6 +442,31 @@ function M.setup(opts)
 		end
 	end
 
+	-- creates an autocmd to initialize flags of new buffer
+	local buf_init_flags; do
+		local on = {'BufNew', 'VimEnter'}
+		buf_init_flags = function(pat, mask)
+			autocmd(on, {
+				pattern = pat,
+				callback = function(ev)
+					local buf = ev.buf
+					if not buf then return end
+					local flags = buf_flags[buf]; if flags
+						then buf_flags[buf] = bor(flags, mask)
+						else buf_flags[buf] = mask + 1 -- +01
+					end
+				end
+			})
+		end
+	end
+
+	-- check the flags of the given buffer
+	local buf_has_flags = function(buf, mask)
+		buf = buf and buf_flags[buf]
+		return buf and band(buf, mask) == mask
+	end
+
+	-- update timestamps and checks the given debounce time
 	local debounce; do
 		local now = uv.now
 		local ts = {0, 0, 0} -- timestamps for:
@@ -483,6 +503,10 @@ function M.setup(opts)
 			})
 		end
 
+		-- set flag +010 to new buffer
+		buf_init_flags(normalize.file_pattern or nil, 2) -- +010
+
+		-- normalizes the input source
 		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
 			input_i = trim(r.stdout)
@@ -508,25 +532,13 @@ function M.setup(opts)
 			end
 		end
 
+		-- expose as a public method
 		M.normalize = fn_normalize
 
+		-- expose as a command
 		usercmd(prefix..'Normalize', fn_normalize, {
 			desc = 'Normalize the input source',
 			nargs = 0
-		})
-
-		-- set flag +010 to new buffer
-		autocmd({'BufNew', 'VimEnter'}, {
-			pattern = normalize.file_pattern or nil,
-			callback = function(ev)
-				local buf = ev.buf
-				if not buf then return end
-				local flags = buf_flags[buf]
-				if flags
-					then buf_flags[buf] = bor(flags, 2) -- +010
-					else buf_flags[buf] = 3 -- 011
-				end
-			end
 		})
 
 		local timeout = normalize.debounce
