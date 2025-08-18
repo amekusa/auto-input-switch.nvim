@@ -609,9 +609,10 @@ function M.setup(opts)
 			-- convert `match.languages` to `map`, which is an array sorted by `priority`
 			local map = {}; do
 				local regex = vim.regex
+				local insert = table.insert
 				for k,v in pairs(match.languages) do
 					if v.enable then
-						table.insert(map, {
+						insert(map, {
 							name = k,
 							priority = v.priority,
 							pattern = regex(v.pattern),
