@@ -165,6 +165,7 @@ function M.setup(opts)
 	local usercmd  = api.nvim_create_user_command
 	local autocmd  = api.nvim_create_autocmd
 	local get_mode = api.nvim_get_mode
+	local buf_get_curr = api.nvim_get_current_buf
 
 	local ev_enter_i = 'InsertEnter'
 	local mode_i = 'i'
@@ -216,7 +217,7 @@ function M.setup(opts)
 	do -- create AutoInputSwitchBuf* commands
 		local cmd_fn = function(mask, label)
 			return function(cmd)
-				local buf = api.nvim_get_current_buf()
+				local buf = buf_get_curr()
 				local flags = buf_flags[buf] or 1 -- 01
 				local arg = cmd.fargs[1]
 				if arg == 'on' then
@@ -635,17 +636,16 @@ function M.setup(opts)
 				end
 			end
 
+			-- matches the input source with the language of the text near the cursor
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
 			local printable = '%S'
-			local fn_match = function(c)
-				if not valid_context(c) then return end
-
+			local fn_match = function(buf)
 				local found -- language name to find
 				local row, col = unpack(win_get_cursor(0)) -- cusor position
 				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
-				local lines = buf_get_lines(c and c.buf or 0, row_top - 1, row + lines_below, false) -- lines to search in
+				local lines = buf_get_lines(buf or 0, row_top - 1, row + lines_below, false) -- lines to search in
 				local n_lines = #lines
 				local cur = row - row_top + 1 -- the index of the current line in `lines`
 				local line = lines[cur] -- current line
@@ -655,7 +655,6 @@ function M.setup(opts)
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							ev_unlocked = false; schedule(ev_unlock)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
@@ -668,6 +667,7 @@ function M.setup(opts)
 								end
 								show_popup(label)
 							end
+							return true
 						end
 					end
 
@@ -717,7 +717,6 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								ev_unlocked = false; schedule(ev_unlock)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
@@ -730,6 +729,7 @@ function M.setup(opts)
 									end
 									show_popup(label)
 								end
+								return true
 							end
 							return
 						end
@@ -737,8 +737,10 @@ function M.setup(opts)
 				end
 			end
 
+			-- expose as a public method
 			M.match = fn_match
 
+			-- expose as a command
 			usercmd(prefix..'Match', fn_match, {
 				desc = 'Match the input source with the characters near the cursor',
 				nargs = 0
