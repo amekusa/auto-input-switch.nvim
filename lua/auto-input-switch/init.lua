@@ -185,6 +185,9 @@ function M.setup(opts)
 		end
 	})
 
+	-- event locking;
+	-- this is for preventing Normalize, Restore, and Match
+	-- from executing in the same event loop
 	local ev_unlocked = true
 	local ev_unlock = function()
 		ev_unlocked = true
