@@ -178,6 +178,13 @@ function M.setup(opts)
 	--        0100: restore enabled
 	--       01000: match enabled
 
+	-- clear the flags of deleted buffer
+	autocmd('BufWipeout', {
+		callback = function(ev)
+			buf_flags[ev.buf] = nil
+		end
+	})
+
 	local ev_unlocked = true
 	local ev_unlock = function()
 		ev_unlocked = true
