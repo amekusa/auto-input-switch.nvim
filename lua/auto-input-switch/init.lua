@@ -455,13 +455,12 @@ function M.setup(opts)
 
 	-- creates an autocmd to initialize flags of new buffer
 	local buf_init_flags; do
-		local on = {'BufNew', 'VimEnter'}
+		local on = 'FileType'
 		buf_init_flags = function(pat, mask)
 			autocmd(on, {
 				pattern = pat,
 				callback = function(ev)
 					local buf = ev.buf
-					if not buf then return end
 					local flags = buf_flags[buf]; if flags
 						then buf_flags[buf] = bor(flags, mask)
 						else buf_flags[buf] = mask + 1 -- +01
@@ -503,7 +502,6 @@ function M.setup(opts)
 		--- auto-detect normal-input
 		if not input_n[1] then
 			autocmd(ev_enter_i, {
-				pattern = normalize.file_pattern or nil,
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
@@ -515,7 +513,7 @@ function M.setup(opts)
 		end
 
 		-- set flag +010 to new buffer
-		buf_init_flags(normalize.file_pattern or nil, 2) -- +010
+		buf_init_flags(normalize.filetypes or nil, 2) -- +010
 
 		-- normalizes the input source
 		local label = popup and popup.labels.normal_input

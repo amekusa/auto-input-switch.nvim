@@ -75,9 +75,9 @@ return {
 			--   :h mode()
 			'[iR]:n',
 		},
-		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
+		filetypes = '*', -- Filetypes to enable Normalize
 		-- Example:
-		-- file_pattern = { '*.md', '*.txt' },
+		-- filetypes = { 'markdown', 'text' },
 
 		debounce = 1000, -- Debounce time in milliseconds for performing multiple Normalizes in a row
 	},
