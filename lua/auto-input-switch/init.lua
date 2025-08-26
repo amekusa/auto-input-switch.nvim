@@ -499,6 +499,9 @@ function M.setup(opts)
 	-- #normalize
 	if normalize then
 
+		-- set flag +010 to new buffer
+		buf_init_flags(normalize.filetypes or nil, 2) -- +010
+
 		--- auto-detect normal-input
 		if not input_n[1] then
 			autocmd(ev_enter_i, {
@@ -511,9 +514,6 @@ function M.setup(opts)
 				end
 			})
 		end
-
-		-- set flag +010 to new buffer
-		buf_init_flags(normalize.filetypes or nil, 2) -- +010
 
 		-- normalizes the input source
 		local label = popup and popup.labels.normal_input
