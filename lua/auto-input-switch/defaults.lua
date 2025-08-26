@@ -117,9 +117,9 @@ return {
 			'InsertEnter',
 			'FocusGained',
 		},
-		file_pattern = false, -- File pattern to enable Match (Set false to any file)
+		filetypes = '*', -- Filetypes to enable Match
 		-- Example:
-		-- file_pattern = { '*.md', '*.txt' },
+		-- filetypes = { 'markdown', 'text' },
 
 		languages = {
 			-- Languages to match with the characters. Set `enable` to true for the ones you want to use.
