@@ -776,6 +776,8 @@ function M.setup(opts)
 		-- #restore
 		if restore then
 
+			-- set flag +0100 to new buffer
+			buf_init_flags(restore.filetypes or nil, 4) -- +0100
 			-- create a reverse-lookup table of lang_inputs
 			local lang_lookup; if popup then
 				lang_lookup = {}

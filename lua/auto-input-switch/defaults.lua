@@ -92,9 +92,9 @@ return {
 			'InsertEnter',
 			'FocusGained',
 		},
-		file_pattern = false, -- File pattern to enable Restore (Set false to any file)
+		filetypes = '*', -- Filetypes to enable Restore
 		-- Example:
-		-- file_pattern = { '*.md', '*.txt' },
+		-- filetypes = { 'markdown', 'text' },
 
 		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
 		-- When a Restore is about to happen, the plugin checks the characters near the cursor at the moment.
