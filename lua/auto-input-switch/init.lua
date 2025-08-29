@@ -604,7 +604,6 @@ function M.setup(opts)
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
-
 		local lang_labels = popup and popup.labels.lang_inputs
 
 		-- sanitize entries of lang_inputs
@@ -753,16 +752,20 @@ function M.setup(opts)
 			M.match = fn_match
 
 			-- expose as a command
-			usercmd(prefix..'Match', fn_match, {
+			usercmd(prefix..'Match', function() fn_match() end, {
 				desc = 'Match the input source with the characters near the cursor',
 				nargs = 0
 			})
 
 			if match.on then
 				autocmd(match.on, {
-					pattern = match.file_pattern or nil,
-					callback = function()
-						if active then fn_match() end
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and buf_has_flags(buf, 8) then
+							if fn_match(buf) then
+								ev_unlocked = false; schedule(ev_unlock)
+							end
+						end
 					end
 				})
 			end
@@ -770,8 +773,13 @@ function M.setup(opts)
 			if match.on_mode_change then
 				autocmd('ModeChanged', {
 					pattern = match.on_mode_change,
-					callback = function()
-						if active then fn_match() end
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and buf_has_flags(buf, 8) then
+							if fn_match(buf) then
+								ev_unlocked = false; schedule(ev_unlock)
+							end
+						end
 					end
 				})
 			end
@@ -793,15 +801,13 @@ function M.setup(opts)
 				end
 			end
 
+			-- restores the input source to the one used before the last Normalize
 			local exclude = restore.exclude_pattern
-			local fn_restore = function(c)
-				if not active or not valid_context(c) then return end
-
-				-- restore input_i that was saved on the last normalize
+			local fn_restore = function(buf)
 				if input_i and (input_i ~= input_n[1]) then
 					if exclude then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
-						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
+						local line = buf_get_lines(buf or 0, row - 1, row, true)[1]
 						if find(sub(line, col, col + 1), exclude) then return end
 					end
 					local lang = lang_lookup[input_i]
@@ -825,18 +831,24 @@ function M.setup(opts)
 				end
 			end
 
+			-- expose as a public method
 			M.restore = fn_restore
 
-			usercmd(prefix..'Restore', fn_restore, {
+			-- expose as a command
+			usercmd(prefix..'Restore', function() fn_restore() end, {
 				desc = 'Restore the input source to the state before tha last normalization',
 				nargs = 0
 			})
 
 			if restore.on then
 				autocmd(restore.on, {
-					pattern = restore.file_pattern or nil,
-					callback = function()
-						if active then fn_restore() end
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and buf_has_flags(buf, 4) then
+							if fn_restore(buf) then
+								ev_unlocked = false; schedule(ev_unlock)
+							end
+						end
 					end
 				})
 			end
@@ -844,8 +856,13 @@ function M.setup(opts)
 			if restore.on_mode_change then
 				autocmd('ModeChanged', {
 					pattern = restore.on_mode_change,
-					callback = function()
-						if active then fn_restore() end
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and buf_has_flags(buf, 4) then
+							if fn_restore(buf) then
+								ev_unlocked = false; schedule(ev_unlock)
+							end
+						end
 					end
 				})
 			end
