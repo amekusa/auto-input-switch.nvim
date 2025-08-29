@@ -456,11 +456,12 @@ function M.setup(opts)
 	-- creates an autocmd to initialize flags of new buffer
 	local buf_init_flags; do
 		local on = 'FileType'
-		buf_init_flags = function(pat, mask)
+		buf_init_flags = function(pat, mask, cond)
 			autocmd(on, {
 				pattern = pat,
 				callback = function(ev)
 					local buf = ev.buf
+					if cond and not cond(buf) then return end
 					local flags = buf_flags[buf]; if flags
 						then buf_flags[buf] = bor(flags, mask)
 						else buf_flags[buf] = mask + 1 -- +01
