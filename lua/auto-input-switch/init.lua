@@ -581,23 +581,6 @@ function M.setup(opts)
 
 	if restore or match then
 
-		local valid_context; do
-			local get_option = api.nvim_get_option_value
-			local buflisted = 'buflisted'
-			local scope = {buf = 0}
-			valid_context = function(c)
-				if c then
-					if not ev_unlocked or (c.event ~= ev_enter_i and get_mode().mode ~= mode_i) then
-						return false
-					end
-					scope.buf = c.buf
-				else
-					scope.buf = 0
-				end
-				return get_option(buflisted, scope)
-			end
-		end
-
 		local max = function(a, b)
 			return a > b and a or b
 		end
