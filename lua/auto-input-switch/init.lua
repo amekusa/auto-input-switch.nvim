@@ -471,13 +471,13 @@ function M.setup(opts)
 		end
 	end
 
-	-- check the flags of the given buffer
+	-- checks the flags of the given buffer
 	local buf_has_flags = function(buf, mask)
 		buf = buf and buf_flags[buf]
 		return buf and band(buf, mask) == mask
 	end
 
-	-- update timestamps and checks the given debounce time
+	-- updates timestamps and checks the given debounce time
 	local debounce; do
 		local now = uv.now
 		local ts = {0, 0, 0} -- timestamps for:
