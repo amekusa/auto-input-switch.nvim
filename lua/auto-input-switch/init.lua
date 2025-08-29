@@ -173,10 +173,10 @@ function M.setup(opts)
 	local buf_flags = {}
 	--   key: <int> buffer
 	-- value: <int> bitmask
-	--          01(1): activated
-	--         010(2): normalize enabled
-	--        0100(4): restore enabled
-	--       01000(8): match enabled
+	--       01(1): activated
+	--      010(2): normalize enabled
+	--     0100(4): restore enabled
+	--    01000(8): match enabled
 
 	-- clear the flags of deleted buffer
 	autocmd('BufWipeout', {
