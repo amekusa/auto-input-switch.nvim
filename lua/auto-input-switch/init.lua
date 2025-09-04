@@ -170,6 +170,7 @@ function M.setup(opts)
 	local ev_enter_i = 'InsertEnter'
 	local mode_i = 'i'
 
+	-- flags for each buffer
 	local buf_flags = {}
 	--   key: <int> buffer
 	-- value: <int> bitmask
@@ -178,12 +179,36 @@ function M.setup(opts)
 	--     0100(4): restore enabled
 	--    01000(8): match enabled
 
-	-- clear the flags of deleted buffer
+	-- clear the flags for deleted buffer
 	autocmd('BufWipeout', {
 		callback = function(ev)
 			buf_flags[ev.buf] = nil
 		end
 	})
+
+	-- create an autocmd that initializes the flags for new buffer
+	local buf_init_flags; do
+		local on = 'FileType'
+		buf_init_flags = function(pat, mask, cond)
+			autocmd(on, {
+				pattern = pat,
+				callback = function(ev)
+					local buf = ev.buf
+					if cond and not cond(buf) then return end
+					local flags = buf_flags[buf]; if flags
+						then buf_flags[buf] = bor(flags, mask)
+						else buf_flags[buf] = mask + 1 -- +01
+					end
+				end
+			})
+		end
+	end
+
+	-- checks the flags of the given buffer
+	local buf_has_flags = function(buf, mask)
+		buf = buf and buf_flags[buf]
+		return buf and band(buf, mask) == mask
+	end
 
 	-- event locking;
 	-- this is for preventing Normalize, Restore, and Match
@@ -451,30 +476,6 @@ function M.setup(opts)
 			timer:start(duration, 0, on_timeout)
 			schedule(activate)
 		end
-	end
-
-	-- creates an autocmd to initialize flags of new buffer
-	local buf_init_flags; do
-		local on = 'FileType'
-		buf_init_flags = function(pat, mask, cond)
-			autocmd(on, {
-				pattern = pat,
-				callback = function(ev)
-					local buf = ev.buf
-					if cond and not cond(buf) then return end
-					local flags = buf_flags[buf]; if flags
-						then buf_flags[buf] = bor(flags, mask)
-						else buf_flags[buf] = mask + 1 -- +01
-					end
-				end
-			})
-		end
-	end
-
-	-- checks the flags of the given buffer
-	local buf_has_flags = function(buf, mask)
-		buf = buf and buf_flags[buf]
-		return buf and band(buf, mask) == mask
 	end
 
 	-- updates timestamps and checks the given debounce time
