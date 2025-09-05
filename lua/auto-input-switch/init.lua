@@ -552,12 +552,12 @@ function M.setup(opts)
 			nargs = 0
 		})
 
-		local timeout = normalize.debounce
+		local debnc = normalize.debounce
 
 		if normalize.on then
 			autocmd(normalize.on, {
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, timeout) and buf_has_flags(ev.buf, 2) and get_mode().mode ~= mode_i then
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 2) and get_mode().mode ~= mode_i then
 						if fn_normalize() then
 							ev_unlocked = false; schedule(ev_unlock)
 						end
@@ -570,7 +570,7 @@ function M.setup(opts)
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, timeout) and buf_has_flags(ev.buf, 2) then
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 2) then
 						if fn_normalize() then
 							ev_unlocked = false; schedule(ev_unlock)
 						end
