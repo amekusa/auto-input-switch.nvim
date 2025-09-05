@@ -79,7 +79,7 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time in milliseconds
+		debounce = 1000, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Normalize multiple times in a row too quickly.
 	},
 
@@ -97,7 +97,7 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time in milliseconds
+		debounce = 1000, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Restore multiple times in a row too quickly.
 
 		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
@@ -125,7 +125,7 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time in milliseconds
+		debounce = 1000, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Match multiple times in a row too quickly.
 
 		languages = {
