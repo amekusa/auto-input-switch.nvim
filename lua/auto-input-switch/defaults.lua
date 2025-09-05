@@ -79,7 +79,8 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time in milliseconds for performing multiple Normalizes in a row
+		debounce = 1000, -- Debounce time in milliseconds
+		-- This prevents the plugin from attempting Normalize multiple times in a row too quickly.
 	},
 
 	restore = {
@@ -95,6 +96,9 @@ return {
 		filetypes = '*', -- Filetypes to enable Restore
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
+
+		debounce = 1000, -- Debounce time in milliseconds
+		-- This prevents the plugin from attempting Restore multiple times in a row too quickly.
 
 		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
 		-- When a Restore is about to happen, the plugin checks the characters near the cursor at the moment.
@@ -120,6 +124,9 @@ return {
 		filetypes = '*', -- Filetypes to enable Match
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
+
+		debounce = 1000, -- Debounce time in milliseconds
+		-- This prevents the plugin from attempting Match multiple times in a row too quickly.
 
 		languages = {
 			-- Languages to match with the characters. Set `enable` to true for the ones you want to use.
