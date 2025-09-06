@@ -78,8 +78,9 @@ function M.setup(opts)
 	if not oss.enable then return end
 
 	-- bit-wise operations module
-	local band, bor; do
+	local bnot, band, bor; do
 		local bit = require('bit')
+		bnot = bit.bnot
 		band = bit.band
 		bor  = bit.bor
 	end
@@ -265,7 +266,7 @@ function M.setup(opts)
 						end
 					end
 				elseif arg == 'off' then
-					buf_flags[buf] = band(flags, flags - mask)
+					buf_flags[buf] = band(flags, bnot(mask))
 					if not cmd.bang then
 						if label
 							then notify(fmt('deactivated %s on current buffer', label))
