@@ -24,6 +24,7 @@ local ns = (...)
 local vim = vim
 local api = vim.api
 local uv  = vim.uv or vim.loop
+local bo  = vim.bo
 
 local emp = ''
 local type_t = 'table'
@@ -502,7 +503,7 @@ function M.setup(opts)
 	if normalize then
 
 		-- set flag +010 to new buffer
-		buf_init_flags(normalize.filetypes or nil, 2) -- +010
+		buf_init_flags(normalize.filetypes or nil, 2, normalize.condition) -- +010
 
 		--- auto-detect normal-input
 		if not input_n[1] then
@@ -586,6 +587,10 @@ function M.setup(opts)
 			return a > b and a or b
 		end
 
+		local cond = function(buf) -- default condition
+			return bo[buf].modifiable
+		end
+
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
 		local lang_labels = popup and popup.labels.lang_inputs
@@ -600,7 +605,10 @@ function M.setup(opts)
 		if match then
 
 			-- set flag +01000 to new buffer
-			buf_init_flags(match.filetypes or nil, 8) -- +01000
+			buf_init_flags(
+				match.filetypes or nil, 8, -- +01000
+				match.condition or (match.condition == nil and cond)
+			)
 
 			-- convert `match.languages` to more suitable form for faster processing
 			local map = {}; do
@@ -775,7 +783,10 @@ function M.setup(opts)
 		if restore then
 
 			-- set flag +0100 to new buffer
-			buf_init_flags(restore.filetypes or nil, 4) -- +0100
+			buf_init_flags(
+				restore.filetypes or nil, 4, -- +0100
+				restore.condition or (restore.condition == nil and cond)
+			)
 
 			-- create a reverse-lookup table of lang_inputs
 			local lang_lookup; if popup then

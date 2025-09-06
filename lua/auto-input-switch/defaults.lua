@@ -80,7 +80,13 @@ return {
 		-- filetypes = { 'markdown', 'text' },
 
 		debounce = 1000, -- Debounce time (ms)
-		-- This prevents the plugin from attempting Normalize multiple times in a row too quickly.
+		-- This prevents the plugin from attempting Normalize multiple times too quickly in a row.
+
+		condition = nil, -- Conditional function to enable Normalize
+		-- Example: This enables Normalize only in listed buffers
+		-- condition = function(buf)
+		--   return vim.bo[buf].buflisted
+		-- end,
 	},
 
 	restore = {
@@ -98,7 +104,11 @@ return {
 		-- filetypes = { 'markdown', 'text' },
 
 		debounce = 1000, -- Debounce time (ms)
-		-- This prevents the plugin from attempting Restore multiple times in a row too quickly.
+		-- This prevents the plugin from attempting Restore multiple times too quickly in a row.
+
+		condition = nil, -- Conditional function to enable Restore
+		-- By default, it checks whether the buffer is 'modifiable'.
+		-- Set false to skip this check.
 
 		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
 		-- When a Restore is about to happen, the plugin checks the characters near the cursor at the moment.
@@ -126,7 +136,11 @@ return {
 		-- filetypes = { 'markdown', 'text' },
 
 		debounce = 1000, -- Debounce time (ms)
-		-- This prevents the plugin from attempting Match multiple times in a row too quickly.
+		-- This prevents the plugin from attempting Match multiple times too quickly in a row.
+
+		condition = nil, -- Conditional function to enable Match
+		-- By default, it checks whether the buffer is 'modifiable'.
+		-- Set false to skip this check.
 
 		languages = {
 			-- Languages to match with the characters. Set `enable` to true for the ones you want to use.
