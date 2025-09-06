@@ -286,16 +286,16 @@ function M.setup(opts)
 			end
 		}
 
-		cmd_opts.desc = 'Activate/Deactivate auto-input-switch'
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch on current buffer'
 		usercmd(prefix..'Buf', cmd_fn(1), cmd_opts)
 
-		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::normalize'
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch:normalize on current buffer'
 		usercmd(prefix..'BufNormalize', cmd_fn(2, 'Normalize'), cmd_opts)
 
-		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::restore'
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch:restore on current buffer'
 		usercmd(prefix..'BufRestore', cmd_fn(4, 'Restore'), cmd_opts)
 
-		cmd_opts.desc = 'Activate/Deactivate auto-input-switch::match'
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch:match on current buffer'
 		usercmd(prefix..'BufMatch', cmd_fn(8, 'Match'), cmd_opts)
 	end
 
