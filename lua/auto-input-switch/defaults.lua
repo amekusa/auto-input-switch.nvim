@@ -60,11 +60,12 @@ return {
 
 		enable = true, -- Enable Normalize?
 		on = { -- Events to trigger Normalize (:h events)
-			'InsertLeave',
 			'BufLeave',
 			'WinLeave',
 			'FocusLost',
+			'FocusGained',
 			'ExitPre',
+			'QuitPre',
 		},
 		on_mode_change = {
 			-- If this is not false, Normalize is triggered by `ModeChanged` event.
@@ -73,7 +74,7 @@ return {
 			--   :h autocmd-pattern
 			--   :h ModeChanged
 			--   :h mode()
-			'[iR]:n',
+			'[iR]:n', -- from Insert/Replace mode to Normal mode
 		},
 		filetypes = '*', -- Filetypes to enable Normalize
 		-- Example:
@@ -96,8 +97,10 @@ return {
 
 		enable = true, -- Enable Restore?
 		on = { -- Events to trigger Restore (:h events)
-			'InsertEnter',
 			'FocusGained',
+		},
+		on_mode_change = {
+			'n:[iR]', -- from Normal mode to Insert/Replace mode
 		},
 		filetypes = '*', -- Filetypes to enable Restore
 		-- Example:
@@ -128,8 +131,10 @@ return {
 
 		enable = false, -- Enable Match?
 		on = { -- Events to trigger Match (:h events)
-			'InsertEnter',
 			'FocusGained',
+		},
+		on_mode_change = {
+			'[nvV]:[iR]', -- from Normal mode to Insert/Replace mode
 		},
 		filetypes = '*', -- Filetypes to enable Match
 		-- Example:
