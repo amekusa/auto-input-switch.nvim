@@ -498,6 +498,16 @@ function M.setup(opts)
 				return true
 			end
 		end
+
+		-- reset timestamps on switching buffers
+		autocmd('BufEnter', {
+			callback = function()
+				ev_unlocked = true -- is this necessary?
+				ts[1] = 0
+				ts[2] = 0
+				ts[3] = 0
+			end
+		})
 	end
 
 	-- #normalize
