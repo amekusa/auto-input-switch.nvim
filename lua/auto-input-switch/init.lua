@@ -166,11 +166,6 @@ function M.setup(opts)
 	local schedule = vim.schedule
 	local usercmd  = api.nvim_create_user_command
 	local autocmd  = api.nvim_create_autocmd
-	local get_mode = api.nvim_get_mode
-	local buf_get_curr = api.nvim_get_current_buf
-
-	local ev_enter_i = 'InsertEnter'
-	local mode_i = 'i'
 
 	-- flags for each buffer
 	local buf_flags = {}
@@ -252,6 +247,7 @@ function M.setup(opts)
 	})
 
 	do -- create AutoInputSwitchBuf* commands
+		local buf_get_curr = api.nvim_get_current_buf
 		local cmd_fn = function(mask, label)
 			return function(cmd)
 				local buf = buf_get_curr()
@@ -301,6 +297,7 @@ function M.setup(opts)
 
 	-- functions to handle shell-commands
 	local exec, exec_get; do
+		local shellescape = vim.fn.shellescape
 		local split = vim.split
 		local split_sep = ' '
 		local system = vim.system
@@ -518,7 +515,7 @@ function M.setup(opts)
 
 		--- auto-detect normal-input
 		if not input_n[1] then
-			autocmd(ev_enter_i, {
+			autocmd('InsertEnter', {
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
@@ -567,6 +564,8 @@ function M.setup(opts)
 		local debnc = normalize.debounce
 
 		if normalize.on then
+			local get_mode = api.nvim_get_mode
+			local mode_i = 'i'
 			autocmd(normalize.on, {
 				callback = function(ev)
 					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i then
