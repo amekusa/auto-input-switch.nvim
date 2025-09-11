@@ -136,7 +136,7 @@ function M.setup(opts)
 	--   [3] = <CmdSetFormatted>,
 	--   cmd_set = <CmdSet>,
 	-- }
-	local function sanitize_input(input)
+	local function format_input(input)
 		if not input then
 			return {false, false, emp}
 		end
@@ -147,7 +147,7 @@ function M.setup(opts)
 		return {input, false, cmd_set:format(input)}
 	end
 
-	local input_n = sanitize_input(oss.normal_input)
+	local input_n = format_input(oss.normal_input)
 	local input_i
 
 	local popup     = opts.popup.enable     and opts.popup
@@ -519,7 +519,7 @@ function M.setup(opts)
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
-						sanitize_input(input_n)
+						format_input(input_n)
 					end)
 					return true -- oneshot
 				end
@@ -608,7 +608,7 @@ function M.setup(opts)
 		-- sanitize entries of lang_inputs
 		local lang_inputs = {}
 		for k,v in pairs(oss.lang_inputs) do
-			lang_inputs[k] = sanitize_input(v)
+			lang_inputs[k] = format_input(v)
 		end
 
 		-- #match
