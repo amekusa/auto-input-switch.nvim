@@ -145,11 +145,7 @@ function M.setup(opts)
 			return {false, false, emp}
 		end
 		if type(input) == type_t then
-			return {
-				input[1],
-				input[2],
-				fmt(input.cmd_set or cmd_set or emp, input[2] or input[1] or emp)
-			}
+			return {input[1], input[2], fmt(input.cmd_set or cmd_set or emp, input[2] or input[1] or emp)}
 		end
 		return {input, false, cmd_set:format(input)}
 	end
