@@ -236,7 +236,7 @@ function M.setup(opts)
 			active = false
 			notify('deactivated')
 		else
-			notify('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
+			notify(fmt('invalid argument: "%s"\nIt must be "on" or "off"', arg), 'ERROR')
 		end
 	end, {
 		desc = 'Activate/Deactivate auto-input-switch',
