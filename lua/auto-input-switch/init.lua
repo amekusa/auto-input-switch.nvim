@@ -26,6 +26,10 @@ local api = vim.api
 local uv  = vim.uv or vim.loop
 local bo  = vim.bo
 
+local fmt  = string.format
+local find = string.find
+local sub  = string.sub
+
 local emp = ''
 local type_t = 'table'
 local type_s = 'string'
@@ -141,8 +145,11 @@ function M.setup(opts)
 			return {false, false, emp}
 		end
 		if type(input) == type_t then
-			input[3] = (input.cmd_set or cmd_set or emp):format(input[2] or input[1] or emp)
-			return input
+			return {
+				input[1],
+				input[2],
+				fmt(input.cmd_set or cmd_set or emp, input[2] or input[1] or emp)
+			}
 		end
 		return {input, false, cmd_set:format(input)}
 	end
@@ -160,9 +167,6 @@ function M.setup(opts)
 	local prefix = opts.prefix
 	opts = nil -- #GC
 
-	local fmt  = string.format
-	local find = string.find
-	local sub  = string.sub
 	local schedule = vim.schedule
 	local usercmd  = api.nvim_create_user_command
 	local autocmd  = api.nvim_create_autocmd
