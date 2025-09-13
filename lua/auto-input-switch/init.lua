@@ -801,6 +801,9 @@ function M.setup(opts)
 			-- create a reverse-lookup table of lang_inputs
 			local lang_lookup; if popup then
 				lang_lookup = {}
+				--   key: <InputName>
+				-- value: <LangCode>
+
 				for k,v in pairs(lang_inputs) do
 					if v[1] then
 						lang_lookup[v[1]] = k
