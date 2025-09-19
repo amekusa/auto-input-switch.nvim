@@ -31,8 +31,8 @@ local find = string.find
 local sub  = string.sub
 
 local emp = ''
-local type_t = 'table'
-local type_s = 'string'
+local t_tbl = 'table'
+local t_str = 'string'
 
 -- lua 5.1 vs 5.2 compatibility
 local unpack = unpack or table.unpack
@@ -72,7 +72,7 @@ end
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
-	if opts and type(opts) == type_t
+	if opts and type(opts) == t_tbl
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
 	end
@@ -110,8 +110,8 @@ function M.setup(opts)
 				for i = 1, #args do
 					item = args[i]
 					t = type(item)
-					if t ~= type_s then
-						if t == type_t
+					if t ~= t_str then
+						if t == t_tbl
 							then item = inspect(item)
 							else item = t..'('..item..')'
 						end
@@ -136,7 +136,7 @@ function M.setup(opts)
 		local sep = ' '
 
 		format_cmd = function(cmd, arg)
-			if type(cmd) ~= type_t then -- assume string
+			if type(cmd) ~= t_tbl then -- assume string
 				cmd = split(cmd, sep)
 			end
 			local r = {}
@@ -166,7 +166,7 @@ function M.setup(opts)
 		if not input then
 			return {}
 		end
-		if type(input) == type_t then
+		if type(input) == t_tbl then
 			local name     = input[1]
 			local name_alt = input[2]
 			return {
@@ -565,8 +565,8 @@ function M.setup(opts)
 			if input_n[1] and (async or input_n[1] ~= input_i) then
 				exec(input_n[3])
 				if label then
-					if type(label) ~= type_t then
-						if type(label) == type_s
+					if type(label) ~= t_tbl then
+						if type(label) == t_str
 							then label = {label, #label}
 							else label = {'A', 1}
 						end
@@ -696,8 +696,8 @@ function M.setup(opts)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
-								if type(label) ~= type_t then
-									if type(label) == type_s
+								if type(label) ~= t_tbl then
+									if type(label) == t_str
 										then label = {label, #label}
 										else label = {found, #found}
 									end
@@ -758,8 +758,8 @@ function M.setup(opts)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
-									if type(label) ~= type_t then
-										if type(label) == type_s
+									if type(label) ~= t_tbl then
+										if type(label) == t_str
 											then label = {label, #label}
 											else label = {found, #found}
 										end
@@ -852,8 +852,8 @@ function M.setup(opts)
 						exec(input[3])
 						if popup then
 							local label = lang_labels[lang]
-							if type(label) ~= type_t then
-								if type(label) == type_s
+							if type(label) ~= t_tbl then
+								if type(label) == t_str
 									then label = {label, #label}
 									else label = {lang, #lang}
 								end
