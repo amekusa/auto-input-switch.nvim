@@ -130,24 +130,53 @@ function M.setup(opts)
 		log('memory usage before setup:', mem1..' kb')
 	end
 
-	local cmd_get = oss.cmd_get
-	local cmd_set = oss.cmd_set
+	-- Format: <table> Cmd = { <string>, ... }
+	local format_cmd; do
+		local split = vim.split
+		local sep = ' '
 
-	-- #NOTE:
-	-- input format: {
-	--   [1] = <InputName>,
-	--   [2] = <inputNameAlt>,
-	--   [3] = <CmdSetFormatted>,
-	--   cmd_set = <CmdSet>,
+		format_cmd = function(cmd, arg)
+			if type(cmd) ~= type_t then -- assume string
+				cmd = split(cmd, sep)
+			end
+			local r = {}
+			if arg then
+				for i = 1, #cmd do
+					r[i] = fmt(cmd[i], arg)
+				end
+			else
+				for i = 1, #cmd do
+					r[i] = cmd[i]
+				end
+			end
+			return r
+		end
+	end
+
+	local cmd_get = format_cmd(oss.cmd_get)
+	local cmd_set = format_cmd(oss.cmd_set)
+
+	-- Format: <table> Input = {
+	--   [1] = <string> InputName,
+	--   [2] = <string> inputNameAlt,
+	--   [3] = <table> Cmd,
+	--   cmd_set = <string> CmdString (Optional)
 	-- }
-	local function format_input(input)
+	local format_input = function(input)
 		if not input then
-			return {false, false, emp}
+			return {}
 		end
 		if type(input) == type_t then
-			return {input[1], input[2], fmt(input.cmd_set or cmd_set or emp, input[2] or input[1] or emp)}
+			local name     = input[1]
+			local name_alt = input[2]
+			return {
+				name,
+				name_alt,
+				input[3] or format_cmd(input.cmd_set or cmd_set, name_alt or name)
+			}
 		end
-		return {input, false, cmd_set:format(input)}
+		-- assume input is a string
+		return {input, false, format_cmd(cmd_set, input)}
 	end
 
 	local input_n = format_input(oss.normal_input)
@@ -297,9 +326,6 @@ function M.setup(opts)
 
 	-- functions to handle shell-commands
 	local exec, exec_get; do
-		local shellescape = vim.fn.shellescape
-		local split = vim.split
-		local split_sep = ' '
 		local system = vim.system
 		local system_opts = {text = true}
 
@@ -316,35 +342,35 @@ function M.setup(opts)
 		if async then -- asynchronous implementation
 			if log then -- with logging
 				exec = function(cmd)
-					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+					system(log_pre(cmd), system_opts, function(r)
 						log_post(cmd, r)
 					end)
 				end
 				exec_get = function(cmd, handler)
-					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+					system(log_pre(cmd), system_opts, function(r)
 						handler(log_post(cmd, r))
 					end)
 				end
 			else -- without logging
-				exec = function(cmd)
-					system(split(cmd, split_sep))
-				end
+				exec = system
 				exec_get = function(cmd, handler)
-					system(split(cmd, split_sep), system_opts, handler)
+					system(cmd, system_opts, handler)
 				end
 			end
 		else -- synchronous implementation
 			if log then -- with logging
 				exec = function(cmd)
-					log_post(cmd, system(split(log_pre(cmd), split_sep)):wait())
+					log_post(cmd, system(log_pre(cmd), system_opts):wait())
 				end
 				exec_get = function(cmd, handler)
-					handler(log_post(cmd, system(split(log_pre(cmd), split_sep), system_opts):wait()))
+					handler(log_post(cmd, system(log_pre(cmd), system_opts):wait()))
 				end
 			else -- without logging
-				exec = os.execute
+				exec = function(cmd)
+					system(cmd):wait()
+				end
 				exec_get = function(cmd, handler)
-					handler(system(split(cmd, split_sep), system_opts):wait())
+					handler(system(cmd, system_opts):wait())
 				end
 			end
 		end
@@ -518,8 +544,7 @@ function M.setup(opts)
 			autocmd('InsertEnter', {
 				callback = function()
 					exec_get(cmd_get, function(r)
-						input_n[1] = trim(r.stdout)
-						format_input(input_n)
+						input_n = format_input(trim(r.stdout))
 					end)
 					return true -- oneshot
 				end
@@ -605,7 +630,7 @@ function M.setup(opts)
 		local buf_get_lines  = api.nvim_buf_get_lines
 		local lang_labels = popup and popup.labels.lang_inputs
 
-		-- sanitize entries of lang_inputs
+		-- format entries of lang_inputs
 		local lang_inputs = {}
 		for k,v in pairs(oss.lang_inputs) do
 			lang_inputs[k] = format_input(v)
@@ -812,6 +837,7 @@ function M.setup(opts)
 			end
 
 			-- restores the input source to the one used before the last Normalize
+			local unknown_inputs = {}
 			local exclude = restore.exclude_pattern
 			local fn_restore = function(buf)
 				if input_i and (input_i ~= input_n[1]) then
@@ -836,7 +862,12 @@ function M.setup(opts)
 							show_popup(label)
 						end
 					else -- unknown input
-						exec(cmd_set:format(input_i))
+						local input = unknown_inputs[input_i]
+						if not input then
+							input = format_input(input_i)
+							unknown_inputs[input_i] = input
+						end
+						exec(input[3])
 					end
 				end
 			end
