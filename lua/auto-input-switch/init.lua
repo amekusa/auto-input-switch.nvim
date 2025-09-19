@@ -544,7 +544,8 @@ function M.setup(opts)
 			autocmd('InsertEnter', {
 				callback = function()
 					exec_get(cmd_get, function(r)
-						input_n = format_input(trim(r.stdout))
+						input_n[1] = trim(r.stdout)
+						input_n = format_input(input_n)
 					end)
 					return true -- oneshot
 				end
