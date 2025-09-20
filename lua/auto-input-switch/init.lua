@@ -537,7 +537,7 @@ function M.setup(opts)
 	if normalize then
 
 		-- set flag +010 to new buffer
-		buf_init_flags(normalize.filetypes or nil, 2, normalize.condition) -- +010
+		buf_init_flags(normalize.filetypes or nil, 2, normalize.buf_condition) -- +010
 
 		--- auto-detect normal-input
 		if not input_n[1] then
@@ -641,7 +641,7 @@ function M.setup(opts)
 			-- set flag +01000 to new buffer
 			buf_init_flags(
 				match.filetypes or nil, 8, -- +01000
-				match.condition or (match.condition == nil and cond)
+				match.buf_condition or (match.buf_condition == nil and cond)
 			)
 
 			-- convert `match.languages` to more suitable form for faster processing
@@ -815,7 +815,7 @@ function M.setup(opts)
 			-- set flag +0100 to new buffer
 			buf_init_flags(
 				restore.filetypes or nil, 4, -- +0100
-				restore.condition or (restore.condition == nil and cond)
+				restore.buf_condition or (restore.buf_condition == nil and cond)
 			)
 
 			-- create a reverse-lookup table of lang_inputs
