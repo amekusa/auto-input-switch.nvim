@@ -594,7 +594,8 @@ function M.setup(opts)
 			local mode_i = 'i'
 			autocmd(normalize.on, {
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i and fn_normalize() then
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i then
+						fn_normalize() -- do NOT put this in the above conditional
 						ev_unlocked = false; schedule(ev_unlock)
 					end
 				end
@@ -605,7 +606,8 @@ function M.setup(opts)
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and fn_normalize() then
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
+						fn_normalize() -- do NOT put this in the above conditional
 						ev_unlocked = false; schedule(ev_unlock)
 					end
 				end
