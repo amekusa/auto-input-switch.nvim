@@ -594,10 +594,8 @@ function M.setup(opts)
 			local mode_i = 'i'
 			autocmd(normalize.on, {
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i then
-						if fn_normalize() then
-							ev_unlocked = false; schedule(ev_unlock)
-						end
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i and fn_normalize() then
+						ev_unlocked = false; schedule(ev_unlock)
 					end
 				end
 			})
@@ -607,10 +605,8 @@ function M.setup(opts)
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
-						if fn_normalize() then
-							ev_unlocked = false; schedule(ev_unlock)
-						end
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and fn_normalize() then
+						ev_unlocked = false; schedule(ev_unlock)
 					end
 				end
 			})
@@ -791,10 +787,8 @@ function M.setup(opts)
 				autocmd(match.on, {
 					callback = function(ev)
 						local buf = ev.buf
-						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) then
-							if fn_match(buf) then
-								ev_unlocked = false; schedule(ev_unlock)
-							end
+						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
 						end
 					end
 				})
@@ -805,10 +799,8 @@ function M.setup(opts)
 					pattern = match.on_mode_change,
 					callback = function(ev)
 						local buf = ev.buf
-						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) then
-							if fn_match(buf) then
-								ev_unlocked = false; schedule(ev_unlock)
-							end
+						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
 						end
 					end
 				})
@@ -888,10 +880,8 @@ function M.setup(opts)
 				autocmd(restore.on, {
 					callback = function(ev)
 						local buf = ev.buf
-						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) then
-							if fn_restore(buf) then
-								ev_unlocked = false; schedule(ev_unlock)
-							end
+						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
 						end
 					end
 				})
@@ -902,10 +892,8 @@ function M.setup(opts)
 					pattern = restore.on_mode_change,
 					callback = function(ev)
 						local buf = ev.buf
-						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) then
-							if fn_restore(buf) then
-								ev_unlocked = false; schedule(ev_unlock)
-							end
+						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
 						end
 					end
 				})
