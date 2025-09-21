@@ -83,7 +83,8 @@ return {
 		debounce = 1000, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Normalize multiple times too quickly in a row.
 
-		buf_condition = nil, -- Conditional function to enable Normalize
+		buf_condition = nil, -- Optional function that determines whether to enable Normalize for buffer
+		-- This function gets called on every buffer creation.
 		-- Example: This enables Normalize only in listed buffers
 		-- buf_condition = function(buf)
 		--   return vim.bo[buf].buflisted
@@ -109,7 +110,8 @@ return {
 		debounce = 1000, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Restore multiple times too quickly in a row.
 
-		buf_condition = nil, -- Conditional function to enable Restore
+		buf_condition = nil, -- Function that determines whether to enable Restore for buffer
+		-- This function gets called on every buffer creation.
 		-- By default, it checks whether the buffer is 'modifiable'.
 		-- Set false to skip this check.
 
@@ -143,7 +145,8 @@ return {
 		debounce = 1000, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Match multiple times too quickly in a row.
 
-		buf_condition = nil, -- Conditional function to enable Match
+		buf_condition = nil, -- Function that determines whether to enable Match for buffer
+		-- This function gets called on every buffer creation.
 		-- By default, it checks whether the buffer is 'modifiable'.
 		-- Set false to skip this check.
 
