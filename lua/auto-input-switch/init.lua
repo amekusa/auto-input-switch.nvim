@@ -44,7 +44,7 @@ local unpack = unpack or table.unpack
 --   - TRACE
 --   - WARN
 --   - OFF
-local function notify(msg, level)
+local notify = function(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
@@ -59,7 +59,7 @@ local trim; do
 	--       http://lua-users.org/wiki/StringTrim
 end
 
-local function detect_os()
+local detect_os = function()
 	local uname = uv.os_uname().sysname:lower()
 	if uname:find('darwin') then
 		return 'macos'
@@ -664,7 +664,7 @@ function M.setup(opts)
 
 			-- returns `name` of the item of `map`, matched with the given string
 			local map_len = #map
-			local function find_in_map(str)
+			local find_in_map = function(str)
 				for i = 1, map_len do
 					local item = map[i]
 					if item.pattern:match_str(str) then
