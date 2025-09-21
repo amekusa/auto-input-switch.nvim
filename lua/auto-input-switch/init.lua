@@ -34,7 +34,7 @@ local emp = ''
 local t_tbl = 'table'
 local t_str = 'string'
 
--- lua 5.1 vs 5.2 compatibility
+-- lua 5.1 compatibility
 local unpack = unpack or table.unpack
 
 -- levels:
