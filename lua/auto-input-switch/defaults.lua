@@ -166,7 +166,7 @@ return {
 		lines = {
 			-- If the current line is empty or has only whitespace characters,
 			-- the plugin also searches the languages in the lines above/below the current line.
-			above = 2, -- How many lines above the current line to search in
+			above = 1, -- How many lines above the current line to search in
 			below = 1, -- How many lines below the current line to search in
 
 			exclude_pattern = [[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]],
