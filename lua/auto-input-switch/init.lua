@@ -180,7 +180,7 @@ function M.setup(opts)
 	end
 
 	local input_n = format_input(oss.normal_input)
-	local input_i
+	local input_r -- input to Restore
 
 	local popup     = opts.popup.enable     and opts.popup
 	local normalize = opts.normalize.enable and opts.normalize
@@ -555,15 +555,15 @@ function M.setup(opts)
 		-- normalizes the input source
 		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
-			input_i = trim(r.stdout)
+			input_r = trim(r.stdout)
 		end
 		local fn_normalize = function()
-			-- save input to input_i before normalize
+			-- save input to input_r before normalize
 			if save_input then
 				exec_get(cmd_get, save_input)
 			end
 			-- switch to input_n
-			if input_n[1] and (async or input_n[1] ~= input_i) then
+			if input_n[1] and (async or input_n[1] ~= input_r) then
 				exec(input_n[3])
 				if label then
 					if type(label) ~= t_tbl then
@@ -835,13 +835,13 @@ function M.setup(opts)
 			local unknown_inputs = {}
 			local exclude = restore.exclude_pattern
 			local fn_restore = function(buf)
-				if input_i and (input_i ~= input_n[1]) then
+				if input_r and (input_r ~= input_n[1]) then
 					if exclude then -- check if the chars before & after the cursor are alphanumeric
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(buf or 0, row - 1, row, true)[1]
 						if find(sub(line, col, col + 1), exclude) then return end
 					end
-					local lang = lang_lookup[input_i]
+					local lang = lang_lookup[input_r]
 					if lang then
 						local input = lang_inputs[lang]
 						exec(input[3])
@@ -857,10 +857,10 @@ function M.setup(opts)
 							show_popup(label)
 						end
 					else -- unknown input
-						local input = unknown_inputs[input_i]
+						local input = unknown_inputs[input_r]
 						if not input then
-							input = format_input(input_i)
-							unknown_inputs[input_i] = input
+							input = format_input(input_r)
+							unknown_inputs[input_r] = input
 						end
 						exec(input[3])
 					end
