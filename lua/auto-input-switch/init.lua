@@ -405,17 +405,11 @@ function M.setup(opts)
 
 		local win = -1
 		local win_base = -1
-		local win_opts = {
-			relative = popup.relative,
-			row = popup.row,
-			col = popup.col,
-			anchor = popup.anchor,
-			border = popup.border,
-			zindex = popup.zindex,
+		local win_opts = vim.tbl_extend('force', {
+			focusable = false,
 			height = 1,
 			style = 'minimal',
-			focusable = false,
-		}
+		}, popup.win)
 
 		local whl = 'winhighlight'
 		local whl_group = 'NormalFloat:'..popup.hl_group

@@ -26,17 +26,19 @@ return {
 		pad = true, -- Whether to add leading & trailing spaces
 		hl_group = 'PmenuSel', -- Highlight group
 
-		-- Popup window settings (:h nvim_open_win())
-		border = 'none', -- Style of the window border
-		zindex = 50, -- Rendering priority
-		row = 1, -- Horizontal offset
-		col = 0, -- Vertical offset
-		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
-		anchor = 'NW', -- Which corner should be used to align a popup window?
-		-- 'NW' : Northwest
-		-- 'NE' : Northeast
-		-- 'SW' : Southwest
-		-- 'SE' : Southeast
+		win = {
+			-- Popup window configuration (:h nvim_open_win())
+			border = 'none', -- Style of the window border
+			zindex = 50, -- Rendering priority
+			row = 1, -- Horizontal offset
+			col = 0, -- Vertical offset
+			relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
+			anchor = 'NW', -- Which corner should be used to align a popup window?
+				-- 'NW' : Northwest
+				-- 'NE' : Northeast
+				-- 'SW' : Southwest
+				-- 'SE' : Southeast
+		},
 
 		labels = {
 			normal_input = { 'A', 1 },
