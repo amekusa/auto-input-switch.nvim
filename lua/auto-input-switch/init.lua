@@ -409,7 +409,7 @@ function M.setup(opts)
 			focusable = false,
 			height = 1,
 			style = 'minimal',
-		}, popup.win)
+		}, popup.window)
 
 		local whl = 'winhighlight'
 		local whl_group = 'NormalFloat:'..popup.hl_group

@@ -26,7 +26,7 @@ return {
 		pad = true, -- Whether to add leading & trailing spaces
 		hl_group = 'PmenuSel', -- Highlight group
 
-		win = {
+		window = {
 			-- Popup window configuration (:h nvim_open_win())
 			border = 'none', -- Style of the window border
 			zindex = 50, -- Rendering priority
