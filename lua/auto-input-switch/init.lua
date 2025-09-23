@@ -621,6 +621,8 @@ function M.setup(opts)
 
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
+		local str_utfindex = vim.str_utfindex -- unicode-aware string index
+		local strcharpart  = vim.fn.strcharpart -- unicode-aware substring
 		local lang_labels = popup and popup.labels.lang_inputs
 
 		-- format entries of lang_inputs
@@ -833,7 +835,7 @@ function M.setup(opts)
 					if exclude then
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(buf or 0, row - 1, row, true)[1]
-						if exclude:match_str(sub(line, col, col + 1)) then return end
+						if exclude:match_str(strcharpart(line, str_utfindex(line, col) - 1, 2, 1)) then return end
 					end
 					local lang = lang_lookup[input_r]
 					if lang then
