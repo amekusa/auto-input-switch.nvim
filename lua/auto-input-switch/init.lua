@@ -827,13 +827,13 @@ function M.setup(opts)
 
 			-- restores the input source to the one used before the last Normalize
 			local unknown_inputs = {}
-			local exclude = restore.exclude_pattern
+			local exclude = restore.exclude_pattern and vim.regex(restore.exclude_pattern)
 			local fn_restore = function(buf)
 				if input_r and (input_r ~= input_n[1]) then
-					if exclude then -- check if the chars before & after the cursor are alphanumeric
+					if exclude then
 						local row, col = unpack(win_get_cursor(0))
 						local line = buf_get_lines(buf or 0, row - 1, row, true)[1]
-						if find(sub(line, col, col + 1), exclude) then return end
+						if exclude:match_str(sub(line, col, col + 1)) then return end
 					end
 					local lang = lang_lookup[input_r]
 					if lang then

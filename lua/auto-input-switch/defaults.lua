@@ -117,9 +117,9 @@ return {
 		-- By default, it checks whether the buffer is 'modifiable'.
 		-- Set false to skip this check.
 
-		exclude_pattern = '[-+%w@#$%%^&/\\¥=~<>(){}%[%];:`]',
+		exclude_pattern = [===[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]===],
 		-- When a Restore is about to happen, the plugin checks the characters near the cursor at the moment.
-		-- And if the characters match with this pattern (NOT regex, but Lua's standard string pattern),
+		-- And if the characters match with this regex pattern,
 		-- the plugin cancels the Restore, leaving the input source unchanged.
 		-- The default pattern includes a whole alphanumeric characters and common punctuation symbols with a few exceptions.
 		-- Set false to disable this feature.
