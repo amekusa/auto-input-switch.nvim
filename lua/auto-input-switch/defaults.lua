@@ -174,6 +174,7 @@ return {
 
 	os = false, -- 'macos', 'windows', 'linux', or false to auto-detect
 	os_settings = { -- OS-specific settings
+
 		macos = {
 			enable = true,
 			cmd_get = 'im-select', -- Shell-command to get the current input source
@@ -201,11 +202,14 @@ return {
 				Ko = 'com.apple.inputmethod.Korean.2SetKorean',
 			},
 		},
+
 		windows = {
 			enable = true,
 			cmd_get = 'im-select.exe',
 			cmd_set = 'im-select.exe %s',
-			normal_input = false,
+			normal_input = false, -- auto-detect
+			-- normal_input = '1033', -- US English
+
 			lang_inputs = {
 				Ru = '1049',
 				Ja = '1041',
@@ -213,11 +217,14 @@ return {
 				Ko = '1042',
 			},
 		},
+
 		linux = {
 			enable = true,
 			cmd_get = 'ibus engine',
 			cmd_set = 'ibus engine %s',
-			normal_input = false,
+			normal_input = false, -- auto-detect
+			-- normal_input = 'xkb:us::eng', -- US English
+
 			lang_inputs = {
 				Ru = 'xkb:ru::rus',
 				Ja = 'mozc-jp',
