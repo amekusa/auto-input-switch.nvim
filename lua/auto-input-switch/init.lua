@@ -641,30 +641,28 @@ function M.setup(opts)
 				match.buf_condition or (match.buf_condition == nil and cond)
 			)
 
-			-- convert `match.languages` to more suitable form for faster processing
-			local map = {}; do
-				local insert = table.insert
+			-- finds a language matches with the given string
+			local match_lang; do
+				local langs = {} -- list to search in
 				for k,v in pairs(match.languages) do
 					if v.enable then
-						insert(map, {
-							name = k,
-							priority = v.priority,
-							pattern = regex(v.pattern),
-						})
+						langs[#langs + 1] = {
+							k,               -- [1]: name
+							v.priority,      -- [2]: priority
+							regex(v.pattern) -- [3]: regex
+						}
 					end
 				end
-				table.sort(map, function(a, b)
-					return a.priority > b.priority
+				table.sort(langs, function(a, b)
+					return a[2] > b[2] -- sort by priority (higher to lower)
 				end)
-			end
-
-			-- returns `name` of the item of `map`, matched with the given string
-			local map_len = #map
-			local find_in_map = function(str)
-				for i = 1, map_len do
-					local item = map[i]
-					if item.pattern:match_str(str) then
-						return item.name, i
+				local n = #langs
+				match_lang = function(str)
+					for i = 1, n do
+						local l = langs[i]
+						if l[3]:match_str(str) then
+							return l[1], i -- name, index
+						end
 					end
 				end
 			end
@@ -684,7 +682,7 @@ function M.setup(opts)
 				local line = lines[cur] -- current line
 
 				if find(line, printable) then -- search in the current line
-					found = find_in_map(strcharpart(line, str_utfindex(line, col) - 1, 2))
+					found = match_lang(strcharpart(line, str_utfindex(line, col) - 1, 2))
 					if found then
 						local input = lang_inputs[found]
 						if input then
@@ -717,7 +715,7 @@ function M.setup(opts)
 								if find(line, printable) then -- not an empty line
 									above_done = true -- found or not, no more searching up
 									if not (exclude and exclude:match_str(line)) then
-										found, found_i = find_in_map(line)
+										found, found_i = match_lang(line)
 									end
 								end
 							else
@@ -733,12 +731,12 @@ function M.setup(opts)
 									below_done = true -- found or not, no more searching down
 									if not (exclude and exclude:match_str(line)) then
 										if found then -- already found in the lines above
-											local _found, _found_i = find_in_map(line)
+											local _found, _found_i = match_lang(line)
 											if _found and _found_i < found_i then -- more prioritized language is found
 												found = _found
 											end
 										else
-											found = find_in_map(line)
+											found = match_lang(line)
 										end
 									end
 								end
