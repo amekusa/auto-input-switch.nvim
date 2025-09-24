@@ -619,10 +619,11 @@ function M.setup(opts)
 			return bo[buf].modifiable
 		end
 
-		local win_get_cursor = api.nvim_win_get_cursor
-		local buf_get_lines  = api.nvim_buf_get_lines
+		local regex = vim.regex
 		local str_utfindex = vim.str_utfindex -- unicode-aware string index
 		local strcharpart  = vim.fn.strcharpart -- unicode-aware substring
+		local win_get_cursor = api.nvim_win_get_cursor
+		local buf_get_lines  = api.nvim_buf_get_lines
 		local lang_labels = popup and popup.labels.lang_inputs
 
 		-- format entries of lang_inputs
@@ -642,7 +643,6 @@ function M.setup(opts)
 
 			-- convert `match.languages` to more suitable form for faster processing
 			local map = {}; do
-				local regex = vim.regex
 				local insert = table.insert
 				for k,v in pairs(match.languages) do
 					if v.enable then
@@ -672,7 +672,7 @@ function M.setup(opts)
 			-- matches the input source with the language of the text near the cursor
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
-			local exclude = match.lines.exclude_pattern and vim.regex(match.lines.exclude_pattern)
+			local exclude = match.lines.exclude_pattern and regex(match.lines.exclude_pattern)
 			local printable = '%S'
 			local fn_match = function(buf)
 				local found -- language name to find
@@ -829,7 +829,7 @@ function M.setup(opts)
 
 			-- restores the input source to the one used before the last Normalize
 			local unknown_inputs = {}
-			local exclude = restore.exclude_pattern and vim.regex(restore.exclude_pattern)
+			local exclude = restore.exclude_pattern and regex(restore.exclude_pattern)
 			local fn_restore = function(buf)
 				if input_r and (input_r ~= input_n[1]) then
 					if exclude then
