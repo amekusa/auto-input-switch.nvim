@@ -193,6 +193,7 @@ function M.setup(opts)
 	opts = nil -- #GC
 
 	local schedule = vim.schedule
+	local strwidth = vim.fn.strdisplaywidth
 	local usercmd  = api.nvim_create_user_command
 	local autocmd  = api.nvim_create_autocmd
 
@@ -562,7 +563,7 @@ function M.setup(opts)
 				if label then
 					if type(label) ~= t_tbl then
 						if type(label) == t_str
-							then label = {label, #label}
+							then label = {label, strwidth(label)}
 							else label = {'A', 1}
 						end
 					end
@@ -691,8 +692,8 @@ function M.setup(opts)
 								local label = lang_labels[found]
 								if type(label) ~= t_tbl then
 									if type(label) == t_str
-										then label = {label, #label}
-										else label = {found, #found}
+										then label = {label, strwidth(label)}
+										else label = {found, strwidth(found)}
 									end
 									lang_labels[found] = label
 								end
@@ -753,8 +754,8 @@ function M.setup(opts)
 									local label = lang_labels[found]
 									if type(label) ~= t_tbl then
 										if type(label) == t_str
-											then label = {label, #label}
-											else label = {found, #found}
+											then label = {label, strwidth(label)}
+											else label = {found, strwidth(found)}
 										end
 										lang_labels[found] = label
 									end
@@ -843,8 +844,8 @@ function M.setup(opts)
 							local label = lang_labels[lang]
 							if type(label) ~= t_tbl then
 								if type(label) == t_str
-									then label = {label, #label}
-									else label = {lang, #lang}
+									then label = {label, strwidth(label)}
+									else label = {lang, strwidth(lang)}
 								end
 								lang_labels[lang] = label
 							end

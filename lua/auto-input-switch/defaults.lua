@@ -41,17 +41,12 @@ return {
 		},
 
 		labels = {
-			normal_input = { 'A', 1 },
-			-- Popup text to show on "Normalize". Set false to disable it.
-			-- The 1st value is the content string.
-			-- The 2nd value is the length of the content string.
-
+			normal_input = 'A', -- Popup text to show on "Normalize". Set false to disable it.
 			lang_inputs = {
 				-- Popup texts to show on "Restore" and "Match".
-				-- The format of each entry is the same as that of `popup.labels.normal_input`.
-				Ja = { 'あ', 2 }, -- For Japanese
-				Zh = { '拼', 2 }, -- For Chinese
-				Ko = { '한', 2 }, -- For Korean
+				Ja = 'あ', -- For Japanese
+				Zh = '拼', -- For Chinese
+				Ko = '한', -- For Korean
 			},
 		},
 	},
