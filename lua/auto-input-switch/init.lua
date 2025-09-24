@@ -684,7 +684,7 @@ function M.setup(opts)
 				local line = lines[cur] -- current line
 
 				if find(line, printable) then -- search in the current line
-					found = find_in_map(sub(line, max(1, col - 2), col + 3))
+					found = find_in_map(strcharpart(line, str_utfindex(line, col) - 1, 2))
 					if found then
 						local input = lang_inputs[found]
 						if input then
