@@ -211,14 +211,24 @@ return {
 			cmd_get = 'im-select.exe',
 			cmd_set = 'im-select.exe %s',
 			normal_input = false,
-			lang_inputs = {},
+			lang_inputs = {
+				Ru = '1049',
+				Ja = '1041',
+				Zh = '2052',
+				Ko = '1042',
+			},
 		},
 		linux = {
 			enable = true,
 			cmd_get = 'ibus engine',
 			cmd_set = 'ibus engine %s',
 			normal_input = false,
-			lang_inputs = {},
+			lang_inputs = {
+				Ru = 'xkb:ru::rus',
+				Ja = 'mozc-jp',
+				Zh = 'libpinyin',
+				Ko = 'hangul',
+			},
 		},
 	},
 }
