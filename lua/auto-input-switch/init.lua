@@ -682,7 +682,7 @@ function M.setup(opts)
 				local line = lines[cur] -- current line
 
 				if find(line, printable) then -- search in the current line
-					found = match_lang(strcharpart(line, str_utfindex(line, col) - 1, 2))
+					found = match_lang(strcharpart(line, str_utfindex(line, col) - 1, 2, 1))
 					if found then
 						local input = lang_inputs[found]
 						if input then
