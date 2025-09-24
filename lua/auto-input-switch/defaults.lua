@@ -59,7 +59,6 @@ return {
 		on = { -- Events to trigger Normalize (:h events)
 			'BufLeave',
 			'WinLeave',
-			'FocusLost',
 			'FocusGained',
 			'ExitPre',
 			'QuitPre',
@@ -77,7 +76,7 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time (ms)
+		debounce = 500, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Normalize multiple times too quickly in a row.
 
 		buf_condition = nil, -- Optional function that determines whether to enable Normalize for buffer
@@ -104,7 +103,7 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time (ms)
+		debounce = 500, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Restore multiple times too quickly in a row.
 
 		buf_condition = nil, -- Function that determines whether to enable Restore for buffer
@@ -139,7 +138,7 @@ return {
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 1000, -- Debounce time (ms)
+		debounce = 500, -- Debounce time (ms)
 		-- This prevents the plugin from attempting Match multiple times too quickly in a row.
 
 		buf_condition = nil, -- Function that determines whether to enable Match for buffer
