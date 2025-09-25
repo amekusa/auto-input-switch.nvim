@@ -113,7 +113,7 @@ return {
 
 		exclude_pattern = [===[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]===],
 		-- Before Restore runs, the plugin checks characters near the cursor.
-		-- And if they match with this regex pattern, Restore is canceled, leaving the input source unchanged.
+		-- If they match this regex pattern, Restore is canceled and the input source is left unchanged.
 		-- Default: matches alphanumeric characters and common punctuation.
 		-- Set false to disable this check.
 	},
