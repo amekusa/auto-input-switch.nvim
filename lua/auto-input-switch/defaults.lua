@@ -5,7 +5,7 @@ return {
 	async = false, -- Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
 	-- false: Run synchronously (recommended).
 	--        May cause slight lag if you switch rapidly between Insert and Normal mode.
-	-- true : Run asynchronously.
+	--  true: Run asynchronously.
 	--        Removes lag but may be less reliable.
 
 	log = false, -- Output logs to a file?
@@ -89,7 +89,7 @@ return {
 
 	restore = {
 		-- When Normalize is about to run, the plugin memorizes the current input source.
-		-- The next time you enter Insert mode, it restores that memorized input source.
+		-- The next time you enter Insert or Replace mode, it restores that memorized input source.
 		-- This feature is called "Restore".
 
 		enable = true, -- Enable Restore?
@@ -109,7 +109,7 @@ return {
 		buf_condition = nil, -- Function that decides whether Restore is enabled for a buffer.
 		-- Called on every buffer creation with the buffer number as the argument.
 		-- By default, it returns true only if the buffer is 'modifiable'.
-		-- You can overwrite this function with your own, or skip it entirely by setting false.
+		-- You can overwrite this function with your own, or disable it entirely by setting false.
 
 		exclude_pattern = [===[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]===],
 		-- Before Restore runs, the plugin checks characters near the cursor.
