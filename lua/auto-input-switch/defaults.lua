@@ -1,39 +1,39 @@
 return {
-	activate = true, -- Enable the plugin?
-	-- You can toggle this with `AutoInputSwitch on|off` command at any time.
+	activate = true, -- Enable the plugin.
+	-- You can toggle it anytime with the `:AutoInputSwitch on|off` command.
 
-	async = false, -- Run the shell-commands (`cmd_get/cmd_set`) to switch inputs asynchronously?
-	-- false: Runs synchronously. (Recommended)
-	--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
-	--  true: Runs asynchronously.
-	--        No lags, but less reliable than synchronous.
+	async = false, -- Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
+	-- false: Run synchronously (recommended).
+	--        May cause slight lag if you switch rapidly between Insert and Normal mode.
+	-- true : Run asynchronously.
+	--        Removes lag but may be less reliable.
 
 	log = false, -- Output logs to a file?
-	-- This is useful for debugging `cmd_get/cmd_set`.
-	-- The log file gets wiped out every time the plugin's setup() function is called.
-	-- The log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
-	--                    ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
+	-- Useful for debugging `cmd_get` / `cmd_set`.
+	-- The log file is cleared every time `setup()` is called.
+	-- Log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
+	--                ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
 
-	prefix = 'AutoInputSwitch', -- Prefix of the command names
-	-- If you prefer shorter command names, use this:
+	prefix = 'AutoInputSwitch', -- Prefix for command names.
+	-- If you prefer shorter commands, set this:
 	-- prefix = 'AIS',
 
 	popup = {
-		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
+		-- When the plugin switches the input source, it can notify you with a popup.
 
 		enable = true, -- Show popups?
-		duration = 1500, -- How long does a popup remain visible? (ms)
-		pad = true, -- Whether to add leading & trailing spaces
-		hl_group = 'PmenuSel', -- Highlight group
+		duration = 1500, -- How long the popup remains visible (ms).
+		pad = true, -- Add leading and trailing spaces.
+		hl_group = 'PmenuSel', -- Highlight group.
 
 		window = {
 			-- Popup window configuration (:h nvim_open_win())
-			border = 'none', -- Style of the window border
-			zindex = 50, -- Rendering priority
-			row = 1, -- Horizontal offset
-			col = 0, -- Vertical offset
-			relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
-			anchor = 'NW', -- Which corner should be used to align a popup window?
+			border = 'none', -- Border style.
+			zindex = 50, -- Rendering priority.
+			row = 1, -- Horizontal offset.
+			col = 0, -- Vertical offset.
+			relative = 'cursor', -- Origin of the offsets. (editor / win / cursor / mouse)
+			anchor = 'NW', -- Corner used to anchor the popup.
 				-- 'NW' : Northwest
 				-- 'NE' : Northeast
 				-- 'SW' : Southwest
@@ -41,22 +41,22 @@ return {
 		},
 
 		labels = {
-			normal_input = 'A', -- Popup text to show on "Normalize". Set false to disable it.
+			normal_input = 'A', -- Popup text for Normalize. Set false to disable.
 			lang_inputs = {
-				-- Popup texts to show on "Restore" and "Match".
-				Ja = 'あ', -- For Japanese
-				Zh = '拼', -- For Chinese
-				Ko = '한', -- For Korean
+				-- Popup texts for Restore and Match.
+				Ja = 'あ', -- Japanese
+				Zh = '拼', -- Chinese
+				Ko = '한', -- Korean
 			},
 		},
 	},
 
 	normalize = {
-		-- Outside of Insert-mode, the plugin can force your input source to be the latin one.
-		-- We call this feature "Normalize".
+		-- Outside Insert mode, the plugin can force the input source to Latin.
+		-- This feature is called "Normalize".
 
 		enable = true, -- Enable Normalize?
-		on = { -- Events to trigger Normalize (:h events)
+		on = { -- Events that trigger Normalize (:h events)
 			'BufLeave',
 			'WinLeave',
 			'FocusGained',
@@ -64,93 +64,92 @@ return {
 			'QuitPre',
 		},
 		on_mode_change = {
-			-- If this is not false, Normalize is triggered by `ModeChanged` event.
-			-- This option determines what modes switched from/to can trigger Normalize.
-			-- For the syntax, see:
-			--   :h autocmd-pattern
-			--   :h ModeChanged
-			--   :h mode()
-			'[iR]:n', -- from Insert/Replace mode to Normal mode
+			-- If not false, Normalize is triggered by `ModeChanged` event.
+			-- This option defines which mode transitions trigger it.
+			-- See :h autocmd-pattern
+			--     :h ModeChanged
+			--     :h mode()
+			'[iR]:n', -- From Insert/Replace to Normal mode.
 		},
-		filetypes = '*', -- Filetypes to enable Normalize
+		filetypes = '*', -- Filetypes where Normalize is enabled.
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 500, -- Debounce time (ms)
-		-- This prevents the plugin from attempting Normalize multiple times too quickly in a row.
+		debounce = 500, -- Debounce time (ms).
+		-- Prevents Normalize from firing too frequently.
 
-		buf_condition = nil, -- Optional function that determines whether to enable Normalize for buffer
-		-- This function gets called on every buffer creation.
-		-- Example: This enables Normalize only in listed buffers
+		buf_condition = nil, -- Optional function that decides whether Normalize is enabled for a buffer.
+		-- Called on every buffer creation with the buffer number as the argument.
+		-- Return true to enable Normalize for that buffer.
+		-- Example: Enable only in listed buffers:
 		-- buf_condition = function(buf)
 		--   return vim.bo[buf].buflisted
 		-- end,
 	},
 
 	restore = {
-		-- When a Normalize is about to happen, the plugin saves the state of the input source at the moment.
-		-- Then, the next time you enter Insert-mode, the plugin automatically restores the saved state.
-		-- We call this feature "Restore".
+		-- When Normalize is about to run, the plugin memorizes the current input source.
+		-- The next time you enter Insert mode, it restores that memorized input source.
+		-- This feature is called "Restore".
 
 		enable = true, -- Enable Restore?
-		on = { -- Events to trigger Restore (:h events)
+		on = { -- Events that trigger Restore (:h events)
 			'FocusGained',
 		},
 		on_mode_change = {
-			'n:[iR]', -- from Normal mode to Insert/Replace mode
+			'n:[iR]', -- From Normal to Insert/Replace mode.
 		},
-		filetypes = '*', -- Filetypes to enable Restore
+		filetypes = '*', -- Filetypes where Restore is enabled.
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 500, -- Debounce time (ms)
-		-- This prevents the plugin from attempting Restore multiple times too quickly in a row.
+		debounce = 500, -- Debounce time (ms).
+		-- Prevents Restore from firing too frequently.
 
-		buf_condition = nil, -- Function that determines whether to enable Restore for buffer
-		-- This function gets called on every buffer creation.
-		-- By default, it checks whether the buffer is 'modifiable'.
-		-- Set false to skip this check.
+		buf_condition = nil, -- Function that decides whether Restore is enabled for a buffer.
+		-- Called on every buffer creation with the buffer number as the argument.
+		-- By default, it returns true only if the buffer is 'modifiable'.
+		-- You can overwrite this function with your own, or skip it entirely by setting false.
 
 		exclude_pattern = [===[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]===],
-		-- When a Restore is about to happen, the plugin checks the characters near the cursor at the moment.
-		-- And if the characters match with this regex pattern,
-		-- the plugin cancels the Restore, leaving the input source unchanged.
-		-- The default pattern includes a whole alphanumeric characters and common punctuation symbols with a few exceptions.
-		-- Set false to disable this feature.
+		-- Before Restore runs, the plugin checks characters near the cursor.
+		-- And if they match with this regex pattern, Restore is canceled, leaving the input source unchanged.
+		-- Default: matches alphanumeric characters and common punctuation.
+		-- Set false to disable this check.
 	},
 
 	match = {
-		-- When you enter Insert-mode, the plugin can detect the language of the characters adjacent to the cursor at the moment.
-		-- Then, it can automatically switch the input source to the one that matches the detected language.
-		-- We call this feature "Match".
-		-- If both Match and Restore happen at the same time, Match is always prioritized.
-		-- To avoid confusion, we recommend to set `restore.enable` to false.
-		-- This feature is disabled by default.
+		-- When you enter Insert or Replace mode, the plugin can detect the language of characters
+		-- near the cursor and switch to the matching input source.
+		-- This feature is called "Match".
+		-- If Match and Restore trigger at the same time, Match takes priority.
+		-- To avoid confusion, consider disabling Restore if you enable Match.
+		-- Disabled by default.
 
 		enable = false, -- Enable Match?
-		on = { -- Events to trigger Match (:h events)
+		on = { -- Events that trigger Match (:h events)
 			'FocusGained',
 		},
 		on_mode_change = {
-			'[nvV]:[iR]', -- from Normal mode to Insert/Replace mode
+			'[nvV]:[iR]', -- From Normal/Visual to Insert/Replace mode.
 		},
-		filetypes = '*', -- Filetypes to enable Match
+		filetypes = '*', -- Filetypes where Match is enabled.
 		-- Example:
 		-- filetypes = { 'markdown', 'text' },
 
-		debounce = 500, -- Debounce time (ms)
-		-- This prevents the plugin from attempting Match multiple times too quickly in a row.
+		debounce = 500, -- Debounce time (ms).
+		-- Prevents Match from firing too frequently.
 
-		buf_condition = nil, -- Function that determines whether to enable Match for buffer
-		-- This function gets called on every buffer creation.
-		-- By default, it checks whether the buffer is 'modifiable'.
-		-- Set false to skip this check.
+		buf_condition = nil, -- Function that decides whether Match is enabled for a buffer.
+		-- Called on every buffer creation with the buffer number as the argument.
+		-- By default, it returns true only if the buffer is 'modifiable'.
+		-- You can overwrite this function with your own, or disable it entirely by setting false.
 
 		languages = {
-			-- Languages to match with the characters. Set `enable` to true for the ones you want to use.
-			-- `pattern` must be a valid regex string. Use the unicode ranges corresponding to the language.
-			-- You can also add your own languages.
-			-- If you do, do not forget to add the input sources for them as well, to `os_settings[Your OS].lang_inputs`.
+			-- Languages to detect. Enable those you want to use.
+			-- `pattern` must be a valid regex string (use Unicode ranges).
+			-- You can also add custom languages.
+			-- If you do, also add their input sources to `os_settings[OS].lang_inputs`.
 			Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
 			Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
 			Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
@@ -158,27 +157,27 @@ return {
 		},
 
 		lines = {
-			-- If the current line is empty or has only whitespace characters,
-			-- the plugin also searches the languages in the lines above/below the current line.
-			above = 1, -- How many lines above the current line to search in
-			below = 1, -- How many lines below the current line to search in
+			-- If the current line is empty or whitespace-only,
+			-- Match also searches lines above and below.
+			above = 1, -- Number of lines above to search.
+			below = 1, -- Number of lines below to search.
 
 			exclude_pattern = [[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]],
-			-- If any of the lines above/below in the searching range match with this regex pattern,
-			-- the plugin immediately stops searching the languages, leaving the input source unchanged.
-			-- This is useful for writing lists, tables, or blockquotes in a markdown document.
-			-- Set false to disable this feature.
+			-- If any surrounding line matches this regex, language detection stops
+			-- and the input source is left unchanged.
+			-- Useful for lists, tables, or blockquotes in Markdown.
+			-- Set false to disable.
 		},
 	},
 
-	os = false, -- 'macos', 'windows', 'linux', or false to auto-detect
+	os = false, -- 'macos', 'windows', 'linux', or false to auto-detect.
 	os_settings = { -- OS-specific settings
 
 		macos = {
 			enable = true,
-			cmd_get = 'im-select', -- Shell-command to get the current input source
-			cmd_set = 'im-select %s', -- Shell-command to set the new input source (Use `%s` as a placeholder for the input source)
-			normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
+			cmd_get = 'im-select', -- Command to get the current input source.
+			cmd_set = 'im-select %s', -- Command to set a new input source (`%s` is replaced).
+			normal_input = false, -- Input source for Normalize (false = auto-detect).
 			-- Examples:
 			-- normal_input = 'com.apple.keylayout.ABC',
 			-- normal_input = 'com.apple.keylayout.US',
@@ -186,15 +185,14 @@ return {
 
 			-- You can also use a table like this:
 			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
-			--   The 1st string is the name of the input source, which should match with the output of `cmd_get`.
-			--   The 2nd string is what is actually passed to `cmd_set`.
-			--
-			-- Additionally, you can override `cmd_set` like this:
-			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu', cmd_set = 'some-alternative-command %s' },
+			--   The 1st string must match `cmd_get` output.
+			--   The 2nd string is passed to `cmd_set`.
+			-- You can override `cmd_set` too, like this:
+			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu', cmd_set = 'other-command %s' },
 
 			lang_inputs = {
-				-- The input sources corresponding to `match.languages` for each.
-				-- You can also use a table for each entry just like `normal_input`.
+				-- Input sources corresponding to `match.languages`.
+				-- Each entry can also be a table like `normal_input`.
 				Ru = 'com.apple.keylayout.Russian',
 				Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
 				Zh = 'com.apple.inputmethod.SCIM.ITABC',
@@ -206,8 +204,8 @@ return {
 			enable = true,
 			cmd_get = 'im-select.exe',
 			cmd_set = 'im-select.exe %s',
-			normal_input = false, -- auto-detect
-			-- normal_input = '1033', -- US English
+			normal_input = false, -- Auto-detect.
+			-- normal_input = '1033', -- US English.
 
 			lang_inputs = {
 				Ru = '1049',
@@ -221,8 +219,8 @@ return {
 			enable = true,
 			cmd_get = 'ibus engine',
 			cmd_set = 'ibus engine %s',
-			normal_input = false, -- auto-detect
-			-- normal_input = 'xkb:us::eng', -- US English
+			normal_input = false, -- Auto-detect.
+			-- normal_input = 'xkb:us::eng', -- US English.
 
 			lang_inputs = {
 				Ru = 'xkb:ru::rus',
