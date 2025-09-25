@@ -28,7 +28,6 @@ local bo  = vim.bo
 
 local fmt  = string.format
 local find = string.find
-local sub  = string.sub
 
 local emp = ''
 local t_tbl = 'table'
