@@ -17,7 +17,7 @@ If you’re upgrading from v4.x or earlier, please check the [Changelog](#change
 
 ---
 
-## ✨ Features
+## Features
 - **Normalize** – Always return to Latin input (e.g. US keyboard) outside of Insert mode.  
 - **Restore** – When you return to Insert mode, restore the input method you were using last time.  
 - **Match** – Detect nearby text and automatically switch to the matching input method (Japanese, Chinese, Korean, Russian, …).  
@@ -25,7 +25,7 @@ If you’re upgrading from v4.x or earlier, please check the [Changelog](#change
 
 ---
 
-## 📦 Installation
+## Installation
 With [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
@@ -43,7 +43,7 @@ require('lazy').setup({
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 This plugin is highly configurable.  
 See [`defaults.lua`](./lua/auto-input-switch/defaults.lua) for all available options.  
 
@@ -67,7 +67,7 @@ Note: Since Japanese and Chinese share some Unicode ranges, it’s recommended t
 
 ---
 
-## 🖥️ Compatibility
+## Compatibility
 
 - **Neovim:** v0.10+  
 - **OS:** macOS, Windows, Linux  
@@ -82,7 +82,7 @@ With the default config:
 
 ---
 
-## 📋 Commands
+## Commands
 
 | Command | Description |
 |---------|-------------|
@@ -95,7 +95,7 @@ Buffer-local versions are also available (see the [Changelog](#changelog)).
 
 ---
 
-## 📖 Changelog
+## Changelog
 
 ### v5.0.0
 This release includes **major breaking changes**.  
