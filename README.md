@@ -129,5 +129,5 @@ If you’re upgrading, please review carefully.
 
 ---
 
-## 📜 License
+## License
 MIT © 2025 [Satoshi Soma](https://github.com/amekusa)
