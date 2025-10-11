@@ -1,0 +1,57 @@
+activate:
+  __default: true
+  __desc:
+    en: |
+      Enable the plugin.
+      You can toggle it anytime with the `:AutoInputSwitch on|off` command.
+    ja: |
+      プラグインを有効にします。
+      `:AutoInputSwitch on|off` コマンドでいつでも切り替えられます。
+popup:
+  __desc:
+    en: When the plugin switches the input method, it can notify you with a popup.
+    ja: プラグインが IME を切り替える際、ポップアップを表示してそれを知らせます。
+
+  enable:
+    __default: true
+    __desc:
+      en: Show popups?
+      ja: ポップアップを表示する？
+
+  window:
+    __desc:
+      en: Popup window configuration. (:h nvim_open_win())
+      ja: ポップアップのウィンドウ設定。 (:h nvim_open_win())
+
+    border:
+      __default: none
+      __desc:
+        en: Border style.
+        ja: ボーダーのスタイル。
+
+
+normalize:
+  __desc:
+    en: |
+      Outside Insert mode, the plugin can force the input method to Latin.
+      This feature is called "Normalize".
+    ja: |
+      Insert モードではない時、IME を英数に強制します。
+      この機能を "Normalize" と呼称します。
+
+  enable:
+    __default: true
+    __desc:
+      en: Enable Normalize?
+      ja: Normalize を有効にする？
+
+  on:
+    __default:
+      - BufLeave
+      - WinLeave
+      - FocusGained
+      - ExitPre
+      - QuitPre
+    __desc:
+      en: Events that trigger Normalize. (:h events)
+      ja: Normalize のトリガーとなるイベント。 (:h events)
