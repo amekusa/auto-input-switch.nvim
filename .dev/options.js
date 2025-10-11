@@ -32,8 +32,11 @@ function toLua(data, opts) {
 	if (comment) { // convert into Lua comments
 		let lines = comment.split(/\r?\n/);
 		comment = ` -- ${lines[0]}`;
-		for (let i = 1; i < lines.length; i++) {
-			comment += `\n${ind}${tab}-- ${lines[i]}`;
+		if (lines.length > 1) { // multi-line comments
+			for (let i = 1; i < lines.length; i++) {
+				comment += `\n${ind}${tab}-- ${lines[i]}`;
+			}
+			comment += '\n'; // add a blank line for legibility
 		}
 	}
 
