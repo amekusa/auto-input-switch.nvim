@@ -40,9 +40,6 @@ function toLua(data, opts) {
 		}
 	}
 
-	// special tag: <!LITERAL>
-	let isLiteral = /^\s*<!LITERAL>(.*)$/;
-
 	switch (typeof data) {
 	case 'object':
 		if (!data) {
@@ -79,8 +76,7 @@ function toLua(data, opts) {
 
 	case 'string':
 		// special tag: <!LITERAL>
-		let m = data.match(isLiteral);
-		if (m) {
+		let m = data.match(/^\s*<!LITERAL>(.*)$/); if (m) {
 			r += m[1];
 			break;
 		}
