@@ -46,13 +46,13 @@ function toLua(data, opts) {
 			r += 'nil';
 			break;
 		}
-		if ('__desc' in data) { // special key
+		if ('__desc' in data) { // special key: __desc
 			let _opts = Object.assign({}, opts);
 			_opts.comment = data.__desc[lang] || '';
 			delete data.__desc;
 			return toLua(data, _opts);
 		}
-		if ('__default' in data) { // special key
+		if ('__default' in data) { // special key: __default
 			return toLua(data.__default, opts);
 		}
 		r += '{' + comment + '\n';
