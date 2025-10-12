@@ -11,8 +11,9 @@ async:
   __desc:
     en: |-
       Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
-      false: Run synchronously (recommended). May cause slight lag if you switch rapidly between Insert and Normal mode.
-      true: Run asynchronously. Removes lag but may be less reliable.
+        * false: Run synchronously (recommended).
+                 May cause slight lag if you switch rapidly between Insert and Normal mode.
+        *  true: Run asynchronously. Removes lag but may be less reliable.
     ja:
 
 log:
@@ -22,17 +23,18 @@ log:
       Output logs to a file?
       Useful for debugging `cmd_get` / `cmd_set`.
       The log file is cleared every time `setup()` is called.
+
       Log file path:
-        - Linux/macOS: ~/.local/state/nvim/auto-input-switch.log
-        - Windows: ~/AppData/Local/nvim-data/auto-input-switch.log
+        * Linux/macOS: ~/.local/state/nvim/auto-input-switch.log
+        *     Windows: ~/AppData/Local/nvim-data/auto-input-switch.log
     ja:
 
 prefix:
-  __default: "AutoInputSwitch"
+  __default: AutoInputSwitch
   __desc:
     en: |-
       Prefix for command names.
-      If you prefer shorter commands, set this (e.g., `AIS`).
+      If you prefer shorter commands, set this to something like 'AIS'.
     ja:
 
 popup:
@@ -49,105 +51,108 @@ popup:
   duration:
     __default: 1500
     __desc:
-      en: How long the popup remains visible (milliseconds).
+      en: How long the popup remains visible (ms).
       ja:
 
   pad:
     __default: true
     __desc:
-      en: Add leading and trailing spaces to the popup text.
+      en: Add leading and trailing spaces in popup text.
       ja:
 
   hl_group:
-    __default: "PmenuSel"
+    __default: PmenuSel
     __desc:
-      en: Highlight group used for the popup text.
+      en: Highlight group for the popup window.
       ja:
 
   window:
     __desc:
-      en: Popup window configuration. See `:h nvim_open_win()`.
+      en: Popup window configuration (:h nvim_open_win()).
       ja:
 
     border:
-      __default: "none"
+      __default: none
       __desc:
-        en: Border style of the popup window.
+        en: Border style.
         ja:
 
     zindex:
       __default: 50
       __desc:
-        en: Rendering priority (higher values appear above others).
+        en: Rendering priority (higher = drawn on top).
         ja:
 
     row:
       __default: 1
       __desc:
-        en: Horizontal offset of the popup position.
+        en: Horizontal offset from the anchor.
         ja:
 
     col:
       __default: 0
       __desc:
-        en: Vertical offset of the popup position.
+        en: Vertical offset from the anchor.
         ja:
 
     relative:
-      __default: "cursor"
+      __default: cursor
       __desc:
         en: |-
           Origin of the offsets.
-          One of: `editor`, `win`, `cursor`, or `mouse`.
+          One of: 'editor', 'win', 'cursor', or 'mouse'.
         ja:
 
     anchor:
-      __default: "NW"
+      __default: NW
       __desc:
         en: |-
           Corner used to anchor the popup.
-          'NW': Northwest
-          'NE': Northeast
-          'SW': Southwest
-          'SE': Southeast
+            * 'NW': Northwest
+            * 'NE': Northeast
+            * 'SW': Southwest
+            * 'SE': Southeast
         ja:
 
   labels:
     __desc:
-      en: Popup label settings.
+      en: Popup label texts for various input methods.
       ja:
 
     normal_input:
-      __default: "A"
+      __default: A
       __desc:
-        en: Popup text for Normalize. Set `false` to disable.
+        en: Popup text for Normalize. Set false to disable.
         ja:
 
     lang_inputs:
       __desc:
         en: Popup texts for Restore and Match.
         ja:
+
       Ja:
-        __default: "あ"
+        __default: あ
         __desc:
-          en: Japanese.
+          en: Popup text for Japanese input.
           ja:
+
       Zh:
-        __default: "拼"
+        __default: 拼
         __desc:
-          en: Chinese.
+          en: Popup text for Chinese input.
           ja:
+
       Ko:
-        __default: "한"
+        __default: 한
         __desc:
-          en: Korean.
+          en: Popup text for Korean input.
           ja:
 
 normalize:
   __desc:
     en: |-
       Outside Insert mode, the plugin can force the input method to Latin.
-      This feature is called **Normalize**.
+      This feature is called "Normalize".
     ja:
 
   enable:
@@ -158,43 +163,46 @@ normalize:
 
   on:
     __default:
-      - "BufLeave"
-      - "WinLeave"
-      - "FocusGained"
-      - "ExitPre"
-      - "QuitPre"
+      - BufLeave
+      - WinLeave
+      - FocusGained
+      - ExitPre
+      - QuitPre
+
     __desc:
-      en: |-
-        Events that trigger Normalize. See `:h events`.
+      en: Events that trigger Normalize (:h events).
       ja:
 
   on_mode_change:
     __default:
-      - "[iR]:n"
+      - '[iR]:n'
+
     __desc:
       en: |-
         Mode transition patterns that trigger Normalize.
-        If not `false`, Normalize is triggered by the `ModeChanged` event.
+        If not false, Normalize is triggered by the 'ModeChanged' event.
         See:
-          - `:h autocmd-pattern`
-          - `:h ModeChanged`
-          - `:h mode()`
-        Default: From Insert/Replace to Normal mode (`[iR]:n`).
+          * :h autocmd-pattern
+          * :h ModeChanged
+          * :h mode()
+
+        Default:
+          '[iR]:n' (From Insert/Replace to Normal mode)
       ja:
 
   filetypes:
-    __default: "*"
+    __default: '*'
     __desc:
       en: |-
         Filetypes where Normalize is enabled.
         Example:
-          filetypes = { 'markdown', 'text' }
+          filetypes = { 'markdown', 'text' },
       ja:
 
   debounce:
     __default: 500
     __desc:
-      en: Debounce time in milliseconds to prevent Normalize from firing too frequently.
+      en: Debounce time (ms). Prevents repeated Normalize triggers.
       ja:
 
   buf_condition:
@@ -202,22 +210,21 @@ normalize:
     __desc:
       en: |-
         Optional function that decides whether Normalize is enabled for a buffer.
-        Called on every buffer creation with the buffer number as an argument.
-        Return `true` to enable Normalize for that buffer.
-
-        Example: enable only in listed buffers:
-          ```lua
+        Called on each buffer creation with its buffer number.
+        Return true to enable Normalize for that buffer.
+        Example:
+          -- Enable only in listed buffers
           buf_condition = function(buf)
             return vim.bo[buf].buflisted
-          end
-          ```
+          end,
       ja:
+
 restore:
   __desc:
     en: |-
-      When Normalize is about to run, the plugin memorizes the current input method.
-      The next time you enter Insert or Replace mode, it restores that memorized input method.
-      This feature is called **Restore**.
+      When Normalize is about to run, the plugin saves the current input method.
+      When you next enter Insert or Replace mode, it restores that input method.
+      This feature is called "Restore".
     ja:
 
   enable:
@@ -228,34 +235,35 @@ restore:
 
   on:
     __default:
-      - "FocusGained"
+      - FocusGained
+
     __desc:
-      en: |-
-        Events that trigger Restore. See `:h events`.
+      en: Events that trigger Restore (:h events).
       ja:
 
   on_mode_change:
     __default:
-      - "n:[iR]"
+      - 'n:[iR]'
+
     __desc:
       en: |-
         Mode transitions that trigger Restore.
-        Default: From Normal to Insert/Replace mode.
+        Default: 'n:[iR]' (From Normal to Insert/Replace mode)
       ja:
 
   filetypes:
-    __default: "*"
+    __default: '*'
     __desc:
       en: |-
         Filetypes where Restore is enabled.
         Example:
-          filetypes = { 'markdown', 'text' }
+          filetypes = { 'markdown', 'text' },
       ja:
 
   debounce:
     __default: 500
     __desc:
-      en: Debounce time in milliseconds to prevent Restore from firing too frequently.
+      en: Debounce time (ms). Prevents repeated Restore triggers.
       ja:
 
   buf_condition:
@@ -263,29 +271,29 @@ restore:
     __desc:
       en: |-
         Function that decides whether Restore is enabled for a buffer.
-        Called on every buffer creation with the buffer number as an argument.
-        By default, it returns `true` only if the buffer is *modifiable*.
-        You can overwrite this function with your own, or disable it entirely by setting `false`.
+        Called on every buffer creation.
+        By default, returns true if the buffer is 'modifiable'.
+        You can override this or disable it by setting false.
       ja:
 
   exclude_pattern:
-    __default: "[===[[-+a-zA-Z0-9@#$%^&/\\\\¥=~<>(){}\\[\\];:`]]===]"
+    __default: '<!LITERAL>[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]'
     __desc:
       en: |-
-        Before Restore runs, the plugin checks characters near the cursor.
-        If they match this regex pattern, Restore is canceled and the input method is left unchanged.
-        Default: matches alphanumeric characters and common punctuation.
-        Set `false` to disable this check.
+        Regex pattern checked before Restore runs.
+        If nearby characters match this, Restore is canceled.
+        Default: matches alphanumerics and common punctuation.
+        Set false to disable this check.
       ja:
 
 match:
   __desc:
     en: |-
-      When you enter Insert or Replace mode, the plugin can detect the language of nearby characters
-      and switch to the matching input method.
-      This feature is called **Match**.
-      If Match and Restore trigger at the same time, Match takes priority.
-      To avoid confusion, consider disabling Restore if you enable Match.
+      Detects the language of nearby characters on Insert/Replace mode entry
+      and switches to the matching input method.
+      This feature is called "Match".
+      If Match and Restore trigger together, Match takes priority.
+      Disabled by default.
     ja:
 
   enable:
@@ -296,34 +304,35 @@ match:
 
   on:
     __default:
-      - "FocusGained"
+      - FocusGained
+
     __desc:
-      en: |-
-        Events that trigger Match. See `:h events`.
+      en: Events that trigger Match (:h events).
       ja:
 
   on_mode_change:
     __default:
-      - "[nvV]:[iR]"
+      - '[nvV]:[iR]'
+
     __desc:
       en: |-
         Mode transitions that trigger Match.
-        Default: From Normal/Visual to Insert/Replace mode.
+        Default: '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
       ja:
 
   filetypes:
-    __default: "*"
+    __default: '*'
     __desc:
       en: |-
         Filetypes where Match is enabled.
         Example:
-          filetypes = { 'markdown', 'text' }
+          filetypes = { 'markdown', 'text' },
       ja:
 
   debounce:
     __default: 500
     __desc:
-      en: Debounce time in milliseconds to prevent Match from firing too frequently.
+      en: Debounce time (ms). Prevents repeated Match triggers.
       ja:
 
   buf_condition:
@@ -331,109 +340,86 @@ match:
     __desc:
       en: |-
         Function that decides whether Match is enabled for a buffer.
-        Called on every buffer creation with the buffer number as an argument.
-        By default, it returns `true` only if the buffer is *modifiable*.
-        You can overwrite this function with your own, or disable it entirely by setting `false`.
+        Called on buffer creation.
+        By default, returns true if the buffer is 'modifiable'.
+        You can override this or disable it by setting false.
       ja:
 
   languages:
     __desc:
       en: |-
-        Languages to detect.
-        Each language entry must define a valid regex `pattern` (using Unicode ranges).
-        You can also add custom languages—if you do, make sure to add their input methods to `os_settings[OS].lang_inputs`.
+        Languages to detect and match.
+        Enable those you want to use.
+        Each `pattern` must be a valid regex (Unicode ranges).
+        Add custom languages if needed, and define them in `os_settings[OS].lang_inputs`.
       ja:
 
     Ru:
-      enable:
-        __default: false
-        __desc:
-          en: Enable Russian detection?
-          ja:
-      priority:
-        __default: 0
-        __desc:
-          en: Priority number for resolving overlapping language patterns.
-          ja:
-      pattern:
-        __default: "[\\\\u0400-\\\\u04ff]"
-        __desc:
-          en: Regex range for Cyrillic (Russian) characters.
-          ja:
+      __default:
+        enable: false
+        priority: 0
+        pattern: '[\\u0400-\\u04ff]'
+
+      __desc:
+        en: Cyrillic range for Russian.
+        ja:
 
     Ja:
-      enable:
-        __default: false
-        __desc:
-          en: Enable Japanese detection?
-          ja:
-      priority:
-        __default: 0
-        __desc:
-          en: Priority number for resolving overlapping language patterns.
-          ja:
-      pattern:
-        __default: "[\\\\u3000-\\\\u30ff\\\\uff00-\\\\uffef\\\\u4e00-\\\\u9fff]"
-        __desc:
-          en: Regex ranges for Japanese characters (Kana, Kanji, full-width forms).
-          ja:
+      __default:
+        enable: false
+        priority: 0
+        pattern: '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]'
+
+      __desc:
+        en: Unicode ranges for Japanese.
+        ja:
 
     Zh:
-      enable:
-        __default: false
-        __desc:
-          en: Enable Chinese detection?
-          ja:
-      priority:
-        __default: 0
-        __desc:
-          en: Priority number for resolving overlapping language patterns.
-          ja:
-      pattern:
-        __default: "[\\\\u3000-\\\\u303f\\\\u4e00-\\\\u9fff\\\\u3400-\\\\u4dbf\\\\u3100-\\\\u312f]"
-        __desc:
-          en: Regex ranges for Chinese characters (CJK, Bopomofo, punctuation).
-          ja:
+      __default:
+        enable: false
+        priority: 0
+        pattern: '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]'
+
+      __desc:
+        en: Unicode ranges for Chinese.
+        ja:
 
     Ko:
-      enable:
-        __default: false
-        __desc:
-          en: Enable Korean detection?
-          ja:
-      priority:
-        __default: 0
-        __desc:
-          en: Priority number for resolving overlapping language patterns.
-          ja:
-      pattern:
-        __default: "[\\\\u3000-\\\\u303f\\\\u1100-\\\\u11ff\\\\u3130-\\\\u318f\\\\uac00-\\\\ud7af]"
-        __desc:
-          en: Regex ranges for Hangul characters.
-          ja:
+      __default:
+        enable: false
+        priority: 0
+        pattern: '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]'
+
+      __desc:
+        en: Unicode ranges for Korean.
+        ja:
 
   lines:
     __desc:
       en: |-
-        Controls how many lines are scanned for language detection if the current line is empty or whitespace.
+        When the current line is empty or whitespace-only,
+        Match searches nearby lines as well.
       ja:
+
     above:
       __default: 1
       __desc:
-        en: Number of lines above the cursor to search.
+        en: Number of lines above to search.
         ja:
+
     below:
       __default: 1
       __desc:
-        en: Number of lines below the cursor to search.
+        en: Number of lines below to search.
         ja:
+
     exclude_pattern:
       __default: "^\\s*\\%([-+*:|>]\\|[0-9]\\+\\.\\)\\s"
       __desc:
         en: |-
-          If any surrounding line matches this regex, language detection stops and the input method is left unchanged.
-          Useful for lists, tables, or blockquotes in Markdown.
-          Set `false` to disable.
+          Regex pattern for lines that stop language detection.
+          Useful for Markdown lists or blockquotes.
+          Set false to disable.
         ja:
 
 os:
@@ -441,13 +427,12 @@ os:
   __desc:
     en: |-
       Operating system to use for input-method control.
-      Accepts `'macos'`, `'windows'`, `'linux'`, or `false` for auto-detection.
+      Accepts 'macos', 'windows', 'linux', or false for auto-detection.
     ja:
 
 os_settings:
   __desc:
-    en: |-
-      OS-specific settings for input-method commands and mappings.
+    en: OS-specific settings for input-method commands and mappings.
     ja:
 
   macos:
@@ -456,54 +441,62 @@ os_settings:
       __desc:
         en: Enable macOS-specific input-method handling.
         ja:
+
     cmd_get:
-      __default: "im-select"
+      __default: 'im-select'
       __desc:
-        en: Command to get the current input method.
+        en: Command to get the current input method ID.
         ja:
+
     cmd_set:
-      __default: "im-select %s"
+      __default: 'im-select %s'
       __desc:
-        en: Command to set a new input method (`%s` will be replaced with the target ID).
+        en: Command to set a new input method (%s will be replaced with the target ID).
         ja:
+
     normal_input:
       __default: false
       __desc:
         en: |-
-          Input method used for Normalize (`false` = auto-detect).
+          Input method used for Normalize (false = auto-detect).
           Examples:
-            - com.apple.keylayout.ABC
-            - com.apple.keylayout.US
-            - com.apple.keylayout.USExtended
-          You can also use a table:
-            { "com.apple.keylayout.ABC", "eisu" }
-          The first string must match `cmd_get` output; the second is passed to `cmd_set`.
+            normal_input = 'com.apple.keylayout.ABC',
+            normal_input = 'com.apple.keylayout.US',
+            normal_input = 'com.apple.keylayout.USExtended',
+          You can also use a table like this:
+            normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+            The first string must match `cmd_get` output; the second is passed to `cmd_set`.
         ja:
+
     lang_inputs:
       __desc:
         en: |-
           Input methods corresponding to `match.languages`.
           Each entry can also be a table like `normal_input`.
         ja:
+
       Ru:
-        __default: "com.apple.keylayout.Russian"
+        __default: 'com.apple.keylayout.Russian'
         __desc:
           en: Input method ID for Russian.
           ja:
+
       Ja:
-        __default: "com.apple.inputmethod.Kotoeri.Japanese"
+        __default: 'com.apple.inputmethod.Kotoeri.Japanese'
         __desc:
           en: Input method ID for Japanese.
           ja:
+
       Zh:
-        __default: "com.apple.inputmethod.SCIM.ITABC"
+        __default: 'com.apple.inputmethod.SCIM.ITABC'
         __desc:
-          en: Input method ID for Simplified Chinese (Pinyin).
+          en: Input method ID for Chinese.
           ja:
+
       Ko:
-        __default: "com.apple.inputmethod.Korean.2SetKorean"
+        __default: 'com.apple.inputmethod.Korean.2SetKorean'
         __desc:
-          en: Input method ID for Korean (2-Set).
+          en: Input method ID for Korean.
           ja:
 
   windows:
@@ -512,46 +505,55 @@ os_settings:
       __desc:
         en: Enable Windows-specific input-method handling.
         ja:
+
     cmd_get:
-      __default: "im-select.exe"
+      __default: 'im-select.exe'
       __desc:
-        en: Command to get the current input method (IME layout code).
+        en: Command to get the current input method ID.
         ja:
+
     cmd_set:
-      __default: "im-select.exe %s"
+      __default: 'im-select.exe %s'
       __desc:
-        en: Command to set a new input method (`%s` will be replaced with the layout code).
+        en: Command to set a new input method (%s will be replaced with the target ID).
         ja:
+
     normal_input:
       __default: false
       __desc:
         en: |-
-          Input method for Normalize (`false` = auto-detect).
-          Example: `"1033"` for US English.
+          Input method for Normalize (false = auto-detect).
+          Example:
+            normal_input = '1033', -- US English
         ja:
+
     lang_inputs:
       __desc:
-        en: Input-method layout codes corresponding to `match.languages`.
+        en: Input methods corresponding to `match.languages`.
         ja:
+
       Ru:
-        __default: "1049"
+        __default: '1049'
         __desc:
-          en: Layout code for Russian.
+          en: Input method ID for Russian.
           ja:
+
       Ja:
-        __default: "1041"
+        __default: '1041'
         __desc:
-          en: Layout code for Japanese IME.
+          en: Input method ID for Japanese.
           ja:
+
       Zh:
-        __default: "2052"
+        __default: '2052'
         __desc:
-          en: Layout code for Simplified Chinese IME.
+          en: Input method ID for Chinese.
           ja:
+
       Ko:
-        __default: "1042"
+        __default: '1042'
         __desc:
-          en: Layout code for Korean IME.
+          en: Input method ID for Korean.
           ja:
 
   linux:
@@ -560,45 +562,54 @@ os_settings:
       __desc:
         en: Enable Linux-specific input-method handling.
         ja:
+
     cmd_get:
-      __default: "ibus engine"
+      __default: 'ibus engine'
       __desc:
-        en: Command to get the current IBus engine name.
+        en: Command to get the current input method ID.
         ja:
+
     cmd_set:
-      __default: "ibus engine %s"
+      __default: 'ibus engine %s'
       __desc:
-        en: Command to set a new IBus engine (`%s` will be replaced with the engine name).
+        en: Command to set a new input method (%s will be replaced with the target ID).
         ja:
+
     normal_input:
       __default: false
       __desc:
         en: |-
-          Input method for Normalize (`false` = auto-detect).
-          Example: `"xkb:us::eng"` for US English.
+          Input method for Normalize (false = auto-detect).
+          Example:
+            normal_input = 'xkb:us::eng', -- US English.
         ja:
+
     lang_inputs:
       __desc:
-        en: IBus engine names corresponding to `match.languages`.
+        en: Input methods corresponding to `match.languages`.
         ja:
+
       Ru:
-        __default: "xkb:ru::rus"
+        __default: 'xkb:ru::rus'
         __desc:
-          en: IBus engine for Russian.
+          en: Input method ID for Russian.
           ja:
+
       Ja:
-        __default: "mozc-jp"
+        __default: 'mozc-jp'
         __desc:
-          en: IBus engine for Japanese (Mozc).
+          en: Input method ID for Japanese.
           ja:
+
       Zh:
-        __default: "libpinyin"
+        __default: 'libpinyin'
         __desc:
-          en: IBus engine for Chinese (Pinyin).
+          en: Input method ID for Chinese.
           ja:
+
       Ko:
-        __default: "hangul"
+        __default: 'hangul'
         __desc:
-          en: IBus engine for Korean (Hangul).
+          en: Input method ID for Korean.
           ja:
 
