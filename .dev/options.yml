@@ -277,7 +277,7 @@ restore:
       ja:
 
   exclude_pattern:
-    __default: '<!LITERAL>[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]'
+    __default: '<!CODE>[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]'
     __desc:
       en: |-
         Regex pattern checked before Restore runs.

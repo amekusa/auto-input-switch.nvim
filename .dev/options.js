@@ -75,8 +75,8 @@ function toLua(data, opts) {
 		break;
 
 	case 'string':
-		// special tag: <!LITERAL>
-		let m = data.match(/^\s*<!LITERAL>(.*)$/); if (m) {
+		// special tag: <!CODE>
+		let m = data.match(/^\s*<!CODE>(.*)$/); if (m) {
 			r += m[1];
 			break;
 		}
