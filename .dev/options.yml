@@ -363,7 +363,7 @@ match:
       __default:
         enable: false
         priority: 0
-        pattern: '[\\u0400-\\u04ff]'
+        pattern: '<!CODE>[==[[\u0400-\u04ff]]==]'
 
       __desc:
         en: Cyrillic range for Russian.
@@ -373,7 +373,7 @@ match:
       __default:
         enable: false
         priority: 0
-        pattern: '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]'
+        pattern: '<!CODE>[==[[\u3000-\u30ff\uff00-\uffef\u4e00-\u9fff]]==]'
 
       __desc:
         en: Unicode ranges for Japanese.
@@ -383,7 +383,7 @@ match:
       __default:
         enable: false
         priority: 0
-        pattern: '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]'
+        pattern: '<!CODE>[==[[\u3000-\u303f\u4e00-\u9fff\u3400-\u4dbf\u3100-\u312f]]==]'
 
       __desc:
         en: Unicode ranges for Chinese.
@@ -393,7 +393,7 @@ match:
       __default:
         enable: false
         priority: 0
-        pattern: '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]'
+        pattern: '<!CODE>[==[[\u3000-\u303f\u1100-\u11ff\u3130-\u318f\uac00-\ud7af]]==]'
 
       __desc:
         en: Unicode ranges for Korean.
@@ -419,7 +419,7 @@ match:
         ja:
 
     exclude_pattern:
-      __default: "^\\s*\\%([-+*:|>]\\|[0-9]\\+\\.\\)\\s"
+      __default: '<!CODE>[==[^\s*([-+*:|>]|[0-9]+\.)\s]==]'
       __desc:
         en: |-
           Regex pattern for lines that stop language detection.
