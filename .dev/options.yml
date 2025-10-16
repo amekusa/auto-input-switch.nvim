@@ -4,7 +4,9 @@ activate:
     en: |-
       Enable the plugin.
       You can toggle it anytime with the `:AutoInputSwitch on|off` command.
-    ja:
+    ja: |-
+      プラグインを有効にする。
+      `:AutoInputSwitch on|off` コマンドでいつでも切り替えることができます。
 
 async:
   __default: false
@@ -14,8 +16,11 @@ async:
         * false: Run synchronously (recommended).
                  May cause slight lag if you switch rapidly between Insert and Normal mode.
         *  true: Run asynchronously. Removes lag but may be less reliable.
-    ja:
-
+    ja: |-
+      シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
+        * false: 同期実行（推奨）。
+                 Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
+        *  true: 非同期実行。ラグはありませんが、動作がやや不安定です。
 log:
   __default: false
   __desc:
