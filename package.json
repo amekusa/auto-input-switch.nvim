@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "scripts": {
+    "setup": ".dev/setup.sh",
+    "doc": ".dev/doc.sh"
+  },
+  "devDependencies": {
+    "yaml": "^2.8.1"
+  }
+}
