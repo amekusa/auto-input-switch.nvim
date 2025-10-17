@@ -419,7 +419,7 @@ match:
         ja:
 
     exclude_pattern:
-      __default: '<!CODE>[==[^\s*([-+*:|>]|[0-9]+\.)\s]==]'
+      __default: '<!CODE>[==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==]'
       __desc:
         en: |-
           Regex pattern for lines that stop language detection.
