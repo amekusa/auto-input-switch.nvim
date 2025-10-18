@@ -4,26 +4,30 @@ import fs from 'node:fs';
 import yaml from 'yaml';
 
 /**
- * Convert a JS object into a Lua expression.
+ * Converts the given value into a Lua expression.
  * @author Satoshi Soma (github.com/amekusa)
  *
  * @param {any} data -
- * @param {object} opts -
- * @param {string} opts.key -
- * @param {number} opts.depth -
+ * @param {object} opts - Options
  * @param {string} opts.tab -
- * @param {string} opts.comment -
  * @param {string} opts.lang -
+ * @param {object} c - Context
+ * @param {number} c.depth -
+ * @param {string} c.key -
+ * @param {string} c.comment -
  * @return {string} a Lua expression
  */
-function toLua(data, opts) {
+function toLua(data, opts, c = {}) {
 	let {
-		depth = 0,
 		tab = '  ',
-		key,
-		comment = '',
 		lang = 'en',
 	} = opts;
+
+	let {
+		depth = 0,
+		key = null,
+		comment = '',
+	} = c;
 
 	let ind = tab.repeat(depth);
 	let r = ind;
@@ -47,28 +51,27 @@ function toLua(data, opts) {
 			break;
 		}
 		if ('__desc' in data) { // special key: __desc
-			let _opts = Object.assign({}, opts);
-			_opts.comment = data.__desc[lang] || '';
+			c = {depth, key, comment: data.__desc[lang] || ''};
 			delete data.__desc;
-			return toLua(data, _opts);
+			return toLua(data, opts, c);
 		}
 		if ('__default' in data) { // special key: __default
-			return toLua(data.__default, opts);
+			return toLua(data.__default, opts, c);
 		}
 		r += '{' + comment + '\n';
 		comment = '';
-		let _opts = {depth: depth + 1, tab, lang};
+		c = {depth: depth + 1};
 		if (Array.isArray(data)) {
 			for (let i = 0; i < data.length; i++) {
-				r += toLua(data[i], _opts) + '\n';
+				r += toLua(data[i], opts, c) + '\n';
 			}
 		} else {
 			let keys = Object.keys(data);
 			for (let i = 0; i < keys.length; i++) {
 				let k = keys[i];
 				let v = data[k];
-				_opts.key = k;
-				r += toLua(v, _opts) + '\n';
+				c.key = k;
+				r += toLua(v, opts, c) + '\n';
 			}
 		}
 		r += ind + '}';
