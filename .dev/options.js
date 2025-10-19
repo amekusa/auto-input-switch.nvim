@@ -160,7 +160,7 @@ out = toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'});
 dst = root + '/doc/auto-input-switch-options.txt';
 fs.writeFile(dst, out, 'utf8', written(dst));
 
-out = toDoc(structuredClone(options), {lang: 'ja'});
+out = toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch'});
 dst = root + '/doc/auto-input-switch-options.ja.txt';
 fs.writeFile(dst, out, 'utf8', written(dst));
 
