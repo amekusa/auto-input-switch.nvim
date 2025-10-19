@@ -109,6 +109,7 @@ function toLua(data, opts, c = {}) {
  *
  * @param {object} data -
  * @param {object} opts - Options
+ * @param {string} opts.header - Header text
  * @param {string} opts.ns - Namespace
  * @param {string} opts.lang - Language
  * @param {string[]} stack - Object key stack
@@ -118,6 +119,7 @@ function toDoc(data, opts, stack = null) {
 	if (!data || typeof data != 'object') return '';
 
 	let {
+		header = '',
 		ns = '',
 		lang = 'en',
 	} = opts;
@@ -148,31 +150,51 @@ function toDoc(data, opts, stack = null) {
 		r += toDoc(v, opts, stack ? [...stack, k] : [k]);
 	}
 
+	if (!stack) {
+		r = header.trim() + '\n\n' + r + '\nvim:tw=78:ts=8:noet:ft=help:norl:';
+	}
 	return r;
 }
 
 let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
-
-let out, dst;
+let out, dst, header;
 let written = file => {
 	return err => {
 		if (err) throw err;
 		console.log('Written:', file);
 	}
 };
+
+// defaults.lua
 out = 'return ' + toLua(structuredClone(options), {lang: 'en'});
 dst = root + '/lua/auto-input-switch/defaults.lua';
 fs.writeFile(dst, out, 'utf8', written(dst));
 
+// defaults.ja.lua
 out = 'return ' + toLua(structuredClone(options), {lang: 'ja'});
 dst = root + '/lua/auto-input-switch/defaults.ja.lua';
 fs.writeFile(dst, out, 'utf8', written(dst));
 
-out = toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'});
+// help docs
+//// english
+header = `
+*auto-input-switch-options.txt*    For auto-input-switch.nvim
+
+==============================================================================
+OPTIONS                                            *auto-input-switch-options*
+`;
+out = toDoc(structuredClone(options), {header, lang: 'en', ns: 'auto-input-switch'});
 dst = root + '/doc/auto-input-switch-options.txt';
 fs.writeFile(dst, out, 'utf8', written(dst));
 
-out = toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch'});
+//// japanese
+header = `
+*auto-input-switch-options.ja.txt*    For auto-input-switch.nvim
+
+==============================================================================
+OPTIONS                                         *auto-input-switch-options-ja*
+`;
+out = toDoc(structuredClone(options), {header, lang: 'ja', ns: 'auto-input-switch-ja'});
 dst = root + '/doc/auto-input-switch-options.ja.txt';
 fs.writeFile(dst, out, 'utf8', written(dst));
 
