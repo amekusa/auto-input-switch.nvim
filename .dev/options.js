@@ -145,7 +145,7 @@ function toDoc(data, opts, stack = null) {
 		let tag = `*${ns}.${head}*`;
 		let pad = 78 - (head.length + tag.length);
 		head += pad < 4 ? ('\n' + tag.padStart(78, ' ')) : (' '.repeat(pad) + tag);
-		r = head + '\n' + r + '\n\n';
+		r = '-'.repeat(78) + '\n' + head + '\n' + r + '\n\n';
 	}
 
 	let keys = Object.keys(data);
