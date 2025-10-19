@@ -126,26 +126,29 @@ function toDoc(data, opts, stack = null) {
 
 	let r = '';
 
-	if ('__default' in data) {
-		r = toLua(data.__default, {lang});
-		if (r.match('\n')) r = `Default: >lua\n` + r + `\n<\n`;
-		else r = 'Default: `' + r + '`\n';
-		delete data.__default;
-	}
-	if ('__desc' in data) {
-		if (data.__desc[lang]) r += data.__desc[lang] + '\n';
-		delete data.__desc;
-	}
-
-	if (r && stack) { // section header
-		r = '\t' + r.replaceAll('\n', '\n\t');
-		r = r.replaceAll('\t<\n', '<\n');
-
-		let head = stack.join('.');
-		let tag = `*${ns}.${head}*`;
-		let pad = 78 - (head.length + tag.length);
-		head += pad < 4 ? ('\n' + tag.padStart(78, ' ')) : (' '.repeat(pad) + tag);
-		r = '-'.repeat(78) + '\n' + head + '\n' + r + '\n\n';
+	if (stack) {
+		if ('__default' in data) {
+			r = toLua(data.__default, {lang});
+			if (r.includes('\n')) r = '<default> >lua\n' + r + '\n<\n';
+			else                  r = '<default> `' + r + '`\n';
+			delete data.__default;
+		}
+		if ('__desc' in data) {
+			if (data.__desc[lang]) r += data.__desc[lang];
+			delete data.__desc;
+		}
+		if (r) { // register section
+			// indent section body
+			r = r.replaceAll('\n', '\n\t');
+			r = r.replaceAll('\t<', '<');
+			r = '\t' + r;
+			// section header
+			let head = stack.join('.');
+			let tag = `*${ns}.${head}*`;
+			let pad = 78 - (head.length + tag.length);
+			head += pad < 4 ? ('\n' + tag.padStart(78, ' ')) : (' '.repeat(pad) + tag);
+			r = '-'.repeat(78) + '\n' + head + '\n' + r + '\n\n';
+		}
 	}
 
 	let keys = Object.keys(data);
