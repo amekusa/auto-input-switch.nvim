@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
 base="$(dirname "$0")"
+cd "$base"
+
+# clear old docs
+rm ../doc/*
 
 # generate defaults.lua and the options doc
-node "$base/options.js"
+node "./options.js"
 
 # generate the main doc
-cd "$base/panvimdoc"
+cd "panvimdoc"
 prj="auto-input-switch.nvim"
 
 ./panvimdoc.sh \
