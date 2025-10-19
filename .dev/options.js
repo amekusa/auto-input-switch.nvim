@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
+import {dirname} from 'node:path';
 import fs from 'node:fs';
 import yaml from 'yaml';
+
+let base = import.meta.dirname;
+let root = dirname(base); // project root
 
 /**
  * Converts the given value into a Lua expression.
@@ -99,5 +103,64 @@ function toLua(data, opts, c = {}) {
 	return r;
 }
 
-let parsed = toLua(yaml.parse(fs.readFileSync('./options.yml', 'utf8')), {lang: 'en'});
-console.debug(parsed);
+function toDoc(data, opts, stack = null) {
+	if (!data || typeof data != 'object') return '';
+
+	let {
+		ns = '',
+		lang = 'en',
+	} = opts;
+
+	let r = '';
+
+	if ('__desc' in data) {
+		r = data.__desc[lang] || '';
+		delete data.__desc;
+	}
+	if ('__default' in data) {
+		r = 'Default: ' + toLua(data.__default, {lang}) + '\n' + r;
+		delete data.__default;
+	}
+
+	if (r && stack) {
+		let left = stack.join('.');
+		let right = `*${ns}.${left}*`;
+		let pad = 78 - (left.length + right.length);
+		r = left + ' '.repeat(pad > 0 ? pad : 1) + right + '\n' + r + '\n\n';
+	}
+
+	let keys = Object.keys(data);
+	for (let i = 0; i < keys.length; i++) {
+		let k = keys[i];
+		let v = data[k];
+		r += toDoc(v, opts, stack ? [...stack, k] : [k]);
+	}
+
+	return r;
+}
+
+let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
+
+let out, dst;
+let written = file => {
+	return err => {
+		if (err) throw err;
+		console.log('Written:', file);
+	}
+};
+out = 'return ' + toLua(structuredClone(options), {lang: 'en'});
+dst = root + '/lua/auto-input-switch/defaults.lua';
+fs.writeFile(dst, out, 'utf8', written(dst));
+
+out = 'return ' + toLua(structuredClone(options), {lang: 'ja'});
+dst = root + '/lua/auto-input-switch/defaults.ja.lua';
+fs.writeFile(dst, out, 'utf8', written(dst));
+
+out = toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'});
+dst = root + '/doc/auto-input-switch-options.txt';
+fs.writeFile(dst, out, 'utf8', written(dst));
+
+out = toDoc(structuredClone(options), {lang: 'ja'});
+dst = root + '/doc/auto-input-switch-options.ja.txt';
+fs.writeFile(dst, out, 'utf8', written(dst));
+
