@@ -127,7 +127,9 @@ function toDoc(data, opts, stack = null) {
 	let r = '';
 
 	if ('__default' in data) {
-		r = 'Default: ' + toLua(data.__default, {lang}) + '\n';
+		r = toLua(data.__default, {lang});
+		if (r.match('\n')) r = `Default: >lua\n` + r + `\n<\n`;
+		else r = 'Default: `' + r + '`\n';
 		delete data.__default;
 	}
 	if ('__desc' in data) {
@@ -137,6 +139,8 @@ function toDoc(data, opts, stack = null) {
 
 	if (r && stack) { // section header
 		r = '\t' + r.replaceAll('\n', '\n\t');
+		r = r.replaceAll('\t<\n', '<\n');
+
 		let head = stack.join('.');
 		let tag = `*${ns}.${head}*`;
 		let pad = 78 - (head.length + tag.length);
