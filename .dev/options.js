@@ -126,16 +126,17 @@ function toDoc(data, opts, stack = null) {
 
 	let r = '';
 
-	if ('__desc' in data) {
-		r = data.__desc[lang] || '';
-		delete data.__desc;
-	}
 	if ('__default' in data) {
-		r = 'Default: ' + toLua(data.__default, {lang}) + '\n' + r;
+		r = 'Default: ' + toLua(data.__default, {lang}) + '\n';
 		delete data.__default;
+	}
+	if ('__desc' in data) {
+		if (data.__desc[lang]) r += data.__desc[lang] + '\n';
+		delete data.__desc;
 	}
 
 	if (r && stack) { // section header
+		r = '\t' + r.replaceAll('\n', '\n\t');
 		let head = stack.join('.');
 		let tag = `*${ns}.${head}*`;
 		let pad = 78 - (head.length + tag.length);
@@ -151,7 +152,7 @@ function toDoc(data, opts, stack = null) {
 	}
 
 	if (!stack) {
-		r = header.trim() + '\n\n' + r + '\nvim:tw=78:ts=8:noet:ft=help:norl:';
+		r = header.trim() + '\n\n' + r + '\nvim:tw=78:ts=4:noet:ft=help:norl:';
 	}
 	return r;
 }
