@@ -103,6 +103,17 @@ function toLua(data, opts, c = {}) {
 	return r;
 }
 
+/**
+ * Converts the given object into a Vim help doc.
+ * @author Satoshi Soma (github.com/amekusa)
+ *
+ * @param {object} data -
+ * @param {object} opts - Options
+ * @param {string} opts.ns - Namespace
+ * @param {string} opts.lang - Language
+ * @param {string[]} stack - Object key stack
+ * @return {string} a Vim help doc
+ */
 function toDoc(data, opts, stack = null) {
 	if (!data || typeof data != 'object') return '';
 
@@ -122,7 +133,7 @@ function toDoc(data, opts, stack = null) {
 		delete data.__default;
 	}
 
-	if (r && stack) {
+	if (r && stack) { // section header
 		let left = stack.join('.');
 		let right = `*${ns}.${left}*`;
 		let pad = 78 - (left.length + right.length);
