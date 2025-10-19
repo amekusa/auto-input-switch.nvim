@@ -134,10 +134,11 @@ function toDoc(data, opts, stack = null) {
 	}
 
 	if (r && stack) { // section header
-		let left = stack.join('.');
-		let right = `*${ns}.${left}*`;
-		let pad = 78 - (left.length + right.length);
-		r = left + ' '.repeat(pad > 0 ? pad : 1) + right + '\n' + r + '\n\n';
+		let head = stack.join('.');
+		let tag = `*${ns}.${head}*`;
+		let pad = 78 - (head.length + tag.length);
+		head += pad < 4 ? ('\n' + tag.padStart(78, ' ')) : (' '.repeat(pad) + tag);
+		r = head + '\n' + r + '\n\n';
 	}
 
 	let keys = Object.keys(data);
