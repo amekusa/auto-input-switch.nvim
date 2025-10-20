@@ -172,6 +172,13 @@ function written(file) {
 let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
 let dst, out;
 let footer = `
+==============================================================================
+OTHER DOCUMENTS
+
+	- About the plugin: |auto-input-switch.nvim|
+	-          Options: |auto-input-switch-options|
+	-   Default config: |auto-input-switch-defaults|
+
 
 vim:tw=78:ts=4:noet:ft=help:norl:`;
 
@@ -191,8 +198,7 @@ DEFAULTS                                          *auto-input-switch-defaults*
 
 >lua
 ${indentBlock(out, '  ')}
-<
-${footer}`
+<` + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
 
@@ -212,8 +218,7 @@ OPTIONS                                            *auto-input-switch-options*
 	Note: CTRL-] to jump to the |link| under the cursor.
 	      CTRL-T or CTRL-O to jump back.
 
-${toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'})}
-${footer}`;
+` + toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
 
@@ -228,7 +233,6 @@ OPTIONS                                         *auto-input-switch-options-ja*
 	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
 	      CTRL-T または CTRL-O で戻る。
 
-${toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch-ja'})}
-${footer}`;
+` + toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch-ja'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
