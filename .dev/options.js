@@ -109,7 +109,6 @@ function toLua(data, opts, c = {}) {
  *
  * @param {object} data -
  * @param {object} opts - Options
- * @param {string} opts.header - Header text
  * @param {string} opts.ns - Namespace
  * @param {string} opts.lang - Language
  * @param {string[]} stack - Object key stack
@@ -119,7 +118,6 @@ function toDoc(data, opts, stack = null) {
 	if (!data || typeof data != 'object') return '';
 
 	let {
-		header = '',
 		ns = '',
 		lang = 'en',
 	} = opts;
@@ -129,8 +127,8 @@ function toDoc(data, opts, stack = null) {
 	if (stack) {
 		if ('__default' in data) {
 			r = toLua(data.__default, {lang});
-			if (r.includes('\n')) r = '<default> >lua\n' + r + '\n<\n';
-			else                  r = '<default> `' + r + '`\n';
+			if (r.includes('\n')) r = '- default: >lua\n' + r + '\n<\n';
+			else                  r = '- default: `' + r + '`\n';
 			delete data.__default;
 		}
 		if ('__desc' in data) {
@@ -138,10 +136,7 @@ function toDoc(data, opts, stack = null) {
 			delete data.__desc;
 		}
 		if (r) { // register section
-			// indent section body
-			r = r.replaceAll('\n', '\n\t');
-			r = r.replaceAll('\t<', '<');
-			r = '\t' + r;
+			r = indentBlock(r);
 			// section header
 			let head = stack.join('.');
 			let tag = `*${ns}.${head}*`;
@@ -157,52 +152,83 @@ function toDoc(data, opts, stack = null) {
 		let v = data[k];
 		r += toDoc(v, opts, stack ? [...stack, k] : [k]);
 	}
-
-	if (!stack) {
-		r = header.trim() + '\n\n' + r + '\nvim:tw=78:ts=4:noet:ft=help:norl:';
-	}
 	return r;
 }
 
-let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
-let out, dst, header;
-let written = file => {
+function indentBlock(str, ind = '\t') {
+	str = str.replaceAll('\n', '\n' + ind);
+	str = str.replaceAll(ind + '<', '<');
+	str = ind + str;
+	return str;
+}
+
+function written(file) {
 	return err => {
 		if (err) throw err;
 		console.log('Written:', file);
-	}
-};
+	};
+}
 
-// defaults.lua
-out = 'return ' + toLua(structuredClone(options), {lang: 'en'});
+let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
+let dst, out;
+let footer = `
+
+vim:tw=78:ts=4:noet:ft=help:norl:`;
+
+
+// --- defaults.lua ---
 dst = root + '/lua/auto-input-switch/defaults.lua';
+out = toLua(structuredClone(options), {lang: 'en'});
+fs.writeFile(dst, 'return ' + out, 'utf8', written(dst));
+
+
+// --- defaults doc ---
+dst = root + '/doc/auto-input-switch-defaults.txt';
+out = `*auto-input-switch-defaults.txt* - Defaults for |auto-input-switch.nvim|
+
+==============================================================================
+DEFAULTS                                          *auto-input-switch-defaults*
+
+>lua
+${indentBlock(out, '  ')}
+<
+${footer}`
 fs.writeFile(dst, out, 'utf8', written(dst));
 
-// defaults.ja.lua
-out = 'return ' + toLua(structuredClone(options), {lang: 'ja'});
+
+// --- defaults.ja.lua ---
 dst = root + '/lua/auto-input-switch/defaults.ja.lua';
-fs.writeFile(dst, out, 'utf8', written(dst));
+out = toLua(structuredClone(options), {lang: 'ja'});
+fs.writeFile(dst, 'return ' + out, 'utf8', written(dst));
 
-// help docs
-//// english
-header = `
-*auto-input-switch-options.txt*    For auto-input-switch.nvim
+
+// --- options doc ---
+dst = root + '/doc/auto-input-switch-options.txt';
+out = `*auto-input-switch-options.txt* - Options for |auto-input-switch.nvim|
 
 ==============================================================================
 OPTIONS                                            *auto-input-switch-options*
-`;
-out = toDoc(structuredClone(options), {header, lang: 'en', ns: 'auto-input-switch'});
-dst = root + '/doc/auto-input-switch-options.txt';
+
+	Note: CTRL-] to jump to the |link| under the cursor.
+	      CTRL-T or CTRL-O to jump back.
+
+${toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'})}
+${footer}`;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
-//// japanese
-header = `
-*auto-input-switch-options.ja.txt*    For auto-input-switch.nvim
+
+// --- options doc (ja) ---
+dst = root + '/doc/auto-input-switch-options.ja.txt';
+out = `
+*auto-input-switch-options.ja.txt* - Options for |auto-input-switch.nvim|
 
 ==============================================================================
 OPTIONS                                         *auto-input-switch-options-ja*
-`;
-out = toDoc(structuredClone(options), {header, lang: 'ja', ns: 'auto-input-switch-ja'});
-dst = root + '/doc/auto-input-switch-options.ja.txt';
+
+	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
+	      CTRL-T または CTRL-O で戻る。
+
+${toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch-ja'})}
+${footer}`;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
