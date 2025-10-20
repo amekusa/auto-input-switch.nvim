@@ -11,10 +11,11 @@ node "./options.js"
 
 # generate the main doc
 cd "panvimdoc"
-prj="auto-input-switch.nvim"
+prj="auto-input-switch"
 
 ./panvimdoc.sh \
 	--input-file "../../README.md" \
+	--description "*auto-input-switch.nvim*" \
 	--project-name "$prj" \
 	--shift-heading-level-by -1 \
 	--demojify true \
