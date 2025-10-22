@@ -32,81 +32,92 @@ log:
       Log file path:
         * Linux/macOS: ~/.local/state/nvim/auto-input-switch.log
         *     Windows: ~/AppData/Local/nvim-data/auto-input-switch.log
-    ja:
+    ja: |-
+      ログをファイルに出力する？
+      `cmd_get` / `cmd_set` をデバッグする際に有用です。
+      ログファイルは `setup()` が実行される度に初期化されます。
+
+      ログファイルのパス:
+        * Linux/macOS: ~/.local/state/nvim/auto-input-switch.log
+        *     Windows: ~/AppData/Local/nvim-data/auto-input-switch.log
 
 prefix:
   __default: AutoInputSwitch
   __desc:
     en: |-
       Prefix for command names.
-      If you prefer shorter commands, set this to something like 'AIS'.
-    ja:
+      If you prefer shorter commands, set this to something like `'AIS'`.
+    ja: |-
+      コマンド名のプリフィックス。
+      例えば `'AIS'` などにすることでコマンドを短くすることができます。
 
 popup:
   __desc:
     en: When the plugin switches the input method, it can notify you with a popup.
-    ja:
+    ja: プラグインによって入力言語が変更される際、ポップアップ表示でそれを知らせます。
 
   enable:
     __default: true
     __desc:
       en: Show popups?
-      ja:
+      ja: ポップアップを表示する？
 
   duration:
     __default: 1500
     __desc:
       en: How long the popup remains visible (ms).
-      ja:
+      ja: ポップアップが表示されている時間。(ms)
 
   pad:
     __default: true
     __desc:
-      en: Add leading and trailing spaces in popup text.
-      ja:
+      en: Add leading and trailing spaces in popup text?
+      ja: ポップアップテキストの左右に空白を入れる？
 
   hl_group:
     __default: PmenuSel
     __desc:
       en: Highlight group for the popup window.
-      ja:
+      ja: ポップアップウィンドウのハイライトグループ。
 
   window:
     __desc:
-      en: Popup window configuration (:h nvim_open_win()).
-      ja:
+      en: Popup window configuration. (:h |nvim_open_win()|)
+      ja: ポップアップウィンドウの設定。(:h |nvim_open_win()|)
 
     border:
       __default: none
       __desc:
         en: Border style.
-        ja:
+        ja: ボーダーのスタイル。
 
     zindex:
       __default: 50
       __desc:
-        en: Rendering priority (higher = drawn on top).
-        ja:
+        en: Rendering priority.
+        ja: 表示の優先度。
 
     row:
       __default: 1
       __desc:
-        en: Horizontal offset from the anchor.
-        ja:
+        en: Horizontal offset.
+        ja: 横方向のオフセット。
 
     col:
       __default: 0
       __desc:
-        en: Vertical offset from the anchor.
-        ja:
+        en: Vertical offset.
+        ja: 縦方向のオフセット。
 
     relative:
       __default: cursor
       __desc:
         en: |-
           Origin of the offsets.
-          One of: 'editor', 'win', 'cursor', or 'mouse'.
-        ja:
+          One of: 'editor', 'win', 'cursor', or 'mouse'
+        ja: |-
+          オフセットの基準となる対象。
+          次の何れか: 'editor', 'win', 'cursor', or 'mouse'
 
     anchor:
       __default: NW
@@ -117,41 +128,46 @@ popup:
             * 'NE': Northeast
             * 'SW': Southwest
             * 'SE': Southeast
-        ja:
+        ja: |-
+          ポップアップの四隅のうちどれを基準位置に合わせるか。
+            * 'NW': 左上
+            * 'NE': 右上
+            * 'SW': 左下
+            * 'SE': 右下
 
   labels:
     __desc:
-      en: Popup label texts for various input methods.
-      ja:
+      en: Popup text for each input method.
+      ja: 各入力言語のポップアップテキスト。
 
     normal_input:
       __default: A
       __desc:
-        en: Popup text for Normalize. Set false to disable.
-        ja:
+        en: Popup text for Normalize. Set `false` to disable.
+        ja: Normalize 時に表示するポップアップテキスト。`false` で非表示。
 
     lang_inputs:
       __desc:
         en: Popup texts for Restore and Match.
-        ja:
+        ja: Restore と Match 時に表示するポップアップテキスト。
 
       Ja:
         __default: あ
         __desc:
           en: Popup text for Japanese input.
-          ja:
+          ja: 日本語入力時のポップアップテキスト。
 
       Zh:
         __default: 拼
         __desc:
           en: Popup text for Chinese input.
-          ja:
+          ja: 中国語入力時のポップアップテキスト。
 
       Ko:
         __default: 한
         __desc:
           en: Popup text for Korean input.
-          ja:
+          ja: 韓国語入力時のポップアップテキスト。
 
 normalize:
   __desc:
@@ -159,12 +175,14 @@ normalize:
       Outside Insert mode, the plugin can force the input method to Latin.
       This feature is called "Normalize".
     ja:
+      Insert モードではない時、入力言語を英数に強制することができます。
+      この機能を "Normalize" と呼称します。
 
   enable:
     __default: true
     __desc:
       en: Enable Normalize?
-      ja:
+      ja: Normalize を有効にする？
 
   on:
     __default:
@@ -175,8 +193,8 @@ normalize:
       - QuitPre
 
     __desc:
-      en: Events that trigger Normalize (:h events).
-      ja:
+      en: Events that trigger Normalize. (:h |events|)
+      ja: Normalize を実行するイベント。(:h |events|)
 
   on_mode_change:
     __default:
@@ -187,13 +205,23 @@ normalize:
         Mode transition patterns that trigger Normalize.
         If not false, Normalize is triggered by the 'ModeChanged' event.
         See:
-          * :h autocmd-pattern
-          * :h ModeChanged
-          * :h mode()
+          * :h |autocmd-pattern|
+          * :h |ModeChanged|
+          * :h |mode()|
 
         Default:
           '[iR]:n' (From Insert/Replace to Normal mode)
-      ja:
+      ja: |-
+        Normalize のトリガーとする、モードの遷移パターン。
+        このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
+        false をセットすることで無効にできます。
+        See:
+          * :h |autocmd-pattern|
+          * :h |ModeChanged|
+          * :h |mode()|
+
+        Default:
+          '[iR]:n' (Insert/Replace から Normal モード)
 
   filetypes:
     __default: '*'
@@ -202,13 +230,16 @@ normalize:
         Filetypes where Normalize is enabled.
         Example:
           filetypes = { 'markdown', 'text' },
-      ja:
+      ja: |-
+        Normalize を有効にするファイルタイプ。
+        例:
+          filetypes = { 'markdown', 'text' },
 
   debounce:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Normalize triggers.
-      ja:
+      ja: デバウンス時間 (ms)。Normalize の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -217,12 +248,22 @@ normalize:
         Optional function that decides whether Normalize is enabled for a buffer.
         Called on each buffer creation with its buffer number.
         Return true to enable Normalize for that buffer.
-        Example:
+        Example: >lua
           -- Enable only in listed buffers
           buf_condition = function(buf)
             return vim.bo[buf].buflisted
           end,
-      ja:
+        <
+      ja: |-
+        Normalize がバッファに対して有効となる条件を定義する関数です。
+        バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+        true が返された場合にのみ、そのバッファで Normalize が有効になります。
+        Example: >lua
+          -- Enable only in listed buffers
+          buf_condition = function(buf)
+            return vim.bo[buf].buflisted
+          end,
+        <
 
 restore:
   __desc:
@@ -230,21 +271,24 @@ restore:
       When Normalize is about to run, the plugin saves the current input method.
       When you next enter Insert or Replace mode, it restores that input method.
       This feature is called "Restore".
-    ja:
+    ja: |-
+      Normalize が実行される際、直前に使っていた入力言語がプラグインによって保存されます。
+      そして次に Insert か Replace モードに切り替えた際、保存されていた入力言語に自動で復帰します。
+      この機能を "Restore" と呼称します。
 
   enable:
     __default: true
     __desc:
       en: Enable Restore?
-      ja:
+      ja: Restore を有効にする？
 
   on:
     __default:
       - FocusGained
 
     __desc:
-      en: Events that trigger Restore (:h events).
-      ja:
+      en: Events that trigger Restore. (:h |events|)
+      ja: Restore を実行するイベント。(:h |events|)
 
   on_mode_change:
     __default:
@@ -252,24 +296,32 @@ restore:
 
     __desc:
       en: |-
-        Mode transitions that trigger Restore.
+        Mode transition patterns that trigger Restore.
         Default: 'n:[iR]' (From Normal to Insert/Replace mode)
-      ja:
+      ja: |-
+        Restore のトリガーとする、モードの遷移パターン。
+        Default: 'n:[iR]' (Normal から Insert/Replace モード)
+
 
   filetypes:
     __default: '*'
     __desc:
       en: |-
         Filetypes where Restore is enabled.
-        Example:
+        Example: >lua
           filetypes = { 'markdown', 'text' },
-      ja:
+        <
+      ja: |-
+        Restore を有効にするファイルタイプ。
+        例: >lua
+          filetypes = { 'markdown', 'text' },
+        <
 
   debounce:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Restore triggers.
-      ja:
+      ja: デバウンス時間 (ms)。Restore の連続実行を抑制します。
 
   buf_condition:
     __default: null
