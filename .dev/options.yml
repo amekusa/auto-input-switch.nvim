@@ -258,7 +258,7 @@ normalize:
         Normalize がバッファに対して有効となる条件を定義する関数です。
         バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
         true が返された場合にのみ、そのバッファで Normalize が有効になります。
-        Example: >lua
+        例: >lua
           -- Enable only in listed buffers
           buf_condition = function(buf)
             return vim.bo[buf].buflisted
@@ -273,7 +273,7 @@ restore:
       This feature is called "Restore".
     ja: |-
       Normalize が実行される際、直前に使っていた入力言語がプラグインによって保存されます。
-      そして次に Insert か Replace モードに切り替えた際、保存されていた入力言語に自動で復帰します。
+      そして次に Insert か Replace モードに入った際、保存されていた入力言語に自動で復帰します。
       この機能を "Restore" と呼称します。
 
   enable:
@@ -328,10 +328,16 @@ restore:
     __desc:
       en: |-
         Function that decides whether Restore is enabled for a buffer.
-        Called on every buffer creation.
+        Called on each buffer creation with its buffer number.
+        Return true to enable Restore for that buffer.
         By default, returns true if the buffer is 'modifiable'.
         You can override this or disable it by setting false.
-      ja:
+      ja: |-
+        Restore がバッファに対して有効となる条件を定義する関数です。
+        バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+        true が返された場合にのみ、そのバッファで Restore が有効になります。
+        デフォルトでは、バッファが 'modifiable' の場合に true が返されます。
+        自作の関数で上書きするか、false をセットすることで無効化することもできます。
 
   exclude_pattern:
     __default: '<!CODE>[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]'
@@ -339,9 +345,13 @@ restore:
       en: |-
         Regex pattern checked before Restore runs.
         If nearby characters match this, Restore is canceled.
-        Default: matches alphanumerics and common punctuation.
         Set false to disable this check.
-      ja:
+        Default: matches alphanumerics and common punctuation.
+      ja: |-
+        この正規表現は Restore が実行される直前にチェックされます。
+        カーソル付近の文字がこれにマッチすると、Restore がキャンセルされます。
+        false をセットするとチェックは無効になります。
+        デフォルト値: 全ての半角英数と、ほとんどの半角記号にマッチします。
 
 match:
   __desc:
@@ -351,21 +361,26 @@ match:
       This feature is called "Match".
       If Match and Restore trigger together, Match takes priority.
       Disabled by default.
-    ja:
+    ja: |-
+      Insert/Replace モードに入った際、カーソル付近の文字にマッチする入力言語に
+      自動で切り替えます。
+      この機能を "Match" と呼称します。
+      Match と Restore が同時に実行された場合は Match が優先されます。
+      この機能はデフォルトでは無効に設定されています。
 
   enable:
     __default: false
     __desc:
       en: Enable Match?
-      ja:
+      ja: Match を有効にする？
 
   on:
     __default:
       - FocusGained
 
     __desc:
-      en: Events that trigger Match (:h events).
-      ja:
+      en: Events that trigger Match. (:h |events|)
+      ja: Match を実行するイベント。(:h |events|)
 
   on_mode_change:
     __default:
@@ -397,10 +412,16 @@ match:
     __desc:
       en: |-
         Function that decides whether Match is enabled for a buffer.
-        Called on buffer creation.
+        Called on each buffer creation with its buffer number.
+        Return true to enable Match for that buffer.
         By default, returns true if the buffer is 'modifiable'.
         You can override this or disable it by setting false.
-      ja:
+      ja: |-
+        Match がバッファに対して有効となる条件を定義する関数です。
+        バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+        true が返された場合にのみ、そのバッファで Match が有効になります。
+        デフォルトでは、バッファが 'modifiable' の場合に true が返されます。
+        自作の関数で上書きするか、false をセットすることで無効化することもできます。
 
   languages:
     __desc:
