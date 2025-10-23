@@ -18,7 +18,7 @@ async:
         *  `true`: Run asynchronously. Removes lag but may be less reliable.
     ja: |-
       シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
-        * `false`: 同期実行（推奨）。
+        * `false`: 同期実行 (推奨) 。
                    Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
         *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
 log:
@@ -66,7 +66,7 @@ popup:
     __default: 1500
     __desc:
       en: How long the popup remains visible (ms).
-      ja: ポップアップが表示されている時間（ms）。
+      ja: ポップアップが表示されている時間 (ms) 。
 
   pad:
     __default: true
@@ -83,7 +83,7 @@ popup:
   window:
     __desc:
       en: Popup window configuration (:h |nvim_open_win()|).
-      ja: ポップアップウィンドウの設定（:h |nvim_open_win()|）。
+      ja: ポップアップウィンドウの設定 (:h |nvim_open_win()|) 。
 
     border:
       __default: none
@@ -194,7 +194,7 @@ normalize:
 
     __desc:
       en: Events that trigger Normalize (:h |events|).
-      ja: Normalize を実行するイベント（:h |events|）。
+      ja: Normalize を実行するイベント (:h |events|) 。
 
   on_mode_change:
     __default:
@@ -240,7 +240,7 @@ normalize:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Normalize triggers.
-      ja: デバウンス時間（ms）。Normalize の連続実行を抑制します。
+      ja: デバウンス時間 (ms) 。Normalize の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -289,7 +289,7 @@ restore:
 
     __desc:
       en: Events that trigger Restore (:h |events|).
-      ja: Restore を実行するイベント（:h |events|）。
+      ja: Restore を実行するイベント (:h |events|) 。
 
   on_mode_change:
     __default:
@@ -324,7 +324,7 @@ restore:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Restore triggers.
-      ja: デバウンス時間（ms）。Restore の連続実行を抑制します。
+      ja: デバウンス時間 (ms) 。Restore の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -383,7 +383,7 @@ match:
 
     __desc:
       en: Events that trigger Match (:h |events|).
-      ja: Match を実行するイベント（:h |events|）。
+      ja: Match を実行するイベント (:h |events|) 。
 
   on_mode_change:
     __default:
@@ -417,7 +417,7 @@ match:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Match triggers.
-      ja: デバウンス時間（ms）。Match の連続実行を抑制します。
+      ja: デバウンス時間 (ms) 。Match の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -554,7 +554,7 @@ os_settings:
       __default: 'im-select %s'
       __desc:
         en: Command to set a new input method (`%s` will be replaced with the target ID).
-        ja: 入力言語を切り替えるコマンド（`%s` が切り替え先の入力言語 ID で置換される）。
+        ja: 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
 
     normal_input:
       __default: false
@@ -571,7 +571,7 @@ os_settings:
           <
           The first string must match `cmd_get` output; the second is passed to `cmd_set`.
         ja: |-
-          Normalize 時に使用する入力言語（`false` = 自動検出）。
+          Normalize 時に使用する入力言語 (`false` = 自動検出) 。
           例: >lua
             normal_input = 'com.apple.keylayout.ABC',
             normal_input = 'com.apple.keylayout.US',
