@@ -13,14 +13,14 @@ async:
   __desc:
     en: |-
       Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
-        * false: Run synchronously (recommended).
-                 May cause slight lag if you switch rapidly between Insert and Normal mode.
-        *  true: Run asynchronously. Removes lag but may be less reliable.
+        * `false`: Run synchronously (recommended).
+                   May cause slight lag if you switch rapidly between Insert and Normal mode.
+        *  `true`: Run asynchronously. Removes lag but may be less reliable.
     ja: |-
       シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
-        * false: 同期実行（推奨）。
-                 Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
-        *  true: 非同期実行。ラグはありませんが、動作がやや不安定です。
+        * `false`: 同期実行（推奨）。
+                   Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
+        *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
 log:
   __default: false
   __desc:
@@ -30,16 +30,16 @@ log:
       The log file is cleared every time `setup()` is called.
 
       Log file path:
-        * Linux/macOS: ~/.local/state/nvim/auto-input-switch.log
-        *     Windows: ~/AppData/Local/nvim-data/auto-input-switch.log
+        * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
+        *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
     ja: |-
       ログをファイルに出力する？
       `cmd_get` / `cmd_set` をデバッグする際に有用です。
       ログファイルは `setup()` が実行される度に初期化されます。
 
       ログファイルのパス:
-        * Linux/macOS: ~/.local/state/nvim/auto-input-switch.log
-        *     Windows: ~/AppData/Local/nvim-data/auto-input-switch.log
+        * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
+        *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
 
 prefix:
   __default: AutoInputSwitch
@@ -66,7 +66,7 @@ popup:
     __default: 1500
     __desc:
       en: How long the popup remains visible (ms).
-      ja: ポップアップが表示されている時間。(ms)
+      ja: ポップアップが表示されている時間（ms）。
 
   pad:
     __default: true
@@ -82,8 +82,8 @@ popup:
 
   window:
     __desc:
-      en: Popup window configuration. (:h |nvim_open_win()|)
-      ja: ポップアップウィンドウの設定。(:h |nvim_open_win()|)
+      en: Popup window configuration (:h |nvim_open_win()|).
+      ja: ポップアップウィンドウの設定（:h |nvim_open_win()|）。
 
     border:
       __default: none
@@ -114,26 +114,26 @@ popup:
       __desc:
         en: |-
           Origin of the offsets.
-          One of: 'editor', 'win', 'cursor', or 'mouse'
+          One of: `'editor'`, `'win'`, `'cursor'`, or `'mouse'`
         ja: |-
           オフセットの基準となる対象。
-          次の何れか: 'editor', 'win', 'cursor', or 'mouse'
+          次の何れか: `'editor'`, `'win'`, `'cursor'`, `'mouse'`
 
     anchor:
       __default: NW
       __desc:
         en: |-
           Corner used to anchor the popup.
-            * 'NW': Northwest
-            * 'NE': Northeast
-            * 'SW': Southwest
-            * 'SE': Southeast
+            * `'NW'`: Northwest
+            * `'NE'`: Northeast
+            * `'SW'`: Southwest
+            * `'SE'`: Southeast
         ja: |-
           ポップアップの四隅のうちどれを基準位置に合わせるか。
-            * 'NW': 左上
-            * 'NE': 右上
-            * 'SW': 左下
-            * 'SE': 右下
+            * `'NW'`: 左上
+            * `'NE'`: 右上
+            * `'SW'`: 左下
+            * `'SE'`: 右下
 
   labels:
     __desc:
@@ -174,7 +174,7 @@ normalize:
     en: |-
       Outside Insert mode, the plugin can force the input method to Latin.
       This feature is called "Normalize".
-    ja:
+    ja: |-
       Insert モードではない時、入力言語を英数に強制することができます。
       この機能を "Normalize" と呼称します。
 
@@ -193,8 +193,8 @@ normalize:
       - QuitPre
 
     __desc:
-      en: Events that trigger Normalize. (:h |events|)
-      ja: Normalize を実行するイベント。(:h |events|)
+      en: Events that trigger Normalize (:h |events|).
+      ja: Normalize を実行するイベント（:h |events|）。
 
   on_mode_change:
     __default:
@@ -203,7 +203,7 @@ normalize:
     __desc:
       en: |-
         Mode transition patterns that trigger Normalize.
-        If not false, Normalize is triggered by the 'ModeChanged' event.
+        If not `false`, Normalize is triggered by the 'ModeChanged' event matched with one of these patterns.
         See:
           * :h |autocmd-pattern|
           * :h |ModeChanged|
@@ -212,10 +212,9 @@ normalize:
         Default:
           '[iR]:n' (From Insert/Replace to Normal mode)
       ja: |-
-        Normalize のトリガーとする、モードの遷移パターン。
-        このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
-        false をセットすることで無効にできます。
-        See:
+        Normalize のトリガーとなる、モードの遷移パターン。
+        `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
+        参照:
           * :h |autocmd-pattern|
           * :h |ModeChanged|
           * :h |mode()|
@@ -228,18 +227,20 @@ normalize:
     __desc:
       en: |-
         Filetypes where Normalize is enabled.
-        Example:
+        Example: >lua
           filetypes = { 'markdown', 'text' },
+        <
       ja: |-
-        Normalize を有効にするファイルタイプ。
-        例:
+        Normalize が有効になるファイルタイプ。
+        例: >lua
           filetypes = { 'markdown', 'text' },
+        <
 
   debounce:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Normalize triggers.
-      ja: デバウンス時間 (ms)。Normalize の連続実行を抑制します。
+      ja: デバウンス時間（ms）。Normalize の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -247,7 +248,7 @@ normalize:
       en: |-
         Optional function that decides whether Normalize is enabled for a buffer.
         Called on each buffer creation with its buffer number.
-        Return true to enable Normalize for that buffer.
+        Return `true` to enable Normalize for that buffer.
         Example: >lua
           -- Enable only in listed buffers
           buf_condition = function(buf)
@@ -257,7 +258,7 @@ normalize:
       ja: |-
         Normalize がバッファに対して有効となる条件を定義する関数です。
         バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
-        true が返された場合にのみ、そのバッファで Normalize が有効になります。
+        `true` が返された場合にのみ、そのバッファで Normalize が有効になります。
         例: >lua
           -- Enable only in listed buffers
           buf_condition = function(buf)
@@ -287,8 +288,8 @@ restore:
       - FocusGained
 
     __desc:
-      en: Events that trigger Restore. (:h |events|)
-      ja: Restore を実行するイベント。(:h |events|)
+      en: Events that trigger Restore (:h |events|).
+      ja: Restore を実行するイベント（:h |events|）。
 
   on_mode_change:
     __default:
@@ -297,10 +298,12 @@ restore:
     __desc:
       en: |-
         Mode transition patterns that trigger Restore.
+        If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
         Default: 'n:[iR]' (From Normal to Insert/Replace mode)
       ja: |-
-        Restore のトリガーとする、モードの遷移パターン。
-        Default: 'n:[iR]' (Normal から Insert/Replace モード)
+        Restore のトリガーとなる、モードの遷移パターン。
+        `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
+        デフォルト: 'n:[iR]' (Normal から Insert/Replace モード)
 
 
   filetypes:
@@ -312,7 +315,7 @@ restore:
           filetypes = { 'markdown', 'text' },
         <
       ja: |-
-        Restore を有効にするファイルタイプ。
+        Restore が有効になるファイルタイプ。
         例: >lua
           filetypes = { 'markdown', 'text' },
         <
@@ -321,7 +324,7 @@ restore:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Restore triggers.
-      ja: デバウンス時間 (ms)。Restore の連続実行を抑制します。
+      ja: デバウンス時間（ms）。Restore の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -329,15 +332,15 @@ restore:
       en: |-
         Function that decides whether Restore is enabled for a buffer.
         Called on each buffer creation with its buffer number.
-        Return true to enable Restore for that buffer.
-        By default, returns true if the buffer is 'modifiable'.
-        You can override this or disable it by setting false.
+        Return `true` to enable Restore for that buffer.
+        By default, returns `true` if the buffer is 'modifiable'.
+        You can override this or disable it by setting `false`.
       ja: |-
         Restore がバッファに対して有効となる条件を定義する関数です。
         バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
-        true が返された場合にのみ、そのバッファで Restore が有効になります。
-        デフォルトでは、バッファが 'modifiable' の場合に true が返されます。
-        自作の関数で上書きするか、false をセットすることで無効化することもできます。
+        `true` が返された場合にのみ、そのバッファで Restore が有効になります。
+        デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
+        自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
 
   exclude_pattern:
     __default: '<!CODE>[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]'
@@ -345,13 +348,13 @@ restore:
       en: |-
         Regex pattern checked before Restore runs.
         If nearby characters match this, Restore is canceled.
-        Set false to disable this check.
+        Set `false` to disable this check.
         Default: matches alphanumerics and common punctuation.
       ja: |-
         この正規表現は Restore が実行される直前にチェックされます。
         カーソル付近の文字がこれにマッチすると、Restore がキャンセルされます。
-        false をセットするとチェックは無効になります。
-        デフォルト値: 全ての半角英数と、ほとんどの半角記号にマッチします。
+        `false` をセットするとこのチェックは無効になります。
+        デフォルト: 全ての半角英数と、ほとんどの半角記号にマッチします。
 
 match:
   __desc:
@@ -379,8 +382,8 @@ match:
       - FocusGained
 
     __desc:
-      en: Events that trigger Match. (:h |events|)
-      ja: Match を実行するイベント。(:h |events|)
+      en: Events that trigger Match (:h |events|).
+      ja: Match を実行するイベント（:h |events|）。
 
   on_mode_change:
     __default:
@@ -388,24 +391,33 @@ match:
 
     __desc:
       en: |-
-        Mode transitions that trigger Match.
+        Mode transition patterns that trigger Match.
+        If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
         Default: '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
-      ja:
+      ja: |-
+        Match のトリガーとなる、モードの遷移パターン。
+        `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
+        デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
 
   filetypes:
     __default: '*'
     __desc:
       en: |-
         Filetypes where Match is enabled.
-        Example:
+        Example: >lua
           filetypes = { 'markdown', 'text' },
-      ja:
+        <
+      ja: |-
+        Match が有効になるファイルタイプ。
+        例: >lua
+          filetypes = { 'markdown', 'text' },
+        <
 
   debounce:
     __default: 500
     __desc:
       en: Debounce time (ms). Prevents repeated Match triggers.
-      ja:
+      ja: デバウンス時間（ms）。Match の連続実行を抑制します。
 
   buf_condition:
     __default: null
@@ -413,24 +425,28 @@ match:
       en: |-
         Function that decides whether Match is enabled for a buffer.
         Called on each buffer creation with its buffer number.
-        Return true to enable Match for that buffer.
-        By default, returns true if the buffer is 'modifiable'.
-        You can override this or disable it by setting false.
+        Return `true` to enable Match for that buffer.
+        By default, returns `true` if the buffer is 'modifiable'.
+        You can override this or disable it by setting `false`.
       ja: |-
         Match がバッファに対して有効となる条件を定義する関数です。
         バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
-        true が返された場合にのみ、そのバッファで Match が有効になります。
-        デフォルトでは、バッファが 'modifiable' の場合に true が返されます。
-        自作の関数で上書きするか、false をセットすることで無効化することもできます。
+        `true` が返された場合にのみ、そのバッファで Match が有効になります。
+        デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
+        自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
 
   languages:
     __desc:
       en: |-
         Languages to detect and match.
-        Enable those you want to use.
-        Each `pattern` must be a valid regex (Unicode ranges).
-        Add custom languages if needed, and define them in `os_settings[OS].lang_inputs`.
-      ja:
+        Set `enable` of those you want to use to `true`.
+        Each `pattern` must be a valid regex. Specify the unicode ranges of the language.
+        Add custom languages if needed, and define the corresponding input methods as well in `os_settings[OS].lang_inputs`.
+      ja: |-
+        Match が検知する言語のリスト。
+        使用したい言語の `enable` を `true` に設定してください。
+        `pattern` は有効な正規表現でなけれなりません。その言語のユニコード範囲を指定すると良いでしょう。
+        カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` に追加してください。
 
     Ru:
       __default:
@@ -439,8 +455,8 @@ match:
         pattern: '<!CODE>[==[[\u0400-\u04ff]]==]'
 
       __desc:
-        en: Cyrillic range for Russian.
-        ja:
+        en: Unicode ranges for Russian.
+        ja: ロシア語のユニコード範囲。
 
     Ja:
       __default:
@@ -450,7 +466,7 @@ match:
 
       __desc:
         en: Unicode ranges for Japanese.
-        ja:
+        ja: 日本語のユニコード範囲。
 
     Zh:
       __default:
@@ -460,7 +476,7 @@ match:
 
       __desc:
         en: Unicode ranges for Chinese.
-        ja:
+        ja: 中国語のユニコード範囲。
 
     Ko:
       __default:
@@ -470,26 +486,28 @@ match:
 
       __desc:
         en: Unicode ranges for Korean.
-        ja:
+        ja: 韓国語のユニコード範囲。
 
   lines:
     __desc:
       en: |-
         When the current line is empty or whitespace-only,
         Match searches nearby lines as well.
-      ja:
+      ja: |-
+        現在の行が空行か空白文字のみ場合、
+        前後の行に対しても Match による検索を行います。
 
     above:
       __default: 1
       __desc:
         en: Number of lines above to search.
-        ja:
+        ja: 上方向に最大で何行検索するか。
 
     below:
       __default: 1
       __desc:
         en: Number of lines below to search.
-        ja:
+        ja: 下方向に最大で何行検索するか。
 
     exclude_pattern:
       __default: '<!CODE>[==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==]'
@@ -497,54 +515,72 @@ match:
         en: |-
           Regex pattern for lines that stop language detection.
           Useful for Markdown lists or blockquotes.
-          Set false to disable.
-        ja:
+          Set `false` to disable.
+        ja: |-
+          検索行がこの正規表現にマッチしたら、検索をキャンセルします。
+          マークダウン記法でリストや引用ブロックを記述する際に有用です。
+          `false` で無効化できます。
 
 os:
   __default: false
   __desc:
     en: |-
-      Operating system to use for input-method control.
-      Accepts 'macos', 'windows', 'linux', or false for auto-detection.
-    ja:
+      Specify your operating system.
+      One of: `'macos'`, `'windows'`, `'linux'`, or `false` for auto-detection.
+    ja: |-
+      使用する OS を明示してください。
+      次の何れか: `'macos'`, `'windows'`, `'linux'`, または `false` で自動検出。
+
 
 os_settings:
   __desc:
-    en: OS-specific settings for input-method commands and mappings.
-    ja:
+    en: OS-specific settings for input methods and commands.
+    ja: OS 毎の入力言語とコマンドの設定。
 
   macos:
     enable:
       __default: true
       __desc:
-        en: Enable macOS-specific input-method handling.
-        ja:
+        en: Enable macOS-specific settings?
+        ja: macOS 用の設定を有効にする？
 
     cmd_get:
       __default: 'im-select'
       __desc:
         en: Command to get the current input method ID.
-        ja:
+        ja: 現在の入力言語 ID を取得するコマンド。
 
     cmd_set:
       __default: 'im-select %s'
       __desc:
-        en: Command to set a new input method (%s will be replaced with the target ID).
-        ja:
+        en: Command to set a new input method (`%s` will be replaced with the target ID).
+        ja: 入力言語を切り替えるコマンド（`%s` が切り替え先の入力言語 ID で置換される）。
 
     normal_input:
       __default: false
       __desc:
         en: |-
-          Input method used for Normalize (false = auto-detect).
-          Examples:
+          Input method used for Normalize (`false` = auto-detect).
+          Examples: >lua
             normal_input = 'com.apple.keylayout.ABC',
             normal_input = 'com.apple.keylayout.US',
             normal_input = 'com.apple.keylayout.USExtended',
-          You can also use a table like this:
+          <
+          You can also use a table like this: >lua
             normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
-            The first string must match `cmd_get` output; the second is passed to `cmd_set`.
-        ja:
+          <
+          The first string must match `cmd_get` output; the second is passed to `cmd_set`.
+        ja: |-
+          Normalize 時に使用する入力言語（`false` = 自動検出）。
+          例: >lua
+            normal_input = 'com.apple.keylayout.ABC',
+            normal_input = 'com.apple.keylayout.US',
+            normal_input = 'com.apple.keylayout.USExtended',
+          <
+          次のようにテーブルを使用することも可: >lua
+            normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+          <
+          最初の文字列は `cmd_get` が出力する値。二番目の文字列は `cmd_set` に渡される値。
 
     lang_inputs:
       __desc:
@@ -600,7 +636,7 @@ os_settings:
       __default: false
       __desc:
         en: |-
-          Input method for Normalize (false = auto-detect).
+          Input method for Normalize (`false` = auto-detect).
           Example:
             normal_input = '1033', -- US English
         ja:
@@ -657,7 +693,7 @@ os_settings:
       __default: false
       __desc:
         en: |-
-          Input method for Normalize (false = auto-detect).
+          Input method for Normalize (`false` = auto-detect).
           Example:
             normal_input = 'xkb:us::eng', -- US English.
         ja:
