@@ -692,91 +692,108 @@ os_settings:
             normal_input = '1033', -- US English
           <
           その他のフォーマット:
-            参照: |auto-input-switch.os_settings.macos.normal_input|
+            参照: |auto-input-switch-ja.os_settings.macos.normal_input|
 
     lang_inputs:
       __desc:
-        en: Input methods corresponding to `match.languages`.
-        ja:
+        en: |-
+          Input methods corresponding to `match.languages`.
+          For more details, see: |auto-input-switch.os_settings.macos.lang_inputs|
+        ja: |-
+          `match.languages` 内の各言語に紐づける入力言語の設定。
+          その他の詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
 
       Ru:
         __default: '1049'
         __desc:
           en: Input method ID for Russian.
-          ja:
+          ja: ロシア語の入力言語 ID 。
 
       Ja:
         __default: '1041'
         __desc:
           en: Input method ID for Japanese.
-          ja:
+          ja: 日本語の入力言語 ID 。
 
       Zh:
         __default: '2052'
         __desc:
           en: Input method ID for Chinese.
-          ja:
+          ja: 中国語の入力言語 ID 。
 
       Ko:
         __default: '1042'
         __desc:
           en: Input method ID for Korean.
-          ja:
+          ja: 韓国語の入力言語 ID 。
 
   linux:
     enable:
       __default: true
       __desc:
-        en: Enable Linux-specific input-method handling.
-        ja:
+        en: Enable Linux-specific settings?
+        ja: Linux 用の設定を有効にする？
 
     cmd_get:
       __default: 'ibus engine'
       __desc:
         en: Command to get the current input method ID.
-        ja:
+        ja: 現在の入力言語 ID を取得するコマンド。
 
     cmd_set:
       __default: 'ibus engine %s'
       __desc:
-        en: Command to set a new input method (%s will be replaced with the target ID).
-        ja:
+        en: Command to set a new input method (`%s` will be replaced with the target ID).
+        ja: 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
 
     normal_input:
       __default: false
       __desc:
         en: |-
-          Input method for Normalize (`false` = auto-detect).
-          Example:
+          Input method used for Normalize (`false` = auto-detect).
+          Example: >lua
             normal_input = 'xkb:us::eng', -- US English.
-        ja:
+          <
+          Other formats:
+            See: |auto-input-switch.os_settings.macos.normal_input|
+        ja: |-
+          Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          例: >lua
+            normal_input = 'xkb:us::eng', -- US English
+          <
+          その他のフォーマット:
+            参照: |auto-input-switch-ja.os_settings.macos.normal_input|
 
     lang_inputs:
       __desc:
-        en: Input methods corresponding to `match.languages`.
-        ja:
+        en: |-
+          Input methods corresponding to `match.languages`.
+          For more details, see: |auto-input-switch.os_settings.macos.lang_inputs|
+        ja: |-
+          `match.languages` 内の各言語に紐づける入力言語の設定。
+          その他の詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
 
       Ru:
         __default: 'xkb:ru::rus'
         __desc:
           en: Input method ID for Russian.
-          ja:
+          ja: ロシア語の入力言語 ID 。
 
       Ja:
         __default: 'mozc-jp'
         __desc:
           en: Input method ID for Japanese.
-          ja:
+          ja: 日本語の入力言語 ID 。
 
       Zh:
         __default: 'libpinyin'
         __desc:
           en: Input method ID for Chinese.
-          ja:
+          ja: 中国語の入力言語 ID 。
 
       Ko:
         __default: 'hangul'
         __desc:
           en: Input method ID for Korean.
-          ja:
+          ja: 韓国語の入力言語 ID 。
 
