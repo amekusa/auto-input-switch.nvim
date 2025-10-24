@@ -82,8 +82,10 @@ popup:
 
   window:
     __desc:
-      en: Popup window configuration (:h |nvim_open_win()|).
-      ja: ポップアップウィンドウの設定 (:h |nvim_open_win()|) 。
+      en: |-
+        Popup window configuration. See: |nvim_open_win()|
+      ja: |-
+        ポップアップウィンドウの設定。参照: |nvim_open_win()|
 
     border:
       __default: none
@@ -193,8 +195,10 @@ normalize:
       - QuitPre
 
     __desc:
-      en: Events that trigger Normalize (:h |events|).
-      ja: Normalize を実行するイベント (:h |events|) 。
+      en: |-
+        Events that trigger Normalize. See: |events|
+      ja: |-
+        Normalize を実行するイベント。参照: |events|
 
   on_mode_change:
     __default:
@@ -205,9 +209,9 @@ normalize:
         Mode transition patterns that trigger Normalize.
         If not `false`, Normalize is triggered by the 'ModeChanged' event matched with one of these patterns.
         See:
-          * :h |autocmd-pattern|
-          * :h |ModeChanged|
-          * :h |mode()|
+          * |autocmd-pattern|
+          * |ModeChanged|
+          * |mode()|
 
         Default:
           '[iR]:n' (From Insert/Replace to Normal mode)
@@ -215,9 +219,9 @@ normalize:
         Normalize のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
         参照:
-          * :h |autocmd-pattern|
-          * :h |ModeChanged|
-          * :h |mode()|
+          * |autocmd-pattern|
+          * |ModeChanged|
+          * |mode()|
 
         Default:
           '[iR]:n' (Insert/Replace から Normal モード)
@@ -288,8 +292,10 @@ restore:
       - FocusGained
 
     __desc:
-      en: Events that trigger Restore (:h |events|).
-      ja: Restore を実行するイベント (:h |events|) 。
+      en: |-
+        Events that trigger Restore. See: |events|
+      ja: |-
+        Restore を実行するイベント。参照: |events|
 
   on_mode_change:
     __default:
@@ -382,8 +388,10 @@ match:
       - FocusGained
 
     __desc:
-      en: Events that trigger Match (:h |events|).
-      ja: Match を実行するイベント (:h |events|) 。
+      en: |-
+        Events that trigger Match. See: |events|
+      ja: |-
+        Match を実行するイベント。参照: |events|
 
   on_mode_change:
     __default:
@@ -509,7 +517,7 @@ match:
   lines:
     __desc:
       en: |-
-        When the current line is empty or whitespace-only,
+        When the current line is empty or contains only whitespace,
         Match searches nearby lines as well.
       ja: |-
         現在の行が空行か空白文字のみ場合、
