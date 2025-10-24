@@ -439,11 +439,29 @@ match:
     __desc:
       en: |-
         Languages to detect and match.
+        Format: >lua
+          languages = {
+            LanguageName = {
+              enable = true,
+              priority = Number,
+              pattern = 'Regex'
+            },
+          },
+        <
         Set `enable` of those you want to use to `true`.
         Each `pattern` must be a valid regex. Specify the unicode ranges of the language.
         Add custom languages if needed, and define the corresponding input methods as well in `os_settings[OS].lang_inputs`.
       ja: |-
         Match が検知する言語のリスト。
+        フォーマット: >lua
+          languages = {
+            言語名 = {
+              enable = true,
+              priority = 数値,
+              pattern = '正規表現'
+            },
+          },
+        <
         使用したい言語の `enable` を `true` に設定してください。
         `pattern` は有効な正規表現でなけれなりません。その言語のユニコード範囲を指定すると良いでしょう。
         カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` に追加してください。
@@ -514,11 +532,11 @@ match:
       __desc:
         en: |-
           Regex pattern for lines that stop language detection.
-          Useful for Markdown lists or blockquotes.
+          Useful for Markdown lists, table rows, or blockquotes.
           Set `false` to disable.
         ja: |-
           検索行がこの正規表現にマッチしたら、検索をキャンセルします。
-          マークダウン記法でリストや引用ブロックを記述する際に有用です。
+          マークダウン記法でリストやテーブル、引用ブロック等を記述する際に有用です。
           `false` で無効化できます。
 
 os:
@@ -530,7 +548,6 @@ os:
     ja: |-
       使用する OS を明示してください。
       次の何れか: `'macos'`, `'windows'`, `'linux'`, または `false` で自動検出。
-
 
 os_settings:
   __desc:
@@ -569,7 +586,8 @@ os_settings:
           You can also use a table like this: >lua
             normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
           <
-          The first string must match `cmd_get` output; the second is passed to `cmd_set`.
+            The first string must match `cmd_get` output.
+            The second is the argument passed to `cmd_set`.
         ja: |-
           Normalize 時に使用する入力言語 (`false` = 自動検出) 。
           例: >lua
@@ -580,66 +598,101 @@ os_settings:
           次のようにテーブルを使用することも可: >lua
             normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
           <
-          最初の文字列は `cmd_get` が出力する値。二番目の文字列は `cmd_set` に渡される値。
+            最初の文字列は `cmd_get` の出力と照合する値。
+            二番目の文字列は `cmd_set` に渡される引数。
 
     lang_inputs:
       __desc:
         en: |-
           Input methods corresponding to `match.languages`.
-          Each entry can also be a table like `normal_input`.
-        ja:
+          Format: >lua
+            lang_inputs = {
+              LanguageName = 'Input Method ID',
+            },
+          <
+          Just like `normal_input`, it can also be a table: >lua
+            lang_inputs = {
+              LanguageName = { 'Input Method ID', 'Argument' },
+            },
+          <
+            The first string must match `cmd_get` output.
+            The second is the argument passed to `cmd_set`.
+
+        ja: |-
+          `match.languages` 内の各言語に紐づける入力言語の設定。
+          フォーマット: >lua
+            lang_inputs = {
+              言語名 = '入力言語ID',
+            },
+          <
+          `normal_input` 同様、テーブルも使用可: >lua
+            lang_inputs = {
+              言語名 = { '入力言語ID', '引数' },
+            },
+          <
+            最初の文字列は `cmd_get` の出力と照合する値。
+            二番目の文字列は `cmd_set` に渡される引数。
 
       Ru:
         __default: 'com.apple.keylayout.Russian'
         __desc:
           en: Input method ID for Russian.
-          ja:
+          ja: ロシア語の入力言語 ID 。
 
       Ja:
         __default: 'com.apple.inputmethod.Kotoeri.Japanese'
         __desc:
           en: Input method ID for Japanese.
-          ja:
+          ja: 日本語の入力言語 ID 。
 
       Zh:
         __default: 'com.apple.inputmethod.SCIM.ITABC'
         __desc:
           en: Input method ID for Chinese.
-          ja:
+          ja: 中国語の入力言語 ID 。
 
       Ko:
         __default: 'com.apple.inputmethod.Korean.2SetKorean'
         __desc:
           en: Input method ID for Korean.
-          ja:
+          ja: 韓国語の入力言語 ID 。
 
   windows:
     enable:
       __default: true
       __desc:
-        en: Enable Windows-specific input-method handling.
-        ja:
+        en: Enable Windows-specific settings?
+        ja: Windows 用の設定を有効にする？
 
     cmd_get:
       __default: 'im-select.exe'
       __desc:
         en: Command to get the current input method ID.
-        ja:
+        ja: 現在の入力言語 ID を取得するコマンド。
 
     cmd_set:
       __default: 'im-select.exe %s'
       __desc:
-        en: Command to set a new input method (%s will be replaced with the target ID).
-        ja:
+        en: Command to set a new input method (`%s` will be replaced with the target ID).
+        ja: 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
 
     normal_input:
       __default: false
       __desc:
         en: |-
-          Input method for Normalize (`false` = auto-detect).
-          Example:
+          Input method used for Normalize (`false` = auto-detect).
+          Example: >lua
             normal_input = '1033', -- US English
-        ja:
+          <
+          Other formats:
+            See: |auto-input-switch.os_settings.macos.normal_input|
+        ja: |-
+          Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          例: >lua
+            normal_input = '1033', -- US English
+          <
+          その他のフォーマット:
+            参照: |auto-input-switch.os_settings.macos.normal_input|
 
     lang_inputs:
       __desc:
