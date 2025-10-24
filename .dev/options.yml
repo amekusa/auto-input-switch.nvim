@@ -53,7 +53,7 @@ prefix:
 
 popup:
   __desc:
-    en: When the plugin switches the input method, it can notify you with a popup.
+    en: When the plugin switches the input method, it can show a popup notification.
     ja: プラグインによって入力言語が変更される際、ポップアップ表示でそれを知らせます。
 
   enable:
@@ -71,7 +71,7 @@ popup:
   pad:
     __default: true
     __desc:
-      en: Add leading and trailing spaces in popup text?
+      en: Add leading and trailing spaces to popup text?
       ja: ポップアップテキストの左右に空白を入れる？
 
   hl_group:
@@ -463,7 +463,7 @@ match:
           },
         <
         使用したい言語の `enable` を `true` に設定してください。
-        `pattern` は有効な正規表現でなけれなりません。その言語のユニコード範囲を指定すると良いでしょう。
+        `pattern` は有効な正規表現でなければなりません。その言語のユニコード範囲を指定すると良いでしょう。
         カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` に追加してください。
 
     Ru:
@@ -543,7 +543,7 @@ os:
   __default: false
   __desc:
     en: |-
-      Specify your operating system.
+      Specify the operating system.
       One of: `'macos'`, `'windows'`, `'linux'`, or `false` for auto-detection.
     ja: |-
       使用する OS を明示してください。
@@ -698,10 +698,10 @@ os_settings:
       __desc:
         en: |-
           Input methods corresponding to `match.languages`.
-          For more details, see: |auto-input-switch.os_settings.macos.lang_inputs|
+          For details, see: |auto-input-switch.os_settings.macos.lang_inputs|
         ja: |-
           `match.languages` 内の各言語に紐づける入力言語の設定。
-          その他の詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
+          詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
 
       Ru:
         __default: '1049'
@@ -768,10 +768,10 @@ os_settings:
       __desc:
         en: |-
           Input methods corresponding to `match.languages`.
-          For more details, see: |auto-input-switch.os_settings.macos.lang_inputs|
+          For details, see: |auto-input-switch.os_settings.macos.lang_inputs|
         ja: |-
           `match.languages` 内の各言語に紐づける入力言語の設定。
-          その他の詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
+          詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
 
       Ru:
         __default: 'xkb:ru::rus'
