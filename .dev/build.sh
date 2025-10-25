@@ -25,8 +25,8 @@ prj="auto-input-switch"
 cp -f "doc/$prj.txt" "../../doc/$prj.txt"
 cd ..
 
-# generate defaults.lua and the options doc
-node "./options.js"
+# do other tasks
+node "./build.js"
 
 # force neovim to reindex the doc
 nvim --headless -c "helptags ../doc" -c "q"
