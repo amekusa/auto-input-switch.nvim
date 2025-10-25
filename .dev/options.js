@@ -255,6 +255,7 @@ out = `*auto-input-switch-options.ja.txt*                    |auto-input-switch.
 ${logo}
 ==============================================================================
 オプション                                      *auto-input-switch-options.ja*
+
 ` + toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch.ja'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
