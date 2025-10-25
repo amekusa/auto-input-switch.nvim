@@ -162,10 +162,9 @@ function toDoc(data, opts, stack = null) {
 }
 
 function indentBlock(str, ind = '\t') {
-	str = str.replaceAll('\n', '\n' + ind);
-	str = str.replaceAll(ind + '<', '<');
-	str = ind + str;
-	return str;
+	return ind + str
+		.replaceAll('\n', '\n' + ind)
+		.replaceAll(ind + '<', '<');
 }
 
 function written(file) {
