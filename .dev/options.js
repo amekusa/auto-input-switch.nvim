@@ -227,7 +227,7 @@ fs.writeFile(dst, out, 'utf8', written(dst));
 
 // --- defaults doc (ja) ---
 dst = root + '/doc/auto-input-switch-defaults.ja.txt';
-out = `*auto-input-switch-defaults.ja*                       |auto-input-switch.nvim|
+out = `*auto-input-switch-defaults.ja.txt*                   |auto-input-switch.nvim|
 ${logo}
 ==============================================================================
 デフォルト設定                                 *auto-input-switch-defaults.ja*
