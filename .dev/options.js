@@ -169,15 +169,17 @@ function written(file) {
 	};
 }
 
-let logo = `
-  ▀█▀██              ▀██▀                  ▄█▀▀▄█
-  ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀  ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
-  █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █    ▀▀▄▄  █ █ █ █  █  █   █▀█
- ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █    ██ ▀▄█▄█ █  █  ▀▄▄ █ █ .NVIM
-▄█▄ ▄██▄ ▄▄▄▄▄▄▄▄▄▄▄ ▄██▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ █▀▄▄██▀ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-`;
 let dst, out;
 let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
+let logo = `
+
+  ▀█▀██              ▀██▀                 ▄█▀▀▄█
+  ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
+  █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
+ ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
+▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+
+`;
 let footer = `
 ==============================================================================
 DOCUMENTS
@@ -213,7 +215,7 @@ fs.writeFile(dst, 'return ' + out, 'utf8', written(dst));
 // --- defaults doc ---
 dst = root + '/doc/auto-input-switch-defaults.txt';
 out = `*auto-input-switch-defaults.txt*                      |auto-input-switch.nvim|
-
+${logo}
 ==============================================================================
 DEFAULT CONFIG                                    *auto-input-switch-defaults*
 
@@ -226,7 +228,7 @@ fs.writeFile(dst, out, 'utf8', written(dst));
 // --- defaults doc (ja) ---
 dst = root + '/doc/auto-input-switch-defaults.ja.txt';
 out = `*auto-input-switch-defaults.ja*                       |auto-input-switch.nvim|
-
+${logo}
 ==============================================================================
 デフォルト設定                                 *auto-input-switch-defaults.ja*
 
@@ -239,7 +241,7 @@ fs.writeFile(dst, out, 'utf8', written(dst));
 // --- options doc ---
 dst = root + '/doc/auto-input-switch-options.txt';
 out = `*auto-input-switch-options.txt*                       |auto-input-switch.nvim|
-
+${logo}
 ==============================================================================
 OPTIONS                                            *auto-input-switch-options*
 
@@ -253,7 +255,7 @@ out = `*auto-input-switch-options.ja.txt*                    |auto-input-switch.
 
 ==============================================================================
 オプション                                      *auto-input-switch-options.ja*
-
+${logo}
 ` + toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch.ja'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
