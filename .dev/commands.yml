@@ -1,34 +1,29 @@
 AutoInputSwitch:
-  args:
-    - on|off
+  args: on|off
   desc:
     en: Enable or disable the plugin globally.
     ja: プラグインを有効化、または無効化します。
 
 AutoInputSwitchBuf:
-  args:
-    - on|off
+  args: on|off
   desc:
     en: Enable or disable the plugin on the current buffer.
     ja: 現在のバッファに対してプラグインを有効化、または無効化します。
 
 AutoInputSwitchBufNormalize:
-  args:
-    - on|off
+  args: on|off
   desc:
     en: Enable or disable Normalize on the current buffer.
     ja: 現在のバッファに対して Normalize を有効化、または無効化します。
 
 AutoInputSwitchBufRestore:
-  args:
-    - on|off
+  args: on|off
   desc:
     en: Enable or disable Restore on the current buffer.
     ja: 現在のバッファに対して Restore を有効化、または無効化します。
 
 AutoInputSwitchBufMatch:
-  args:
-    - on|off
+  args: on|off
   desc:
     en: Enable or disable Match on the current buffer.
     ja: 現在のバッファに対して Match を有効化、または無効化します。
