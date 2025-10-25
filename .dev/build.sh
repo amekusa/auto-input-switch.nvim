@@ -18,6 +18,7 @@ prj="auto-input-switch"
 	--description "*auto-input-switch.nvim*" \
 	--project-name "$prj" \
 	--shift-heading-level-by -1 \
+	--toc false \
 	--ignore-rawblocks false \
 	--demojify false \
 
