@@ -3,8 +3,11 @@
 base="$(dirname "$0")"
 cd "$base"
 
-# clear old docs
-rm ../doc/*
+if [ -d ../doc ]; then
+	rm ../doc/*
+else
+	mkdir ../doc
+fi
 
 # generate defaults.lua and the options doc
 node "./options.js"
