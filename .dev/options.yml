@@ -700,7 +700,7 @@ os_settings:
             normal_input = '1033', -- US English
           <
           その他のフォーマット:
-            参照: |auto-input-switch-ja.os_settings.macos.normal_input|
+            参照: |auto-input-switch.ja.os_settings.macos.normal_input|
 
     lang_inputs:
       __desc:
@@ -709,7 +709,7 @@ os_settings:
           For details, see: |auto-input-switch.os_settings.macos.lang_inputs|
         ja: |-
           `match.languages` 内の各言語に紐づける入力言語の設定。
-          詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
+          詳細は次を参照: |auto-input-switch.ja.os_settings.macos.lang_inputs|
 
       Ru:
         __default: '1049'
@@ -770,7 +770,7 @@ os_settings:
             normal_input = 'xkb:us::eng', -- US English
           <
           その他のフォーマット:
-            参照: |auto-input-switch-ja.os_settings.macos.normal_input|
+            参照: |auto-input-switch.ja.os_settings.macos.normal_input|
 
     lang_inputs:
       __desc:
@@ -779,7 +779,7 @@ os_settings:
           For details, see: |auto-input-switch.os_settings.macos.lang_inputs|
         ja: |-
           `match.languages` 内の各言語に紐づける入力言語の設定。
-          詳細は次を参照: |auto-input-switch-ja.os_settings.macos.lang_inputs|
+          詳細は次を参照: |auto-input-switch.ja.os_settings.macos.lang_inputs|
 
       Ru:
         __default: 'xkb:ru::rus'
