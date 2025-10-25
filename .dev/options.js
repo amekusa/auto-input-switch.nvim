@@ -231,7 +231,7 @@ fs.writeFile(dst, out, 'utf8', written(dst));
 
 // --- options doc ---
 dst = root + '/doc/auto-input-switch-options.txt';
-out = `*auto-input-switch-options.txt*                      |auto-input-switch.nvim|
+out = `*auto-input-switch-options.txt*                       |auto-input-switch.nvim|
 
 ==============================================================================
 OPTIONS                                            *auto-input-switch-options*
@@ -242,8 +242,7 @@ fs.writeFile(dst, out, 'utf8', written(dst));
 
 // --- options doc (ja) ---
 dst = root + '/doc/auto-input-switch-options.ja.txt';
-out = `
-*auto-input-switch-options.ja.txt* - Options for |auto-input-switch.nvim|
+out = `*auto-input-switch-options.ja.txt*                    |auto-input-switch.nvim|
 
 ==============================================================================
 オプション                                      *auto-input-switch-options.ja*
