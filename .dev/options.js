@@ -252,10 +252,9 @@ fs.writeFile(dst, out, 'utf8', written(dst));
 // --- options doc (ja) ---
 dst = root + '/doc/auto-input-switch-options.ja.txt';
 out = `*auto-input-switch-options.ja.txt*                    |auto-input-switch.nvim|
-
+${logo}
 ==============================================================================
 オプション                                      *auto-input-switch-options.ja*
-${logo}
 ` + toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch.ja'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
