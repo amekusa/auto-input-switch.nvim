@@ -169,6 +169,13 @@ function written(file) {
 	};
 }
 
+let logo = `
+   ▀█▀██      ▀██▀       ▄█▀▀▄█
+   ▐▌ ██       ██        ██   █
+   █▄▄██       ██         ▀▀▄▄
+  ▐▌  ██       ██       █    ██
+▄▄█▄ ▄██▄ UTO ▄██▄ NPUT █▀▄▄██▀ WITCH.nvim
+`;
 let dst, out;
 let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
 let footer = `
