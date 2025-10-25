@@ -3,14 +3,11 @@
 base="$(dirname "$0")"
 cd "$base"
 
-if [ -d ../doc ]; then
-	rm ../doc/*
-else
-	mkdir ../doc
+# create/clean doc dir
+if [ -d ../doc ]
+	then rm ../doc/*
+	else mkdir ../doc
 fi
-
-# generate defaults.lua and the options doc
-node "./options.js"
 
 # generate the main doc
 cd "panvimdoc"
@@ -21,10 +18,15 @@ prj="auto-input-switch"
 	--description "*auto-input-switch.nvim*" \
 	--project-name "$prj" \
 	--shift-heading-level-by -1 \
-	--demojify true \
+	--ignore-rawblocks false \
+	--demojify false \
 
 cp -f "doc/$prj.txt" "../../doc/$prj.txt"
+cd ..
+
+# generate defaults.lua and the options doc
+node "./options.js"
 
 # force neovim to reindex the doc
-nvim --headless -c "helptags ../../doc" -c "q"
+nvim --headless -c "helptags ../doc" -c "q"
 

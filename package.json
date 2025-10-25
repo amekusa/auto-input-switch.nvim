@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "setup": ".dev/setup.sh",
-    "doc": ".dev/doc.sh"
+    "build": ".dev/build.sh"
   },
   "devDependencies": {
     "yaml": "^2.8.1"
