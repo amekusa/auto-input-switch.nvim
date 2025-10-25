@@ -169,15 +169,29 @@ function written(file) {
 	};
 }
 
-let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
 let dst, out;
+let options = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
 let footer = `
 ==============================================================================
-OTHER DOCUMENTS
+DOCUMENTS
 
-	- About the plugin: |auto-input-switch.nvim|
-	-          Options: |auto-input-switch-options|
-	-   Default config: |auto-input-switch-defaults|
+	* About the plugin: |auto-input-switch.nvim|
+	*          Options: |auto-input-switch-options|
+	*   Default config: |auto-input-switch-defaults|
+
+	Note: CTRL-] to jump to the |link| under the cursor.
+	      CTRL-T or CTRL-O to jump back.
+
+
+==============================================================================
+ドキュメント
+
+	* プラグインについて: |auto-input-switch.nvim.ja|
+	*         オプション: |auto-input-switch-options.ja|
+	*     デフォルト設定: |auto-input-switch-defaults.ja|
+
+	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
+	      CTRL-T または CTRL-O で戻る。
 
 
 vim:tw=78:ts=4:noet:ft=help:norl:`;
@@ -191,10 +205,10 @@ fs.writeFile(dst, 'return ' + out, 'utf8', written(dst));
 
 // --- defaults doc ---
 dst = root + '/doc/auto-input-switch-defaults.txt';
-out = `*auto-input-switch-defaults.txt* - Defaults for |auto-input-switch.nvim|
+out = `*auto-input-switch-defaults.txt*                      |auto-input-switch.nvim|
 
 ==============================================================================
-DEFAULTS                                          *auto-input-switch-defaults*
+DEFAULT CONFIG                                    *auto-input-switch-defaults*
 
 >lua
 ${indentBlock(out, '  ')}
@@ -202,21 +216,25 @@ ${indentBlock(out, '  ')}
 fs.writeFile(dst, out, 'utf8', written(dst));
 
 
-// --- defaults.ja.lua ---
-dst = root + '/lua/auto-input-switch/defaults.ja.lua';
-out = toLua(structuredClone(options), {lang: 'ja'});
-fs.writeFile(dst, 'return ' + out, 'utf8', written(dst));
+// --- defaults doc (ja) ---
+dst = root + '/doc/auto-input-switch-defaults.ja.txt';
+out = `*auto-input-switch-defaults.ja*                       |auto-input-switch.nvim|
+
+==============================================================================
+デフォルト設定                                 *auto-input-switch-defaults.ja*
+
+>lua
+${indentBlock(toLua(structuredClone(options), {lang: 'ja'}), '  ')}
+<` + footer;
+fs.writeFile(dst, out, 'utf8', written(dst));
 
 
 // --- options doc ---
 dst = root + '/doc/auto-input-switch-options.txt';
-out = `*auto-input-switch-options.txt* - Options for |auto-input-switch.nvim|
+out = `*auto-input-switch-options.txt*                      |auto-input-switch.nvim|
 
 ==============================================================================
 OPTIONS                                            *auto-input-switch-options*
-
-	Note: CTRL-] to jump to the |link| under the cursor.
-	      CTRL-T or CTRL-O to jump back.
 
 ` + toDoc(structuredClone(options), {lang: 'en', ns: 'auto-input-switch'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
@@ -228,11 +246,8 @@ out = `
 *auto-input-switch-options.ja.txt* - Options for |auto-input-switch.nvim|
 
 ==============================================================================
-OPTIONS                                         *auto-input-switch-options-ja*
+オプション                                      *auto-input-switch-options.ja*
 
-	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
-	      CTRL-T または CTRL-O で戻る。
-
-` + toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch-ja'}) + footer;
+` + toDoc(structuredClone(options), {lang: 'ja', ns: 'auto-input-switch.ja'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
 
