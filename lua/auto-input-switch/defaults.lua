@@ -16,7 +16,7 @@ return {
     --   *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
 
   prefix = 'AutoInputSwitch', -- Prefix for command names.
-    -- If you prefer shorter commands, set this to something like `'AIS'`.
+    -- If you prefer shorter commands, set this to something like 'AIS'.
 
   popup = { -- When the plugin switches the input method, it can show a popup notification.
     enable = true, -- Show popups?
@@ -29,13 +29,13 @@ return {
       row = 1, -- Horizontal offset.
       col = 0, -- Vertical offset.
       relative = 'cursor', -- Origin of the offsets.
-        -- One of: `'editor'`, `'win'`, `'cursor'`, or `'mouse'`
+        -- One of: 'editor', 'win', 'cursor', or 'mouse'
 
       anchor = 'NW', -- Corner used to anchor the popup.
-        --   * `'NW'`: Northwest
-        --   * `'NE'`: Northeast
-        --   * `'SW'`: Southwest
-        --   * `'SE'`: Southeast
+        --   * 'NW': Northwest
+        --   * 'NE': Northeast
+        --   * 'SW': Southwest
+        --   * 'SE': Southeast
 
     },
     labels = { -- Popup text for each input method.
@@ -71,20 +71,18 @@ return {
       '[iR]:n',
     },
     filetypes = '*', -- Filetypes where Normalize is enabled.
-      -- Example: >lua
+      -- Example:
       --   filetypes = { 'markdown', 'text' },
-      -- <
 
     debounce = 500, -- Debounce time (ms). Prevents repeated Normalize triggers.
     buf_condition = nil, -- Optional function that decides whether Normalize is enabled for a buffer.
       -- Called on each buffer creation with its buffer number.
       -- Return `true` to enable Normalize for that buffer.
-      -- Example: >lua
+      -- Example:
       --   -- Enable only in listed buffers
       --   buf_condition = function(buf)
       --     return vim.bo[buf].buflisted
       --   end,
-      -- <
 
   },
   restore = { -- When Normalize is about to run, the plugin saves the current input method.
@@ -102,9 +100,8 @@ return {
       'n:[iR]',
     },
     filetypes = '*', -- Filetypes where Restore is enabled.
-      -- Example: >lua
+      -- Example:
       --   filetypes = { 'markdown', 'text' },
-      -- <
 
     debounce = 500, -- Debounce time (ms). Prevents repeated Restore triggers.
     buf_condition = nil, -- Function that decides whether Restore is enabled for a buffer.
@@ -136,9 +133,8 @@ return {
       '[nvV]:[iR]',
     },
     filetypes = '*', -- Filetypes where Match is enabled.
-      -- Example: >lua
+      -- Example:
       --   filetypes = { 'markdown', 'text' },
-      -- <
 
     debounce = 500, -- Debounce time (ms). Prevents repeated Match triggers.
     buf_condition = nil, -- Function that decides whether Match is enabled for a buffer.
@@ -148,7 +144,7 @@ return {
       -- You can override this or disable it by setting `false`.
 
     languages = { -- Languages to detect and match.
-      -- Format: >lua
+      -- Format:
       --   languages = {
       --     LanguageName = {
       --       enable = true,
@@ -156,7 +152,7 @@ return {
       --       pattern = 'Regex'
       --     },
       --   },
-      -- <
+      -- 
       -- Set `enable` of those you want to use to `true`.
       -- Each `pattern` must be a valid regex. Specify the unicode ranges of the language.
       -- Add custom languages if needed, and define the corresponding input methods as well in `os_settings[OS].lang_inputs`.
@@ -194,7 +190,7 @@ return {
     },
   },
   os = false, -- Specify the operating system.
-    -- One of: `'macos'`, `'windows'`, `'linux'`, or `false` for auto-detection.
+    -- One of: 'macos', 'windows', 'linux', or `false` for auto-detection.
 
   os_settings = { -- OS-specific settings for input methods and commands.
     macos = {
@@ -202,28 +198,28 @@ return {
       cmd_get = 'im-select', -- Command to get the current input method ID.
       cmd_set = 'im-select %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
       normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
-        -- Examples: >lua
+        -- Examples:
         --   normal_input = 'com.apple.keylayout.ABC',
         --   normal_input = 'com.apple.keylayout.US',
         --   normal_input = 'com.apple.keylayout.USExtended',
-        -- <
-        -- You can also use a table like this: >lua
+        -- 
+        -- You can also use a table like this:
         --   normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
-        -- <
+        -- 
         --   The first string must match `cmd_get` output.
         --   The second is the argument passed to `cmd_set`.
 
       lang_inputs = { -- Input methods corresponding to `match.languages`.
-        -- Format: >lua
+        -- Format:
         --   lang_inputs = {
         --     LanguageName = 'Input Method ID',
         --   },
-        -- <
-        -- Just like `normal_input`, it can also be a table: >lua
+        -- 
+        -- Just like `normal_input`, it can also be a table:
         --   lang_inputs = {
         --     LanguageName = { 'Input Method ID', 'Argument' },
         --   },
-        -- <
+        -- 
         --   The first string must match `cmd_get` output.
         --   The second is the argument passed to `cmd_set`.
 
@@ -238,9 +234,9 @@ return {
       cmd_get = 'im-select.exe', -- Command to get the current input method ID.
       cmd_set = 'im-select.exe %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
       normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
-        -- Example: >lua
+        -- Example:
         --   normal_input = '1033', -- US English
-        -- <
+        -- 
         -- Other formats:
         --   See: |auto-input-switch.os_settings.macos.normal_input|
 
@@ -258,9 +254,9 @@ return {
       cmd_get = 'ibus engine', -- Command to get the current input method ID.
       cmd_set = 'ibus engine %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
       normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
-        -- Example: >lua
+        -- Example:
         --   normal_input = 'xkb:us::eng', -- US English.
-        -- <
+        -- 
         -- Other formats:
         --   See: |auto-input-switch.os_settings.macos.normal_input|
 
