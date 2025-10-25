@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/**
+ * Documentation Generator for Auto-Input-Switch.nvim
+ * @author Satoshi Soma (github.com/amekusa)
+ */
+
 import {dirname} from 'node:path';
 import fs from 'node:fs';
 import yaml from 'yaml';
