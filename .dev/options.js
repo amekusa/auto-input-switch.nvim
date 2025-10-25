@@ -38,6 +38,12 @@ function toLua(data, opts, c = {}) {
 	if (key) r += `${key} = `;
 
 	if (comment) { // convert into Lua comments
+		comment = comment
+			.replaceAll(/`'(.+?)'`/g, "'$1'") // `'something'` to 'something'
+			.replaceAll(/\s?>lua\n/g, '\n')   // remove '>lua'
+			.replaceAll(/\n<(\n|$)/g, '\n$1') // remove '<'
+			.trim();
+
 		let lines = comment.split(/\r?\n/);
 		comment = ` -- ${lines[0]}`;
 		if (lines.length > 1) { // multi-line comments
