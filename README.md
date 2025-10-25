@@ -1,14 +1,16 @@
-# auto-input-switch.nvim
+**English** / [日本語](README.ja.md)
 
-  ▀█▀██              ▀██▀                 ▄█▀▀▄█
+```
+
+  ▀█▀██              ▀██▀                 ██▀▀▄█
   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
-▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄██ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+
+```
 
 ![GitHub Tag](https://img.shields.io/github/v/tag/amekusa/auto-input-switch.nvim?label=stable&link=https%3A%2F%2Fgithub.com%2Famekusa%2Fauto-input-switch.nvim%2Ftags)
-
-**English** / [日本語](README.ja.md)
 
 <img src="https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif">
 
@@ -22,7 +24,6 @@ Works on **macOS, Windows, and Linux**.
 ⚠️ **Breaking changes in v5.0.0**  
 If you’re upgrading from v4.x or earlier, please check the [Changelog](#changelog) for details.
 
----
 
 ## Features
 - **Normalize** – Always return to Latin input (e.g. US keyboard) outside of Insert mode.  
@@ -30,7 +31,6 @@ If you’re upgrading from v4.x or earlier, please check the [Changelog](#change
 - **Match** – Detect nearby text and automatically switch to the matching input method (Japanese, Chinese, Korean, Russian, …).  
 - **Popup notifications** – Show a small popup whenever the plugin switches your input method.  
 
----
 
 ## Installation
 With [lazy.nvim](https://github.com/folke/lazy.nvim):
@@ -48,7 +48,6 @@ require('lazy').setup({
 })
 ```
 
----
 
 ## Configuration
 This plugin is highly configurable.  
@@ -72,7 +71,6 @@ require('auto-input-switch').setup({
 
 Note: Since Japanese and Chinese share some Unicode ranges, it’s recommended to set `priority` to control which language takes precedence.
 
----
 
 ## Compatibility
 
@@ -87,7 +85,6 @@ With the default config:
   (Alternatively, [macism](https://github.com/laishulu/macism) may work better on macOS.)  
 - Linux: [ibus](https://github.com/ibus/ibus)  
 
----
 
 ## Commands
 
@@ -100,7 +97,6 @@ With the default config:
 
 Buffer-local versions are also available (see the [Changelog](#changelog)).
 
----
 
 ## Changelog
 
@@ -134,7 +130,6 @@ If you’re upgrading, please review carefully.
 
 </details>
 
----
 
 ## License
 MIT © 2025 [Satoshi Soma](https://github.com/amekusa)
