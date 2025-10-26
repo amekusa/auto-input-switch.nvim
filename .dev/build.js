@@ -150,8 +150,8 @@ function toDoc(data, opts, stack = null) {
 			r = indentBlock(r);
 			// section header
 			let head = stack.join('.');
-			head = padMiddle(head, `*${ns}.${head}*`, 78, 4);
-			r = '-'.repeat(78) + '\n' + head + '\n' + r + '\n\n';
+			head = padMiddle(head, `*${ns}.${head}*`, docw, 4);
+			r = '-'.repeat(docw) + '\n' + head + '\n' + r + '\n\n';
 		}
 	}
 
@@ -178,7 +178,7 @@ function toCmdDoc(data, opts) {
 		let v = data[k];
 		let head = ':' + k;
 		if (v.args) head += ' ' + v.args;
-		r += '-'.repeat(78) + '\n' + padMiddle(head, `*${ns}:${k}*`, 78, 4) + '\n';
+		r += '-'.repeat(docw) + '\n' + padMiddle(head, `*${ns}:${k}*`, docw, 4) + '\n';
 		if (v.desc && v.desc[lang]) {
 			r += indentBlock(v.desc[lang]) + '\n';
 		}
@@ -264,6 +264,7 @@ function lines(first, ...rest) {
 	return first;
 }
 
+let data;
 let logo = `
 
    ▀█▀██              ▀██▀                  ▄█▀▀▄█
@@ -273,9 +274,7 @@ let logo = `
  ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 `;
-let footer = `
-==============================================================================
-DOCUMENTS
+let footer = `${section}DOCUMENTS
 
 	* About the plugin: |auto-input-switch.nvim|
 	*          Options: |auto-input-switch-options|
@@ -285,9 +284,7 @@ DOCUMENTS
 	Note: CTRL-] to jump to the |link| under the cursor.
 	      CTRL-T or CTRL-O to jump back.
 
-
-==============================================================================
-ドキュメント
+${section}ドキュメント
 
 	* プラグインについて: |auto-input-switch.nvim.ja|
 	*         オプション: |auto-input-switch-options.ja|
@@ -298,95 +295,119 @@ DOCUMENTS
 	      CTRL-T または CTRL-O で戻る。
 
 
-vim:tw=78:ts=4:noet:ft=help:norl:`;
+vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
 
 
-// --- defaults.lua ---
-dst = root + '/lua/auto-input-switch/defaults.lua';
-out = toLua(structuredClone(data), {lang: 'en'});
-fs.writeFile(dst, 'return ' + out, 'utf8', written(dst));
+// options
+fs.readFile(base + '/options.yml', enc, (err, data) => {
+	if (err) throw err;
+	data = yaml.parse(data);
+	let dst, out;
+
+	// defaults.lua
+	dst = root + '/lua/auto-input-switch/defaults.lua';
+	out = toLua(structuredClone(data), {lang: 'en'});
+	fs.writeFile(dst, 'return ' + out, enc, written(dst));
 
 
-// --- defaults doc ---
-dst = root + '/doc/auto-input-switch-defaults.txt';
-out = `*auto-input-switch-defaults.txt*                      |auto-input-switch.nvim|
-${logo}
-==============================================================================
-DEFAULT CONFIG                                    *auto-input-switch-defaults*
-
->lua
-${indentBlock(out, '  ')}
-<` + footer;
-fs.writeFile(dst, out, 'utf8', written(dst));
-
-
-// --- defaults doc (ja) ---
-dst = root + '/doc/auto-input-switch-defaults.ja.txt';
-out = `*auto-input-switch-defaults.ja.txt*                |auto-input-switch.nvim.ja|
-${logo}
-==============================================================================
-デフォルト設定                                 *auto-input-switch-defaults.ja*
-
->lua
-${indentBlock(toLua(structuredClone(data), {lang: 'ja'}), '  ')}
-<` + footer;
-fs.writeFile(dst, out, 'utf8', written(dst));
+	// defaults doc
+	dst = root + '/doc/auto-input-switch-defaults.txt';
+	out = lines(
+		h(tag(basename(dst)), link('auto-input-switch.nvim')),
+		logo,
+		section,
+		h('DEFAULT CONFIG', tag('auto-input-switch-defaults')),
+		codeblock(out, 'lua', '  '),
+		footer
+	);
+	fs.writeFile(dst, out, enc, written(dst));
 
 
-// --- options doc ---
-dst = root + '/doc/auto-input-switch-options.txt';
-out = `*auto-input-switch-options.txt*                       |auto-input-switch.nvim|
-${logo}
-==============================================================================
-OPTIONS                                            *auto-input-switch-options*
-
-` + toDoc(structuredClone(data), {lang: 'en', ns: 'auto-input-switch'}) + footer;
-fs.writeFile(dst, out, 'utf8', written(dst));
-
-
-// --- options doc (ja) ---
-dst = root + '/doc/auto-input-switch-options.ja.txt';
-out = `*auto-input-switch-options.ja.txt*                 |auto-input-switch.nvim.ja|
-${logo}
-==============================================================================
-オプション                                      *auto-input-switch-options.ja*
-
-` + toDoc(structuredClone(data), {lang: 'ja', ns: 'auto-input-switch.ja'}) + footer;
-fs.writeFile(dst, out, 'utf8', written(dst));
+	// defaults doc (ja)
+	dst = root + '/doc/auto-input-switch-defaults.ja.txt';
+	out = lines(
+		h(tag(basename(dst)), link('auto-input-switch.nvim.ja')),
+		logo,
+		section,
+		h('デフォルト設定', tag('auto-input-switch-defaults.ja')),
+		codeblock(toLua(structuredClone(data), {lang: 'ja'}), 'lua', '  '),
+		footer
+	);
+	fs.writeFile(dst, out, enc, written(dst));
 
 
-// --- commands doc ---
-data = yaml.parse(fs.readFileSync(base + '/commands.yml', 'utf8'));
-dst = root + '/doc/auto-input-switch-commands.txt';
-out = `*auto-input-switch-commands.txt*                      |auto-input-switch.nvim|
-${logo}
-==============================================================================
-COMMANDS                                          *auto-input-switch-commands*
+	// options doc
+	dst = root + '/doc/auto-input-switch-options.txt';
+	out = lines(
+		h(tag(basename(dst)), link('auto-input-switch.nvim')),
+		logo,
+		section,
+		h('OPTIONS', tag('auto-input-switch-options')),
+		toDoc(structuredClone(data), {lang: 'en', ns: 'auto-input-switch'}),
+		footer
+	);
+	fs.writeFile(dst, out, enc, written(dst));
 
-` + toCmdDoc(data, {lang: 'en', ns: ''}) + footer;
-fs.writeFile(dst, out, 'utf8', written(dst));
+
+	// options doc (ja)
+	dst = root + '/doc/auto-input-switch-options.ja.txt';
+	out = lines(
+		h(tag(basename(dst)), link('auto-input-switch.nvim')),
+		logo,
+		section,
+		h('オプション', tag('auto-input-switch-options.ja')),
+		toDoc(structuredClone(data), {lang: 'ja', ns: 'auto-input-switch.ja'}),
+		footer
+	);
+	fs.writeFile(dst, out, enc, written(dst));
+});
 
 
-// --- commands doc (ja) ---
-dst = root + '/doc/auto-input-switch-commands.ja.txt';
-out = `*auto-input-switch-commands.ja.txt*                |auto-input-switch.nvim.ja|
-${logo}
-==============================================================================
-コマンド                                       *auto-input-switch-commands.ja*
+// commands
+fs.readFile(base + '/commands.yml', enc, (err, data) => {
+	if (err) throw err;
+	data = yaml.parse(data);
+	let dst, out;
 
-` + toCmdDoc(data, {lang: 'ja', ns: 'ja'}) + footer;
-fs.writeFile(dst, out, 'utf8', written(dst));
+	// commands doc
+	dst = root + '/doc/auto-input-switch-commands.txt';
+	out = lines(
+		h(tag(basename(dst)), link('auto-input-switch.nvim')),
+		logo,
+		section,
+		h('COMMANDS', tag('auto-input-switch-commands')),
+		toCmdDoc(data, {lang: 'en', ns: ''}),
+		footer
+	);
+	fs.writeFile(dst, out, enc, written(dst));
+
+
+	// commands doc (ja)
+	dst = root + '/doc/auto-input-switch-commands.ja.txt';
+	out = lines(
+		h(tag(basename(dst)), link('auto-input-switch.nvim.ja')),
+		logo,
+		section,
+		h('コマンド', tag('auto-input-switch-commands.ja')),
+		toCmdDoc(data, {lang: 'ja', ns: 'ja'}),
+		footer
+	);
+	fs.writeFile(dst, out, enc, written(dst));
+});
 
 
 { // post-process the main doc
 	let dst = root + '/doc/auto-input-switch.txt';
-	fs.readFile(dst, {encoding: 'utf8'}, (err, data) => {
+	fs.readFile(dst, enc, (err, data) => {
 		if (err) throw err;
-		let out = padMiddle(tag(basename(dst)), tag('auto-input-switch.nvim'), 78) + '\n';
-		out += '日本語: |auto-input-switch.ja.txt|\n';
-		out += '>\n' + logo + '\n<\n';
-		out += data.substring(data.indexOf('\n<\n') + 2).trim();
-		fs.writeFile(dst, out, 'utf8', written(dst));
+		data = data.substring(data.indexOf('\n<\n') + 2).trim(); // remove the header
+		let out = lines(
+			h(tag(basename(dst)), tag('auto-input-switch.nvim')),
+			'日本語: |auto-input-switch.ja.txt|',
+			codeblock(logo, '', ''),
+			data
+		);
+		fs.writeFile(dst, out, enc, written(dst));
 	});
 }
 
