@@ -297,7 +297,6 @@ ${section}ドキュメント
 
 vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
 
-
 // options
 fs.readFile(base + '/options.yml', enc, (err, data) => {
 	if (err) throw err;
@@ -308,7 +307,6 @@ fs.readFile(base + '/options.yml', enc, (err, data) => {
 	dst = root + '/lua/auto-input-switch/defaults.lua';
 	out = toLua(structuredClone(data), {lang: 'en'});
 	fs.writeFile(dst, 'return ' + out, enc, written(dst));
-
 
 	// defaults doc
 	dst = root + '/doc/auto-input-switch-defaults.txt';
@@ -322,7 +320,6 @@ fs.readFile(base + '/options.yml', enc, (err, data) => {
 	);
 	fs.writeFile(dst, out, enc, written(dst));
 
-
 	// defaults doc (ja)
 	dst = root + '/doc/auto-input-switch-defaults.ja.txt';
 	out = lines(
@@ -335,7 +332,6 @@ fs.readFile(base + '/options.yml', enc, (err, data) => {
 	);
 	fs.writeFile(dst, out, enc, written(dst));
 
-
 	// options doc
 	dst = root + '/doc/auto-input-switch-options.txt';
 	out = lines(
@@ -347,7 +343,6 @@ fs.readFile(base + '/options.yml', enc, (err, data) => {
 		footer
 	);
 	fs.writeFile(dst, out, enc, written(dst));
-
 
 	// options doc (ja)
 	dst = root + '/doc/auto-input-switch-options.ja.txt';
@@ -381,7 +376,6 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 	);
 	fs.writeFile(dst, out, enc, written(dst));
 
-
 	// commands doc (ja)
 	dst = root + '/doc/auto-input-switch-commands.ja.txt';
 	out = lines(
@@ -394,7 +388,6 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 	);
 	fs.writeFile(dst, out, enc, written(dst));
 });
-
 
 { // post-process the main doc
 	let dst = root + '/doc/auto-input-switch.txt';
