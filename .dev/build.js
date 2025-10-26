@@ -253,7 +253,7 @@ function link(str) {
 }
 
 function codeblock(str, lang = '', ind = '\t') {
-	return `>${lang}\n${indentBlock(str, ind)}\n>\n`;
+	return `>${lang}\n${indentBlock(str, ind)}\n<\n`;
 }
 
 function lines(first, ...rest) {
