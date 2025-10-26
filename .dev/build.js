@@ -5,7 +5,7 @@
  * @author Satoshi Soma (github.com/amekusa)
  */
 
-import {dirname} from 'node:path';
+import {dirname, basename} from 'node:path';
 import fs from 'node:fs';
 import yaml from 'yaml';
 
@@ -205,15 +205,30 @@ function written(file) {
 	};
 }
 
+/**
+ * Surround
+ */
+function sr(str, start, end = null) {
+	return start + str + (end || start);
+}
+
+function tag(str) {
+	return sr(str, '*');
+}
+
+function link(str) {
+	return sr(str, '|');
+}
+
 let dst, out, data;
 data = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
 let logo = `
 
-  ▀█▀██              ▀██▀                 ██▀▀▄█
-  ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
-  █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
- ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
-▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄██ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+   ▀█▀██              ▀██▀                  ▄█▀▀▄█
+   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀  ██   █  █ █ █ █ ▀█▀ ▄▀▀ █ █
+   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █    ▀▀▄▄   █ █ █ █  █  █   █▀█
+  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █   █   ██  ▀▄█▄█ █  █  ▀▄▄ █ █
+ ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 `;
 let footer = `
@@ -319,4 +334,17 @@ ${logo}
 
 ` + toCmdDoc(data, {lang: 'ja', ns: 'ja'}) + footer;
 fs.writeFile(dst, out, 'utf8', written(dst));
+
+
+{ // post-process the main doc
+	let dst = root + '/doc/auto-input-switch.txt';
+	fs.readFile(dst, {encoding: 'utf8'}, (err, data) => {
+		if (err) throw err;
+		let out = padMiddle(tag(basename(dst)), tag('auto-input-switch.nvim'), 78) + '\n';
+		out += '日本語: |auto-input-switch.ja.txt|\n';
+		out += '>\n' + logo + '\n<\n';
+		out += data.substring(data.indexOf('\n<\n') + 2).trim();
+		fs.writeFile(dst, out, 'utf8', written(dst));
+	});
+}
 
