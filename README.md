@@ -2,11 +2,11 @@
 
 ```
 
-  ▀█▀██              ▀██▀                 ██▀▀▄█
-  ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
-  █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
- ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
-▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄██ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+   ▀█▀██              ▀██▀                  ▄█▀▀▄█
+   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀  ██   █  █ █ █ █ ▀█▀ ▄▀▀ █ █
+   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █    ▀▀▄▄   █ █ █ █  █  █   █▀█
+  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █   █   ██  ▀▄█▄█ █  █  ▀▄▄ █ █
+ ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 ```
 
@@ -21,7 +21,7 @@ Works on **macOS, Windows, and Linux**.
 
 ---
 
-⚠️ **Breaking changes in v5.0.0**  
+**Breaking changes in v5.0.0**  
 If you’re upgrading from v4.x or earlier, please check the [Changelog](#changelog) for details.
 
 
@@ -51,13 +51,15 @@ require('lazy').setup({
 
 ## Configuration
 This plugin is highly configurable.  
-See [`defaults.lua`](./lua/auto-input-switch/defaults.lua) for all available options.  
+For all available options, see:
+
+- [`defaults.lua`](lua/auto-input-switch/defaults.lua)
+- [`auto-input-switch-options.txt`](doc/auto-input-switch-options.txt)
 
 Example: enable **Match** for Japanese, Chinese, and Korean:
 
 ```lua
 require('auto-input-switch').setup({
-  restore = { enable = false }, -- disable Restore to avoid confusion
   match = {
     enable = true,
     languages = {
@@ -65,7 +67,12 @@ require('auto-input-switch').setup({
       Zh = { enable = true, priority = 0 },
       Ko = { enable = true },
     }
-  }
+  },
+  restore = {
+    enable = false,
+      -- If you enable Match, it is recommended
+      -- to disable Restore to avoid confusion.
+  },
 })
 ```
 
@@ -86,16 +93,11 @@ With the default config:
 - Linux: [ibus](https://github.com/ibus/ibus)  
 
 
-## Commands
-
-| Command | Description |
-|---------|-------------|
-| `:AutoInputSwitch on/off` | Enable or disable the plugin globally |
-| `:AutoInputSwitchNormalize` | Normalize to the default Latin input |
-| `:AutoInputSwitchRestore` | Restore the last used input method |
-| `:AutoInputSwitchMatch` | Match input method based on nearby text |
-
-Buffer-local versions are also available (see the [Changelog](#changelog)).
+## Documents
+- [About the plugin](doc/auto-input-switch.txt)
+- [Options](doc/auto-input-switch-options.txt)
+- [Default config](doc/auto-input-switch-defaults.txt)
+- [Commands](doc/auto-input-switch-commands.txt)
 
 
 ## Changelog
