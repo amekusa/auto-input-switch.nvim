@@ -17,19 +17,24 @@
 A Neovim plugin that **automatically switches your input method** (IME / input source) based on context.  
 It removes the friction of constantly toggling between English and non-English input methods when coding, writing, or taking notes.
 
-Works on **macOS, Windows, and Linux**.  
+Works on macOS, Windows, and Linux.
 
 ---
 
-**Breaking changes in v5.0.0**  
-If you’re upgrading from v4.x or earlier, please check the [Changelog](#changelog) for details.
+> [!WARNING]  
+> **Breaking changes in v5.0.0**  
+> If you’re upgrading from v4.x or earlier, please check the [Changelog](#changelog) for details.
 
 
 ## Features
-- **Normalize** – Always return to Latin input (e.g. US keyboard) outside of Insert mode.  
-- **Restore** – When you return to Insert mode, restore the input method you were using last time.  
-- **Match** – Detect nearby text and automatically switch to the matching input method (Japanese, Chinese, Korean, Russian, …).  
-- **Popup notifications** – Show a small popup whenever the plugin switches your input method.  
+- **Normalize**:  
+  Always return to Latin input (e.g. US keyboard) outside of Insert mode.
+- **Restore**:  
+  When you return to Insert mode, restore the input method you were using last time.
+- **Match**:  
+  Detect nearby text and automatically switch to the matching input method (Japanese, Chinese, Korean, Russian, …).
+- **Popup notifications**:  
+  Show a small popup whenever the plugin switches your input method.
 
 
 ## Installation
@@ -53,8 +58,8 @@ require('lazy').setup({
 This plugin is highly configurable.  
 For all available options, see:
 
-- [`defaults.lua`](lua/auto-input-switch/defaults.lua)
 - [`auto-input-switch-options.txt`](doc/auto-input-switch-options.txt)
+- [`defaults.lua`](lua/auto-input-switch/defaults.lua)
 
 Example: enable **Match** for Japanese, Chinese, and Korean:
 
@@ -79,18 +84,16 @@ require('auto-input-switch').setup({
 Note: Since Japanese and Chinese share some Unicode ranges, it’s recommended to set `priority` to control which language takes precedence.
 
 
-## Compatibility
+## Requirements
+- **Neovim:** v0.10+
+- **OS:** macOS, Windows, Linux
 
-- **Neovim:** v0.10+  
-- **OS:** macOS, Windows, Linux  
-
-### Prerequisites
 You need a commanline program to switch input methods in the background.  
 With the default config:
 
 - macOS / Windows: [im-select](https://github.com/daipeihust/im-select)  
-  (Alternatively, [macism](https://github.com/laishulu/macism) may work better on macOS.)  
-- Linux: [ibus](https://github.com/ibus/ibus)  
+  (Alternatively, [macism](https://github.com/laishulu/macism) may work better on macOS.)
+- Linux: [ibus](https://github.com/ibus/ibus)
 
 
 ## Documents
@@ -107,28 +110,27 @@ This release includes **major breaking changes**.
 If you’re upgrading, please review carefully.
 
 **Breaking Changes**
-- Replaced `*.file_pattern` with `*.filetypes` (takes filetype names, not extensions).  
-- New `*.on_mode_change` options replace some `InsertEnter/InsertLeave` defaults.  
-- `restore.exclude_pattern` now uses regex (not Lua patterns).  
-- Popup window options moved from `popup.*` → `popup.window.*`.  
+- Replaced `*.file_pattern` with `*.filetypes` (takes filetype names, not extensions).
+- New `*.on_mode_change` options replace some `InsertEnter/InsertLeave` defaults.
+- `restore.exclude_pattern` now uses regex (not Lua patterns).
+- Popup window options moved from `popup.*` → `popup.window.*`.
 
 **Non-breaking Changes**
-- `popup.labels.*` simplified (accepts plain strings).  
-- New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.  
-- New buffer-local commands:  
-  - `:AutoInputSwitchBuf on|off`  
-  - `:AutoInputSwitchBufNormalize on|off`  
-  - `:AutoInputSwitchBufRestore on|off`  
-  - `:AutoInputSwitchBufMatch on|off`  
+- `popup.labels.*` simplified (accepts plain strings).
+- New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.
+- New buffer-local commands:
+  - `:AutoInputSwitchBuf on|off`
+  - `:AutoInputSwitchBufNormalize on|off`
+  - `:AutoInputSwitchBufRestore on|off`
+  - `:AutoInputSwitchBufMatch on|off`
 
-<details>
-<summary>Older releases</summary>
+<details><summary>Older releases</summary>
 
-- v4.1.0 – Override `cmd_set` per input method  
-- v4.0.0 – Custom popup labels, bug fixes  
-- v3.0.0 – Added Match feature  
-- v2.0.0 – Added async support  
-- v1.0.0 – Initial release  
+- v4.1.0 – Override `cmd_set` per input method
+- v4.0.0 – Custom popup labels, bug fixes
+- v3.0.0 – Added Match feature
+- v2.0.0 – Added async support
+- v1.0.0 – Initial release
 
 </details>
 
