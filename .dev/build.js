@@ -217,7 +217,12 @@ function strWidth(str) {
 
 function padStart(str, width, pad = ' ') {
 	let short = width - strWidth(str);
-	return short <= 0 ? str : pad.repeat(Math.floor(short / strWidth(pad))) + str;
+	return short <= 0 ? str : (pad.repeat(Math.floor(short / strWidth(pad))) + str);
+}
+
+function padEnd(str, width, pad = ' ') {
+	let short = width - strWidth(str);
+	return short <= 0 ? str : (str + pad.repeat(Math.floor(short / strWidth(pad))));
 }
 
 function padMiddle(start, end, width, margin = 0, pad = ' ') {
