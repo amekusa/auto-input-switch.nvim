@@ -404,7 +404,7 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 		let out = lines(
 			h(tag(basename(dst)), tag('auto-input-switch.nvim')),
 			'日本語: |auto-input-switch.ja.txt|',
-			codeblock(logo, '', ''),
+			sr(logo, br),
 			data
 		);
 		fs.writeFile(dst, out, enc, written(dst));
