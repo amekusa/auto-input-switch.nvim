@@ -264,7 +264,6 @@ function lines(first, ...rest) {
 	return first;
 }
 
-let data;
 let logo = `
 
    ▀█▀██              ▀██▀                  ▄█▀▀▄█
