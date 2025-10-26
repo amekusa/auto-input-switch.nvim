@@ -164,11 +164,6 @@ function toDoc(data, opts, stack = null) {
 	return r;
 }
 
-function padMiddle(start, end, length, margin = 0, pad = ' ') {
-	let nPad = length - (start.length + end.length);
-	return start + (nPad < margin ? ('\n' + end.padStart(length, pad)) : (pad.repeat(nPad) + end));
-}
-
 function toCmdDoc(data, opts) {
 	let {
 		ns = '',
@@ -192,12 +187,6 @@ function toCmdDoc(data, opts) {
 	return r;
 }
 
-function indentBlock(str, ind = '\t') {
-	return ind + str
-		.replaceAll('\n', '\n' + ind)
-		.replaceAll(ind + '<', '<');
-}
-
 function written(file) {
 	return err => {
 		if (err) throw err;
@@ -205,9 +194,48 @@ function written(file) {
 	};
 }
 
-/**
- * Surround
- */
+// template helpers
+let br = '\n'; // linebreak
+let enc = 'utf8'; // encoding
+let docw = 78; // document width
+let section = br + '='.repeat(docw) + br; // section separator
+
+function indentBlock(str, ind = '\t') {
+	return ind + str
+		.replaceAll('\n', '\n' + ind)
+		.replaceAll(ind + '<', '<');
+}
+
+function strWidth(str) {
+	let r = 0;
+	for (let char of str) {
+		let cp = char.codePointAt(0);
+		r += (0x00 <= cp && cp < 0x7f) ? 1 : 2
+	}
+	return r;
+}
+
+function padStart(str, width, pad = ' ') {
+	let short = width - strWidth(str);
+	if (short <= 0) return str;
+	return pad.repeat(Math.floor(short / strWidth(pad))) + str;
+}
+
+function padMiddle(start, end, width, margin = 0, pad = ' ') {
+	let sw = strWidth(start);
+	let ew = strWidth(end);
+	let short = width - (sw + ew);
+	return start + (
+		short <= margin
+		? (br + pad.repeat(Math.floor((width - ew) / strWidth(pad))))
+		: pad.repeat(Math.floor(short / strWidth(pad)))
+	) + end;
+}
+
+function h(left, right) {
+	return padMiddle(left, right, docw, 4);
+}
+
 function sr(str, start, end = null) {
 	return start + str + (end || start);
 }
@@ -220,8 +248,18 @@ function link(str) {
 	return sr(str, '|');
 }
 
-let dst, out, data;
-data = yaml.parse(fs.readFileSync(base + '/options.yml', 'utf8'));
+function codeblock(str, lang = '', ind = '\t') {
+	return `>${lang}\n${indentBlock(str, ind)}\n>\n`;
+}
+
+function lines(first, ...rest) {
+	for (let i = 0; i < rest.length; i++) {
+		let next = rest[i];
+		first += (first.endsWith(br) || next.startsWith(br)) ? next : (br + next);
+	}
+	return first;
+}
+
 let logo = `
 
    ▀█▀██              ▀██▀                  ▄█▀▀▄█
