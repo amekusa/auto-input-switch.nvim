@@ -11,19 +11,17 @@ import yaml from 'yaml';
 
 import md2doc from './md2doc.js';
 import {
-	docWidth,
+	docWidth, lines,
 	h, tag, link, sr,
-	lines,
-	indentBlock,
-	codeblock,
+	codeblock, indentBlock,
 } from './helpers.js';
+
+const base = import.meta.dirname;
+const root = dirname(base); // project root
 
 const docw = docWidth(78);
 const lf = '\n';
 const section = lf + '='.repeat(docw) + lf; // section separator
-
-const base = import.meta.dirname;
-const root = dirname(base); // project root
 
 /**
  * Converts the given value into a Lua expression.
