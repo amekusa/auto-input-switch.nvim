@@ -9,7 +9,7 @@ import {dirname, basename} from 'node:path';
 import fs from 'node:fs';
 import yaml from 'yaml';
 
-import md2doc from './md2doc.js';
+import {MD2Doc} from './md2doc.js';
 import {
 	docWidth, lines,
 	h, tag, link, sr,
@@ -328,6 +328,18 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 		footer
 	);
 	fs.writeFile(dst, out, enc, written(dst));
+});
+
+// generate the main doc from README.md
+fs.readFile(root + '/README.md', enc, (err, data) => {
+	if (err) throw err;
+	let md2doc = new MD2Doc({
+		docWidth: docw,
+		ns: 'auto-input-switch.nvim',
+	});
+	data = md2doc.parse(data);
+	// WIP
+	console.debug(data);
 });
 
 { // post-process the main doc
