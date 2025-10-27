@@ -9,8 +9,21 @@ import {dirname, basename} from 'node:path';
 import fs from 'node:fs';
 import yaml from 'yaml';
 
-let base = import.meta.dirname;
-let root = dirname(base); // project root
+import md2doc from './md2doc.js';
+import {
+	docWidth,
+	h, tag, link, sr,
+	lines,
+	indentBlock,
+	codeblock,
+} from './helpers.js';
+
+const docw = docWidth(78);
+const lf = '\n';
+const section = lf + '='.repeat(docw) + lf; // section separator
+
+const base = import.meta.dirname;
+const root = dirname(base); // project root
 
 /**
  * Converts the given value into a Lua expression.
@@ -150,7 +163,7 @@ function toDoc(data, opts, stack = null) {
 			r = indentBlock(r);
 			// section header
 			let head = stack.join('.');
-			head = padMiddle(head, `*${ns}.${head}*`, docw, 4);
+			head = h(head, `*${ns}.${head}*`);
 			r = '-'.repeat(docw) + '\n' + head + '\n' + r + '\n\n';
 		}
 	}
@@ -178,7 +191,7 @@ function toCmdDoc(data, opts) {
 		let v = data[k];
 		let head = ':' + k;
 		if (v.args) head += ' ' + v.args;
-		r += '-'.repeat(docw) + '\n' + padMiddle(head, `*${ns}:${k}*`, docw, 4) + '\n';
+		r += '-'.repeat(docw) + '\n' + h(head, `*${ns}:${k}*`) + '\n';
 		if (v.desc && v.desc[lang]) {
 			r += indentBlock(v.desc[lang]) + '\n';
 		}
@@ -192,76 +205,6 @@ function written(file) {
 		if (err) throw err;
 		console.log('Written:', file);
 	};
-}
-
-// template helpers
-let br = '\n'; // linebreak
-let enc = 'utf8'; // encoding
-let docw = 78; // document width
-let section = br + '='.repeat(docw) + br; // section separator
-
-function indentBlock(str, ind = '\t') {
-	return ind + str
-		.replaceAll('\n', '\n' + ind)
-		.replaceAll(ind + '<', '<');
-}
-
-function strWidth(str) {
-	let r = 0;
-	for (let char of str) {
-		let cp = char.codePointAt(0);
-		r += (0x00 <= cp && cp < 0x7f) ? 1 : 2
-	}
-	return r;
-}
-
-function padStart(str, width, pad = ' ') {
-	let short = width - strWidth(str);
-	return short <= 0 ? str : (pad.repeat(Math.floor(short / strWidth(pad))) + str);
-}
-
-function padEnd(str, width, pad = ' ') {
-	let short = width - strWidth(str);
-	return short <= 0 ? str : (str + pad.repeat(Math.floor(short / strWidth(pad))));
-}
-
-function padMiddle(start, end, width, margin = 0, pad = ' ') {
-	let sw = strWidth(start);
-	let ew = strWidth(end);
-	let short = width - (sw + ew);
-	return start + (
-		short <= margin
-		? (br + pad.repeat(Math.floor((width - ew) / strWidth(pad))))
-		: pad.repeat(Math.floor(short / strWidth(pad)))
-	) + end;
-}
-
-function h(left, right) {
-	return padMiddle(left, right, docw, 4);
-}
-
-function sr(str, start, end = null) {
-	return start + str + (end || start);
-}
-
-function tag(str) {
-	return sr(str, '*');
-}
-
-function link(str) {
-	return sr(str, '|');
-}
-
-function codeblock(str, lang = '', ind = '\t') {
-	return `>${lang}\n${indentBlock(str, ind)}\n<\n`;
-}
-
-function lines(first, ...rest) {
-	for (let i = 0; i < rest.length; i++) {
-		let next = rest[i];
-		first += (first.endsWith(br) || next.startsWith(br)) ? next : (br + next);
-	}
-	return first;
 }
 
 let logo = `
@@ -295,6 +238,8 @@ ${section}ドキュメント
 
 
 vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
+
+let enc = 'utf8'; // encoding
 
 // options
 fs.readFile(base + '/options.yml', enc, (err, data) => {
@@ -395,7 +340,7 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 		let out = lines(
 			h(tag(basename(dst)), tag('auto-input-switch.nvim')),
 			'日本語: |auto-input-switch.ja.txt|',
-			sr(logo, br),
+			sr(logo, lf),
 			data
 		);
 		fs.writeFile(dst, out, enc, written(dst));
