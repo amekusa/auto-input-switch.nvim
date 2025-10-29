@@ -42,8 +42,10 @@ export function sr(str, start, end = null) {
 }
 
 export function lines(first, ...rest) {
+	if (!first) first = '';
 	for (let i = 0; i < rest.length; i++) {
 		let next = rest[i];
+		if (!next) continue;
 		first += (first.endsWith(lf) || next.startsWith(lf)) ? next : (lf + next);
 	}
 	return first;

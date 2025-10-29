@@ -1,6 +1,7 @@
 import {sr, padMiddle} from './strutil.js';
-
 export {sr, lines} from './strutil.js';
+
+const lf = '\n';
 
 let docw = 78; // document width
 export function docWidth(set = 0) {
@@ -14,8 +15,16 @@ export function indentBlock(str, ind = '\t') {
 		.replaceAll(ind + '<', '<');
 }
 
-export function h(left, right) {
-	return padMiddle(left, right, docw, 4);
+export function h(left, right = '') {
+	return right ? padMiddle(left, right, docw, 4) : left;
+}
+
+export function h1(left, right = '') {
+	return '='.repeat(docw) + lf + h(left, right);
+}
+
+export function h2(left, right = '') {
+	return '-'.repeat(docw) + lf + h(left, right);
 }
 
 export function tag(str) {
