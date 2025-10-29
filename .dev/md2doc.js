@@ -1,4 +1,5 @@
 import {Marked} from 'marked';
+import ContextStack from './cstack.js';
 import {
 	docWidth, lines,
 	h, tag, link, sr,
@@ -9,11 +10,14 @@ const lf = '\n';
 const lflf = lf.repeat(2);
 
 function docRenderer(opts) {
-	let {
+	const {
 		ns, // namespace
 		docw = 78, // doc width
 		shiftHL = 0, // shift heading level
+		indent = '  ',
 	} = opts;
+
+	const cs = new ContextStack();
 
 	// @see: https://github.com/markedjs/marked/blob/227cad9c9d61da3846112321c0cd7dded25a9316/src/Renderer.ts#L12
 	return {
@@ -30,10 +34,11 @@ function docRenderer(opts) {
 		},
 		paragraph({tokens}) {
 			let text = this.parser.parseInline(tokens);
-			return sr(text, lf);
+			return cs.get('list') ? text : sr(text, lf);
 		},
 		br() {
-			return lf;
+			let c = cs.get('list');
+			return c ? (lf + indent.repeat(c.depth + 1)) : lf;
 		},
 		em({tokens}) {
 			let text = this.parser.parseInline(tokens);
@@ -44,13 +49,14 @@ function docRenderer(opts) {
 			return sr(text, '*');
 		},
 		list({items, ordered}) {
-			let c = context('list', {depth: 0}, next => {next.depth++});
-			let ind = '  ';
+			let c = cs.get('list', {depth: 0}, next => {next.depth++});
+			let ind = c.depth ? indent.repeat(c.depth) : '';
 			let body = '';
 			for (let i = 0; i < items.length; i++) {
-			  body += ind.repeat(c.depth) + (ordered ? `${i+1}. ` : '- ') + this.listitem(items[i]) + lf;
+				let item = this.listitem(items[i]).trim();
+				body += ind + (ordered ? `${i+1}. ` : '- ') + item + lf;
 			}
-			pop();
+			cs.pop();
 			return lf + body;
 		},
 		listitem({tokens, loose}) {
@@ -61,33 +67,9 @@ function docRenderer(opts) {
 			return sr(text, '`');
 		},
 		code({text, lang, escaped}) {
-			return codeblock(text, lang, '  ');
+			return codeblock(text, lang, indent);
 		}
 	}
-}
-
-let stack = [];
-function push(type, c) {
-	c.__type = type;
-	stack.push(c);
-	return c
-}
-
-function pop() {
-	return stack.pop();
-}
-
-function context(type, fb = null, next = null) {
-	for (let i = stack.length - 1; i >= 0; i--) {
-		if (stack[i].__type === type) {
-			if (next) {
-				let c = structuredClone(stack[i]);
-				return push(type, next(c) || c);
-			}
-			return stack[i];
-		}
-	}
-	return fb ? push(type, fb) : null;
 }
 
 export class MD2Doc {
