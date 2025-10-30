@@ -15,6 +15,7 @@ function docRenderer(opts) {
 		docw = 78, // doc width
 		shiftHL = 0, // shift heading level
 		indent = '  ',
+		baseURL = '', // for relative URLs
 	} = opts;
 
 	const cs = new ContextStack();
@@ -51,17 +52,21 @@ function docRenderer(opts) {
 		list({items, ordered}) {
 			let c = cs.get('list', {depth: 0}, next => {next.depth++});
 			let ind = c.depth ? indent.repeat(c.depth) : '';
-			let body = '';
+			let body = lf;
 			for (let i = 0; i < items.length; i++) {
 				let item = this.listitem(items[i]).trim();
 				body += ind + (ordered ? `${i+1}. ` : '- ') + item + lf;
 			}
 			cs.pop();
-			return lf + body;
+			return body;
 		},
 		listitem({tokens, loose}) {
 			let text = this.parser.parse(tokens, !!loose);
 			return text;
+		},
+		link({href, tokens}) {
+			let text = this.parser.parseInline(tokens);
+			return `${text} (${url(href, baseURL)})`;
 		},
 		codespan({text}) {
 			return sr(text, '`');
@@ -70,6 +75,12 @@ function docRenderer(opts) {
 			return codeblock(text, lang, indent);
 		}
 	}
+}
+
+function url(str, base = '') {
+	let m = str.match(/^[a-z]+:\/\//);
+	if (m || !base) return str;
+	return base.replace(/\/$/, '') + '/' + str.replace(/^\//, '');
 }
 
 export class MD2Doc {
