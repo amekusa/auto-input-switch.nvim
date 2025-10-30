@@ -5,6 +5,10 @@
 
 const lf = '\n';
 
+export function indent(str, ind = '\t') {
+	return ind + str.replaceAll(lf, lf + ind);
+}
+
 export function strWidth(str) {
 	let r = 0;
 	for (let char of str) {

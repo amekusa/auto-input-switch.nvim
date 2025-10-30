@@ -3,7 +3,7 @@ import ContextStack from './cstack.js';
 import {
 	docWidth, lines,
 	h, tag, link, sr,
-	codeblock, indentBlock,
+	codeblock, indent,
 } from './helpers.js';
 
 const lf = '\n';
@@ -14,8 +14,9 @@ function docRenderer(opts) {
 		ns, // namespace
 		docw = 78, // doc width
 		shiftHL = 0, // shift heading level
-		indent = '  ',
+		indent: indentStr = '  ',
 		baseURL = '', // for relative URLs
+		images = true,
 	} = opts;
 
 	const cs = new ContextStack();
@@ -34,12 +35,12 @@ function docRenderer(opts) {
 			return sr(text, lf);
 		},
 		paragraph({tokens}) {
-			let text = this.parser.parseInline(tokens);
-			return cs.get('list') ? text : sr(text, lf);
+			let text = this.parser.parseInline(tokens).trim();
+			return cs.get('list') ? text : block(text);
 		},
 		br() {
 			let c = cs.get('list');
-			return c ? (lf + indent.repeat(c.depth + 1)) : lf;
+			return c ? (lf + indentStr.repeat(c.depth + 1)) : lf;
 		},
 		em({tokens}) {
 			let text = this.parser.parseInline(tokens);
@@ -47,11 +48,11 @@ function docRenderer(opts) {
 		},
 		strong({tokens}) {
 			let text = this.parser.parseInline(tokens);
-			return sr(text, '*');
+			return text;
 		},
 		list({items, ordered}) {
 			let c = cs.get('list', {depth: 0}, next => {next.depth++});
-			let ind = c.depth ? indent.repeat(c.depth) : '';
+			let ind = c.depth ? indentStr.repeat(c.depth) : '';
 			let body = lf;
 			for (let i = 0; i < items.length; i++) {
 				let item = this.listitem(items[i]).trim();
@@ -68,13 +69,27 @@ function docRenderer(opts) {
 			let text = this.parser.parseInline(tokens);
 			return `${text} (${url(href, baseURL)})`;
 		},
+		image({href, title}) {
+			if (!images) return '';
+			href = url(href, baseURL);
+			return title ? `[img: ${title} src: ${href}]` : `[img: ${href}]`;
+		},
+		blockquote({tokens}) {
+			let body = this.parser.parse(tokens);
+			return sr(indent(body.trim(), indentStr), lf);
+		},
 		codespan({text}) {
 			return sr(text, '`');
 		},
 		code({text, lang, escaped}) {
-			return codeblock(text, lang, indent);
+			return codeblock(text, lang, indentStr);
 		}
 	}
+}
+
+function block(str) {
+	str = str.trim();
+	return str ? sr(str, lf) : '';
 }
 
 function url(str, base = '') {

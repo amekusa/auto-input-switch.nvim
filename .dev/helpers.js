@@ -1,5 +1,5 @@
-import {sr, padMiddle} from './strutil.js';
-export {sr, lines} from './strutil.js';
+import {sr, indent, padMiddle} from './strutil.js';
+export {sr, indent, lines} from './strutil.js';
 
 const lf = '\n';
 
@@ -10,9 +10,7 @@ export function docWidth(set = 0) {
 }
 
 export function indentBlock(str, ind = '\t') {
-	return ind + str
-		.replaceAll('\n', '\n' + ind)
-		.replaceAll(ind + '<', '<');
+	return ind + indent(str, ind).replaceAll(ind + '<', '<');
 }
 
 export function h(left, right = '') {
