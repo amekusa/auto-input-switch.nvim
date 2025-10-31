@@ -55,34 +55,40 @@ function docRenderer(opts) {
 			let ind = c.depth ? indentStr.repeat(c.depth) : '';
 			let body = lf;
 			for (let i = 0; i < items.length; i++) {
-				let item = this.listitem(items[i]).trim();
-				body += ind + (ordered ? `${i+1}. ` : '- ') + item + lf;
+				body += ind + (ordered ? `${i+1}. ` : '- ') + this.listitem(items[i]) + lf;
 			}
 			cs.pop();
 			return body;
 		},
 		listitem({tokens, loose}) {
-			let text = this.parser.parse(tokens, !!loose);
+			let text = this.parser.parse(tokens, !!loose).trim();
 			return text;
 		},
 		link({href, tokens}) {
 			let text = this.parser.parseInline(tokens);
 			return `${text} (${url(href, baseURL)})`;
 		},
-		image({href, title}) {
+		image({href, title, text}) {
 			if (!images) return '';
 			href = url(href, baseURL);
-			return title ? `[img: ${title} src: ${href}]` : `[img: ${href}]`;
+			return text ? `[img: ${text} (${href})]` : `[img: ${href}]`;
 		},
 		blockquote({tokens}) {
-			let body = this.parser.parse(tokens);
-			return sr(indent(body.trim(), indentStr), lf);
+			let body = this.parser.parse(tokens).trim();
+			body = body.replace(/^\[!([A-Z]+)\]\n/, '$1:\n');
+			return sr(indent(body, indentStr), lf);
 		},
 		codespan({text}) {
 			return sr(text, '`');
 		},
 		code({text, lang, escaped}) {
 			return codeblock(text, lang, indentStr);
+		},
+		html({text, block:isBlock}) {
+			text = text.replaceAll(/<details>(.*?)<\/details>/g, (m, m1) => {
+				return m1;
+			});
+			return isBlock ? block(text) : text;
 		}
 	}
 }
