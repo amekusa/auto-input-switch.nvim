@@ -332,24 +332,49 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 	fs.writeFile(dst, out, enc, written(dst));
 });
 
-// generate the main doc from README.md
-fs.readFile(root + '/README.md', enc, (err, data) => {
-	if (err) throw err;
-	let dst = root + '/doc/auto-input-switch.txt';
-	let md2doc = new MD2Doc({
-		ns: 'auto-input-switch.nvim',
-		docw,
-		shiftHL: -1,
-		indentStr: '  ',
-		baseURL: 'https://github.com/amekusa/auto-input-switch.nvim',
-		header: lines(
-			h(tag(basename(dst)), tag('auto-input-switch.nvim')),
-			'日本語: |auto-input-switch.ja.txt|',
-			logo,
-		),
-		footer,
+{ // main doc
+	let baseURL = 'https://github.com/amekusa/auto-input-switch.nvim';
+
+	// main doc from README.md
+	fs.readFile(root + '/README.md', enc, (err, data) => {
+		if (err) throw err;
+		let dst = root + '/doc/auto-input-switch.txt';
+		let md2doc = new MD2Doc({
+			ns: 'auto-input-switch.nvim',
+			docw,
+			shiftHL: -1,
+			indentStr: '  ',
+			baseURL,
+			header: lines(
+				h(tag(basename(dst)), tag('auto-input-switch.nvim')),
+				'日本語: |auto-input-switch.ja.txt|',
+				logo,
+			),
+			footer,
+		});
+		let out = md2doc.parse(data);
+		fs.writeFile(dst, out, enc, written(dst));
 	});
-	let out = md2doc.parse(data);
-	fs.writeFile(dst, out, enc, written(dst));
-});
+
+	// main doc (ja) from README.ja.md
+	fs.readFile(root + '/README.ja.md', enc, (err, data) => {
+		if (err) throw err;
+		let dst = root + '/doc/auto-input-switch.ja.txt';
+		let md2doc = new MD2Doc({
+			ns: 'auto-input-switch.nvim.ja',
+			docw,
+			shiftHL: -1,
+			indentStr: '  ',
+			baseURL,
+			header: lines(
+				h(tag(basename(dst)), tag('auto-input-switch.nvim.ja')),
+				'English: |auto-input-switch.txt|',
+				logo,
+			),
+			footer,
+		});
+		let out = md2doc.parse(data);
+		fs.writeFile(dst, out, enc, written(dst));
+	});
+}
 
