@@ -16,5 +16,6 @@ clone() {
 	fi
 }
 
-clone "git@github.com:kdheepak/panvimdoc.git" "$base/panvimdoc"
+# clone "git@github.com:kdheepak/panvimdoc.git" "$base/panvimdoc"
+# NOTE: No longer used
 

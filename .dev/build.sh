@@ -9,22 +9,6 @@ if [ -d ../doc ]
 	else mkdir ../doc
 fi
 
-# generate the main doc
-cd "panvimdoc"
-prj="auto-input-switch"
-
-./panvimdoc.sh \
-	--input-file "../../README.md" \
-	--description "*auto-input-switch.nvim*" \
-	--project-name "$prj" \
-	--shift-heading-level-by -1 \
-	--toc false \
-	--ignore-rawblocks false \
-	--demojify false \
-
-cp -f "doc/$prj.txt" "../../doc/$prj.txt"
-cd ..
-
 # do other tasks
 node "./build.js"
 
