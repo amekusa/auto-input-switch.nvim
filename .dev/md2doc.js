@@ -7,7 +7,6 @@ import {
 } from './helpers.js';
 
 const lf = '\n';
-const lflf = lf.repeat(2);
 
 function docRenderer(opts) {
 	const {
@@ -85,9 +84,7 @@ function docRenderer(opts) {
 			return codeblock(text, lang, indentStr);
 		},
 		html({text, block:isBlock}) {
-			text = text.replaceAll(/<\/?(:?details|summary)>/g, m => {
-				return '';
-			});
+			text = text.replaceAll(/<\/?(:?details|summary)>/g, '');
 			return isBlock ? block(text) : text;
 		}
 	}
