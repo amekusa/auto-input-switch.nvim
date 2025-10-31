@@ -225,12 +225,12 @@ restore.on                                   *auto-input-switch.ja.restore.on*
 restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
 	- default: >lua
 	{
-	  'n:[iR]',
+	  '[nvV]:[iR]',
 	}
 <
 	Restore のトリガーとなる、モードの遷移パターン。
 	`false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
-	デフォルト: 'n:[iR]' (Normal から Insert/Replace モード)
+	デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
 
 ------------------------------------------------------------------------------
 restore.filetypes                     *auto-input-switch.ja.restore.filetypes*

@@ -95,9 +95,9 @@ return {
     },
     on_mode_change = { -- Mode transition patterns that trigger Restore.
       -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
-      -- Default: 'n:[iR]' (From Normal to Insert/Replace mode)
+      -- Default: 'n:[iR]' (From Normal/Visual to Insert/Replace mode)
 
-      'n:[iR]',
+      '[nvV]:[iR]',
     },
     filetypes = '*', -- Filetypes where Restore is enabled.
       -- Example:

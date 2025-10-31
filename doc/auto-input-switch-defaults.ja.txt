@@ -108,9 +108,9 @@
       },
       on_mode_change = { -- Restore のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
-        -- デフォルト: 'n:[iR]' (Normal から Insert/Replace モード)
+        -- デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
   
-        'n:[iR]',
+        '[nvV]:[iR]',
       },
       filetypes = '*', -- Restore が有効になるファイルタイプ。
         -- 例:
