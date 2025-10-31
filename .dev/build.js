@@ -236,7 +236,8 @@ ${h1('ドキュメント')}
 	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
 	      CTRL-T または CTRL-O で戻る。
 
- vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
+
+vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
 
 let enc = 'utf8'; // encoding
 
