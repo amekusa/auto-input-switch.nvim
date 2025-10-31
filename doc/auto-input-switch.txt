@@ -9,6 +9,7 @@
  ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 
+
 A Neovim plugin that automatically switches your input method (IME / input source) based on context.
 It removes the friction of constantly toggling between English and non-English input methods when coding, writing, or taking notes.
 
