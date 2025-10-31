@@ -109,15 +109,20 @@ export class MD2Doc {
 			renderer: docRenderer(opts),
 		});
 	}
+	preprocess(md) {
+		md = md.replaceAll(/<!--+\s*TRUNCATE:START\s*--+>.*?<!--+\s*TRUNCATE:END\s*--+>/gs, '');
+		return md;
+	}
 	parse(md) {
 		let {
 			header,
 			footer,
 		} = this.opts;
-		let body = this.marked.parse(md);
+		md = this.preprocess(md);
+		md = this.marked.parse(md);
 		return lines(
 			header,
-			body,
+			md,
 			footer
 		).trim();
 	}
