@@ -27,7 +27,8 @@ function docRenderer(opts) {
 			if (depth < 1) return '';
 			let text = this.parser.parseInline(tokens);
 			if (depth < 3) {
-				text = (depth == 1 ? '=' : '-').repeat(docw) + lf + h(text, tag(ns + '.' + text.toLowerCase().replaceAll(/[^\w]+/g, '-')));
+				text = h(text, tag(ns + '.' + text.toLowerCase().replaceAll(/[^\w]+/g, '-')));
+				text = (depth == 1 ? '=' : '-').repeat(docw) + lf + text;
 			} else {
 				text = (depth == 3 ? text.toUpperCase() : text) + ' ~';
 			}
