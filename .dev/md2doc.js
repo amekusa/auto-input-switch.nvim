@@ -75,7 +75,7 @@ function docRenderer(opts) {
 		blockquote({tokens}) {
 			let body = this.parser.parse(tokens).trim();
 			body = body.replace(/^\[!([A-Z]+)\]\n/, '$1:\n');
-			return sr(indent(body, indentStr), lf);
+			return sr(indent(body, '▎ '), lf);
 		},
 		codespan({text}) {
 			return sr(text, '`');
