@@ -30,9 +30,16 @@ function docRenderer(opts) {
 		heading({tokens, depth}) {
 			depth += shiftHL;
 			if (depth < 1) return '';
-			let text = this.parser.parseInline(tokens);
+			let text = this.parser.parseInline(tokens).trim();
 			if (depth < 3) {
-				text = h(text, tag(ns + '.' + text.toLowerCase().replaceAll(/[^\w]+/g, '-')));
+				let slug = /<!--\s*#([a-zA-Z]+)\s*-->/;
+				let m = text.match(slug);
+				if (m) {
+					text = text.replace(slug, '').trim();
+					slug = m[1];
+				} else slug = text;
+				slug = slug.toLowerCase().replaceAll(/[^\w]+/g, '-');
+				text = h(text, tag(ns + '.' + slug));
 				text = (depth == 1 ? '=' : '-').repeat(docw) + lf + text;
 			} else {
 				text = (depth == 3 ? text.toUpperCase() : text) + ' ~';
