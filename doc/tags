@@ -102,6 +102,7 @@ auto-input-switch.ja.restore.exclude_pattern	auto-input-switch-options.ja.txt	/*
 auto-input-switch.ja.restore.filetypes	auto-input-switch-options.ja.txt	/*auto-input-switch.ja.restore.filetypes*
 auto-input-switch.ja.restore.on	auto-input-switch-options.ja.txt	/*auto-input-switch.ja.restore.on*
 auto-input-switch.ja.restore.on_mode_change	auto-input-switch-options.ja.txt	/*auto-input-switch.ja.restore.on_mode_change*
+auto-input-switch.ja.txt	auto-input-switch.ja.txt	/*auto-input-switch.ja.txt*
 auto-input-switch.log	auto-input-switch-options.txt	/*auto-input-switch.log*
 auto-input-switch.match	auto-input-switch-options.txt	/*auto-input-switch.match*
 auto-input-switch.match.buf_condition	auto-input-switch-options.txt	/*auto-input-switch.match.buf_condition*
@@ -131,6 +132,14 @@ auto-input-switch.nvim.changelog	auto-input-switch.txt	/*auto-input-switch.nvim.
 auto-input-switch.nvim.configuration	auto-input-switch.txt	/*auto-input-switch.nvim.configuration*
 auto-input-switch.nvim.features	auto-input-switch.txt	/*auto-input-switch.nvim.features*
 auto-input-switch.nvim.installation	auto-input-switch.txt	/*auto-input-switch.nvim.installation*
+auto-input-switch.nvim.ja	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja*
+auto-input-switch.nvim.ja.changelog	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.changelog*
+auto-input-switch.nvim.ja.configuration	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.configuration*
+auto-input-switch.nvim.ja.features	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.features*
+auto-input-switch.nvim.ja.installation	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.installation*
+auto-input-switch.nvim.ja.license	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.license*
+auto-input-switch.nvim.ja.requirements	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.requirements*
+auto-input-switch.nvim.ja.v5-0-0	auto-input-switch.ja.txt	/*auto-input-switch.nvim.ja.v5-0-0*
 auto-input-switch.nvim.license	auto-input-switch.txt	/*auto-input-switch.nvim.license*
 auto-input-switch.nvim.requirements	auto-input-switch.txt	/*auto-input-switch.nvim.requirements*
 auto-input-switch.nvim.v5-0-0	auto-input-switch.txt	/*auto-input-switch.nvim.v5-0-0*
