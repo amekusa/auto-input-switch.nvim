@@ -103,6 +103,8 @@ With the default config:
 - [Options](doc/auto-input-switch-options.txt)
 - [Default config](doc/auto-input-switch-defaults.txt)
 - [Commands](doc/auto-input-switch-commands.txt)
+
+
 <!--TRUNCATE:END-->
 ## Changelog
 
