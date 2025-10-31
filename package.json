@@ -5,6 +5,7 @@
     "build": ".dev/build.sh"
   },
   "devDependencies": {
+    "marked": "^16.4.1",
     "yaml": "^2.8.1"
   }
 }
