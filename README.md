@@ -1,25 +1,24 @@
+<!--TRUNCATE:START-->
 **English** / [日本語](README.ja.md)
 
 ```
 
-   ▀█▀██              ▀██▀                  ▄█▀▀▄█
-   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀  ██   █  █ █ █ █ ▀█▀ ▄▀▀ █ █
-   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █    ▀▀▄▄   █ █ █ █  █  █   █▀█
-  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █   █   ██  ▀▄█▄█ █  █  ▀▄▄ █ █
- ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━━ ★ NVIM
+   ▀█▀██              ▀██▀                 ▄█▀▀▄█
+   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
+   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
+  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
+ ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 ```
-
 ![GitHub Tag](https://img.shields.io/github/v/tag/amekusa/auto-input-switch.nvim?label=stable&link=https%3A%2F%2Fgithub.com%2Famekusa%2Fauto-input-switch.nvim%2Ftags)
 
-<img src="https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif">
+![Demo Gif](https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif)
 
+<!--TRUNCATE:END-->
 A Neovim plugin that **automatically switches your input method** (IME / input source) based on context.  
 It removes the friction of constantly toggling between English and non-English input methods when coding, writing, or taking notes.
 
 Works on macOS, Windows, and Linux.
-
----
 
 > [!WARNING]  
 > **Breaking changes in v5.0.0**  
@@ -81,7 +80,9 @@ require('auto-input-switch').setup({
 })
 ```
 
-Note: Since Japanese and Chinese share some Unicode ranges, it’s recommended to set `priority` to control which language takes precedence.
+> [!NOTE]
+> Since Japanese and Chinese share some Unicode ranges,
+> it’s recommended to set `priority` to control which language takes precedence.
 
 
 ## Requirements
@@ -96,26 +97,26 @@ With the default config:
 - Linux: [ibus](https://github.com/ibus/ibus)
 
 
+<!--TRUNCATE:START-->
 ## Documents
 - [About the plugin](doc/auto-input-switch.txt)
 - [Options](doc/auto-input-switch-options.txt)
 - [Default config](doc/auto-input-switch-defaults.txt)
 - [Commands](doc/auto-input-switch-commands.txt)
-
-
+<!--TRUNCATE:END-->
 ## Changelog
 
 ### v5.0.0
 This release includes **major breaking changes**.  
 If you’re upgrading, please review carefully.
 
-**Breaking Changes**
+**Breaking Changes**:
 - Replaced `*.file_pattern` with `*.filetypes` (takes filetype names, not extensions).
 - New `*.on_mode_change` options replace some `InsertEnter/InsertLeave` defaults.
 - `restore.exclude_pattern` now uses regex (not Lua patterns).
 - Popup window options moved from `popup.*` → `popup.window.*`.
 
-**Non-breaking Changes**
+**Non-breaking Changes**:
 - `popup.labels.*` simplified (accepts plain strings).
 - New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.
 - New buffer-local commands:
@@ -124,7 +125,8 @@ If you’re upgrading, please review carefully.
   - `:AutoInputSwitchBufRestore on|off`
   - `:AutoInputSwitchBufMatch on|off`
 
-<details><summary>Older releases</summary>
+<details>
+<summary>Older releases:</summary>
 
 - v4.1.0 – Override `cmd_set` per input method
 - v4.0.0 – Custom popup labels, bug fixes
@@ -137,3 +139,4 @@ If you’re upgrading, please review carefully.
 
 ## License
 MIT © 2025 [Satoshi Soma](https://github.com/amekusa)
+
