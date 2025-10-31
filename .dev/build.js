@@ -12,7 +12,7 @@ import yaml from 'yaml';
 import {MD2Doc} from './md2doc.js';
 import {
 	docWidth, lines,
-	h, tag, link, sr,
+	h, h1, h2, tag, link, sr,
 	codeblock, indentBlock,
 } from './helpers.js';
 
@@ -207,6 +207,7 @@ function written(file) {
 
 let logo = `
 
+
    ▀█▀██              ▀██▀                 ▄█▀▀▄█
    ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
    █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
@@ -214,7 +215,8 @@ let logo = `
  ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 `;
-let footer = `${section}DOCUMENTS
+let footer = `
+${h1('Documents')}
 
 	* About the plugin: |auto-input-switch.nvim|
 	*          Options: |auto-input-switch-options|
@@ -224,7 +226,8 @@ let footer = `${section}DOCUMENTS
 	Note: CTRL-] to jump to the |link| under the cursor.
 	      CTRL-T or CTRL-O to jump back.
 
-${section}ドキュメント
+
+${h1('ドキュメント')}
 
 	* プラグインについて: |auto-input-switch.nvim.ja|
 	*         オプション: |auto-input-switch-options.ja|
@@ -235,7 +238,7 @@ ${section}ドキュメント
 	      CTRL-T または CTRL-O で戻る。
 
 
-vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
+ vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
 
 let enc = 'utf8'; // encoding
 
@@ -333,27 +336,21 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 // generate the main doc from README.md
 fs.readFile(root + '/README.md', enc, (err, data) => {
 	if (err) throw err;
-	let md2doc = new MD2Doc({
-		docWidth: docw,
-		ns: 'auto-input-switch.nvim',
-	});
-	data = md2doc.parse(data);
-	// WIP
-	console.debug(data);
-});
-
-{ // post-process the main doc
 	let dst = root + '/doc/auto-input-switch.txt';
-	fs.readFile(dst, enc, (err, data) => {
-		if (err) throw err;
-		data = data.substring(data.indexOf('\n<\n') + 2).trim(); // remove the header
-		let out = lines(
+	let md2doc = new MD2Doc({
+		ns: 'auto-input-switch.nvim',
+		docw,
+		shiftHL: -1,
+		indentStr: '  ',
+		baseURL: 'https://github.com/amekusa/auto-input-switch.nvim',
+		header: lines(
 			h(tag(basename(dst)), tag('auto-input-switch.nvim')),
 			'日本語: |auto-input-switch.ja.txt|',
-			sr(logo, lf),
-			data
-		);
-		fs.writeFile(dst, out, enc, written(dst));
+			logo,
+		),
+		footer,
 	});
-}
+	let out = md2doc.parse(data);
+	fs.writeFile(dst, out, enc, written(dst));
+});
 
