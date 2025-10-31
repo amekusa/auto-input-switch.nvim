@@ -226,7 +226,6 @@ ${h1('Documents')}
 	Note: CTRL-] to jump to the |link| under the cursor.
 	      CTRL-T or CTRL-O to jump back.
 
-
 ${h1('ドキュメント')}
 
 	* プラグインについて: |auto-input-switch.nvim.ja|
@@ -236,7 +235,6 @@ ${h1('ドキュメント')}
 
 	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
 	      CTRL-T または CTRL-O で戻る。
-
 
  vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
 
@@ -259,7 +257,7 @@ fs.readFile(base + '/options.yml', enc, (err, data) => {
 		h(tag(basename(dst)), link('auto-input-switch.nvim')),
 		logo,
 		section,
-		h('DEFAULT CONFIG', tag('auto-input-switch-defaults')),
+		h('Default Config', tag('auto-input-switch-defaults')),
 		codeblock(out, 'lua', '  '),
 		footer
 	);
@@ -283,7 +281,7 @@ fs.readFile(base + '/options.yml', enc, (err, data) => {
 		h(tag(basename(dst)), link('auto-input-switch.nvim')),
 		logo,
 		section,
-		h('OPTIONS', tag('auto-input-switch-options')),
+		h('Options', tag('auto-input-switch-options')),
 		toDoc(structuredClone(data), {lang: 'en', ns: 'auto-input-switch'}),
 		footer
 	);
@@ -314,7 +312,7 @@ fs.readFile(base + '/commands.yml', enc, (err, data) => {
 		h(tag(basename(dst)), link('auto-input-switch.nvim')),
 		logo,
 		section,
-		h('COMMANDS', tag('auto-input-switch-commands')),
+		h('Commands', tag('auto-input-switch-commands')),
 		toCmdDoc(data, {lang: 'en', ns: ''}),
 		footer
 	);
