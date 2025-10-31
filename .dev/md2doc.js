@@ -85,8 +85,8 @@ function docRenderer(opts) {
 			return codeblock(text, lang, indentStr);
 		},
 		html({text, block:isBlock}) {
-			text = text.replaceAll(/<details>(.*?)<\/details>/g, (m, m1) => {
-				return m1;
+			text = text.replaceAll(/<\/?(:?details|summary)>/g, m => {
+				return '';
 			});
 			return isBlock ? block(text) : text;
 		}
