@@ -10,7 +10,7 @@ export function docWidth(set = 0) {
 }
 
 export function indentBlock(str, ind = '\t') {
-	return ind + indent(str, ind).replaceAll(ind + '<', '<');
+	return indent(str, ind).replaceAll(ind + '<', '<');
 }
 
 export function h(left, right = '') {

@@ -14,7 +14,7 @@ function docRenderer(opts) {
 		ns, // namespace
 		docw = 78, // doc width
 		shiftHL = 0, // shift heading level
-		indent: indentStr = '  ',
+		indentStr = '  ',
 		baseURL = '', // for relative URLs
 		images = true,
 	} = opts;
