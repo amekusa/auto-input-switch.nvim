@@ -1,0 +1,624 @@
+*auto-input-switch-options.ja.txt*                    |auto-input-switch.nvim|
+
+
+   ▀█▀██              ▀██▀                 ▄█▀▀▄█
+   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
+   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
+  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
+ ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+
+
+==============================================================================
+オプション                                      *auto-input-switch-options.ja*
+------------------------------------------------------------------------------
+activate                                       *auto-input-switch.ja.activate*
+	- default: `true`
+	プラグインを有効にする。
+	`:AutoInputSwitch on|off` コマンドでいつでも切り替えることができます。
+
+------------------------------------------------------------------------------
+async                                             *auto-input-switch.ja.async*
+	- default: `false`
+	シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
+	  * `false`: 同期実行 (推奨) 。
+	             Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
+	  *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
+
+------------------------------------------------------------------------------
+log                                                 *auto-input-switch.ja.log*
+	- default: `false`
+	ログをファイルに出力する？
+	`cmd_get` / `cmd_set` をデバッグする際に有用です。
+	ログファイルは `setup()` が実行される度に初期化されます。
+	
+	ログファイルのパス:
+	  * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
+	  *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
+
+------------------------------------------------------------------------------
+prefix                                           *auto-input-switch.ja.prefix*
+	- default: `'AutoInputSwitch'`
+	コマンド名のプリフィックス。
+	例えば `'AIS'` などにすることでコマンドを短くすることができます。
+
+------------------------------------------------------------------------------
+popup                                             *auto-input-switch.ja.popup*
+	プラグインによって入力言語が変更される際、ポップアップ表示でそれを知らせます。
+
+------------------------------------------------------------------------------
+popup.enable                               *auto-input-switch.ja.popup.enable*
+	- default: `true`
+	ポップアップを表示する？
+
+------------------------------------------------------------------------------
+popup.duration                           *auto-input-switch.ja.popup.duration*
+	- default: `1500`
+	ポップアップが表示されている時間 (ms) 。
+
+------------------------------------------------------------------------------
+popup.pad                                     *auto-input-switch.ja.popup.pad*
+	- default: `true`
+	ポップアップテキストの左右に空白を入れる？
+
+------------------------------------------------------------------------------
+popup.hl_group                           *auto-input-switch.ja.popup.hl_group*
+	- default: `'PmenuSel'`
+	ポップアップウィンドウのハイライトグループ。
+
+------------------------------------------------------------------------------
+popup.window                               *auto-input-switch.ja.popup.window*
+	ポップアップウィンドウの設定。参照: |nvim_open_win()|
+
+------------------------------------------------------------------------------
+popup.window.border                 *auto-input-switch.ja.popup.window.border*
+	- default: `'none'`
+	ボーダーのスタイル。
+
+------------------------------------------------------------------------------
+popup.window.zindex                 *auto-input-switch.ja.popup.window.zindex*
+	- default: `50`
+	表示の優先度。
+
+------------------------------------------------------------------------------
+popup.window.row                       *auto-input-switch.ja.popup.window.row*
+	- default: `1`
+	横方向のオフセット。
+
+------------------------------------------------------------------------------
+popup.window.col                       *auto-input-switch.ja.popup.window.col*
+	- default: `0`
+	縦方向のオフセット。
+
+------------------------------------------------------------------------------
+popup.window.relative             *auto-input-switch.ja.popup.window.relative*
+	- default: `'cursor'`
+	オフセットの基準となる対象。
+	次の何れか: `'editor'`, `'win'`, `'cursor'`, `'mouse'`
+
+------------------------------------------------------------------------------
+popup.window.anchor                 *auto-input-switch.ja.popup.window.anchor*
+	- default: `'NW'`
+	ポップアップの四隅のうちどれを基準位置に合わせるか。
+	  * `'NW'`: 左上
+	  * `'NE'`: 右上
+	  * `'SW'`: 左下
+	  * `'SE'`: 右下
+
+------------------------------------------------------------------------------
+popup.labels                               *auto-input-switch.ja.popup.labels*
+	各入力言語のポップアップテキスト。
+
+------------------------------------------------------------------------------
+popup.labels.normal_input     *auto-input-switch.ja.popup.labels.normal_input*
+	- default: `'A'`
+	Normalize 時に表示するポップアップテキスト。`false` で非表示。
+
+------------------------------------------------------------------------------
+popup.labels.lang_inputs       *auto-input-switch.ja.popup.labels.lang_inputs*
+	Restore と Match 時に表示するポップアップテキスト。
+
+------------------------------------------------------------------------------
+popup.labels.lang_inputs.Ja
+                            *auto-input-switch.ja.popup.labels.lang_inputs.Ja*
+	- default: `'あ'`
+	日本語入力時のポップアップテキスト。
+
+------------------------------------------------------------------------------
+popup.labels.lang_inputs.Zh
+                            *auto-input-switch.ja.popup.labels.lang_inputs.Zh*
+	- default: `'拼'`
+	中国語入力時のポップアップテキスト。
+
+------------------------------------------------------------------------------
+popup.labels.lang_inputs.Ko
+                            *auto-input-switch.ja.popup.labels.lang_inputs.Ko*
+	- default: `'한'`
+	韓国語入力時のポップアップテキスト。
+
+------------------------------------------------------------------------------
+normalize                                     *auto-input-switch.ja.normalize*
+	Insert モードではない時、入力言語を英数に強制することができます。
+	この機能を "Normalize" と呼称します。
+
+------------------------------------------------------------------------------
+normalize.enable                       *auto-input-switch.ja.normalize.enable*
+	- default: `true`
+	Normalize を有効にする？
+
+------------------------------------------------------------------------------
+normalize.on                               *auto-input-switch.ja.normalize.on*
+	- default: >lua
+	{
+	  'BufLeave',
+	  'WinLeave',
+	  'FocusGained',
+	  'ExitPre',
+	  'QuitPre',
+	}
+<
+	Normalize を実行するイベント。参照: |events|
+
+------------------------------------------------------------------------------
+normalize.on_mode_change       *auto-input-switch.ja.normalize.on_mode_change*
+	- default: >lua
+	{
+	  '[iR]:n',
+	}
+<
+	Normalize のトリガーとなる、モードの遷移パターン。
+	`false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
+	参照:
+	  * |autocmd-pattern|
+	  * |ModeChanged|
+	  * |mode()|
+	
+	Default:
+	  '[iR]:n' (Insert/Replace から Normal モード)
+
+------------------------------------------------------------------------------
+normalize.filetypes                 *auto-input-switch.ja.normalize.filetypes*
+	- default: `'*'`
+	Normalize が有効になるファイルタイプ。
+	例: >lua
+	  filetypes = { 'markdown', 'text' },
+<
+
+------------------------------------------------------------------------------
+normalize.debounce                   *auto-input-switch.ja.normalize.debounce*
+	- default: `500`
+	デバウンス時間 (ms) 。Normalize の連続実行を抑制します。
+
+------------------------------------------------------------------------------
+normalize.buf_condition         *auto-input-switch.ja.normalize.buf_condition*
+	- default: `nil`
+	Normalize がバッファに対して有効となる条件を定義する関数です。
+	バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+	`true` が返された場合にのみ、そのバッファで Normalize が有効になります。
+	例: >lua
+	  -- Enable only in listed buffers
+	  buf_condition = function(buf)
+	    return vim.bo[buf].buflisted
+	  end,
+<
+
+------------------------------------------------------------------------------
+restore                                         *auto-input-switch.ja.restore*
+	Normalize が実行される際、直前に使っていた入力言語がプラグインによって保存されます。
+	そして次に Insert か Replace モードに入った際、保存されていた入力言語に自動で復帰します。
+	この機能を "Restore" と呼称します。
+
+------------------------------------------------------------------------------
+restore.enable                           *auto-input-switch.ja.restore.enable*
+	- default: `true`
+	Restore を有効にする？
+
+------------------------------------------------------------------------------
+restore.on                                   *auto-input-switch.ja.restore.on*
+	- default: >lua
+	{
+	  'FocusGained',
+	}
+<
+	Restore を実行するイベント。参照: |events|
+
+------------------------------------------------------------------------------
+restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
+	- default: >lua
+	{
+	  '[nvV]:[iR]',
+	}
+<
+	Restore のトリガーとなる、モードの遷移パターン。
+	`false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
+	デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+
+------------------------------------------------------------------------------
+restore.filetypes                     *auto-input-switch.ja.restore.filetypes*
+	- default: `'*'`
+	Restore が有効になるファイルタイプ。
+	例: >lua
+	  filetypes = { 'markdown', 'text' },
+<
+
+------------------------------------------------------------------------------
+restore.debounce                       *auto-input-switch.ja.restore.debounce*
+	- default: `500`
+	デバウンス時間 (ms) 。Restore の連続実行を抑制します。
+
+------------------------------------------------------------------------------
+restore.buf_condition             *auto-input-switch.ja.restore.buf_condition*
+	- default: `nil`
+	Restore がバッファに対して有効となる条件を定義する関数です。
+	バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+	`true` が返された場合にのみ、そのバッファで Restore が有効になります。
+	デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
+	自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
+
+------------------------------------------------------------------------------
+restore.exclude_pattern         *auto-input-switch.ja.restore.exclude_pattern*
+	- default: `[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]`
+	この正規表現は Restore が実行される直前にチェックされます。
+	カーソル付近の文字がこれにマッチすると、Restore がキャンセルされます。
+	`false` をセットするとこのチェックは無効になります。
+	デフォルト: 全ての半角英数と、ほとんどの半角記号にマッチします。
+
+------------------------------------------------------------------------------
+match                                             *auto-input-switch.ja.match*
+	Insert/Replace モードに入った際、カーソル付近の文字にマッチする入力言語に
+	自動で切り替えます。
+	この機能を "Match" と呼称します。
+	Match と Restore が同時に実行された場合は Match が優先されます。
+	この機能はデフォルトでは無効に設定されています。
+
+------------------------------------------------------------------------------
+match.enable                               *auto-input-switch.ja.match.enable*
+	- default: `false`
+	Match を有効にする？
+
+------------------------------------------------------------------------------
+match.on                                       *auto-input-switch.ja.match.on*
+	- default: >lua
+	{
+	  'FocusGained',
+	}
+<
+	Match を実行するイベント。参照: |events|
+
+------------------------------------------------------------------------------
+match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
+	- default: >lua
+	{
+	  '[nvV]:[iR]',
+	}
+<
+	Match のトリガーとなる、モードの遷移パターン。
+	`false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
+	デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+
+------------------------------------------------------------------------------
+match.filetypes                         *auto-input-switch.ja.match.filetypes*
+	- default: `'*'`
+	Match が有効になるファイルタイプ。
+	例: >lua
+	  filetypes = { 'markdown', 'text' },
+<
+
+------------------------------------------------------------------------------
+match.debounce                           *auto-input-switch.ja.match.debounce*
+	- default: `500`
+	デバウンス時間 (ms) 。Match の連続実行を抑制します。
+
+------------------------------------------------------------------------------
+match.buf_condition                 *auto-input-switch.ja.match.buf_condition*
+	- default: `nil`
+	Match がバッファに対して有効となる条件を定義する関数です。
+	バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+	`true` が返された場合にのみ、そのバッファで Match が有効になります。
+	デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
+	自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
+
+------------------------------------------------------------------------------
+match.languages                         *auto-input-switch.ja.match.languages*
+	Match が検知する言語のリスト。
+	フォーマット: >lua
+	  languages = {
+	    言語名 = {
+	      enable = true,
+	      priority = 数値,
+	      pattern = '正規表現'
+	    },
+	  },
+<
+	使用したい言語の `enable` を `true` に設定してください。
+	`pattern` は有効な正規表現でなければなりません。その言語のユニコード範囲を指定すると良いでしょう。
+	カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` に追加してください。
+
+------------------------------------------------------------------------------
+match.languages.Ru                   *auto-input-switch.ja.match.languages.Ru*
+	- default: >lua
+	{
+	  enable = false,
+	  priority = 0,
+	  pattern = [==[[\u0400-\u04ff]]==],
+	}
+<
+	ロシア語のユニコード範囲。
+
+------------------------------------------------------------------------------
+match.languages.Ja                   *auto-input-switch.ja.match.languages.Ja*
+	- default: >lua
+	{
+	  enable = false,
+	  priority = 0,
+	  pattern = [==[[\u3000-\u30ff\uff00-\uffef\u4e00-\u9fff]]==],
+	}
+<
+	日本語のユニコード範囲。
+
+------------------------------------------------------------------------------
+match.languages.Zh                   *auto-input-switch.ja.match.languages.Zh*
+	- default: >lua
+	{
+	  enable = false,
+	  priority = 0,
+	  pattern = [==[[\u3000-\u303f\u4e00-\u9fff\u3400-\u4dbf\u3100-\u312f]]==],
+	}
+<
+	中国語のユニコード範囲。
+
+------------------------------------------------------------------------------
+match.languages.Ko                   *auto-input-switch.ja.match.languages.Ko*
+	- default: >lua
+	{
+	  enable = false,
+	  priority = 0,
+	  pattern = [==[[\u3000-\u303f\u1100-\u11ff\u3130-\u318f\uac00-\ud7af]]==],
+	}
+<
+	韓国語のユニコード範囲。
+
+------------------------------------------------------------------------------
+match.lines                                 *auto-input-switch.ja.match.lines*
+	現在の行が空行か空白文字のみ場合、
+	前後の行に対しても Match による検索を行います。
+
+------------------------------------------------------------------------------
+match.lines.above                     *auto-input-switch.ja.match.lines.above*
+	- default: `1`
+	上方向に最大で何行検索するか。
+
+------------------------------------------------------------------------------
+match.lines.below                     *auto-input-switch.ja.match.lines.below*
+	- default: `1`
+	下方向に最大で何行検索するか。
+
+------------------------------------------------------------------------------
+match.lines.exclude_pattern
+                            *auto-input-switch.ja.match.lines.exclude_pattern*
+	- default: `[==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==]`
+	検索行がこの正規表現にマッチしたら、検索をキャンセルします。
+	マークダウン記法でリストやテーブル、引用ブロック等を記述する際に有用です。
+	`false` で無効化できます。
+
+------------------------------------------------------------------------------
+os                                                   *auto-input-switch.ja.os*
+	- default: `false`
+	使用する OS を明示してください。
+	次の何れか: `'macos'`, `'windows'`, `'linux'`, または `false` で自動検出。
+
+------------------------------------------------------------------------------
+os_settings                                 *auto-input-switch.ja.os_settings*
+	OS 毎の入力言語とコマンドの設定。
+
+------------------------------------------------------------------------------
+os_settings.macos.enable       *auto-input-switch.ja.os_settings.macos.enable*
+	- default: `true`
+	macOS 用の設定を有効にする？
+
+------------------------------------------------------------------------------
+os_settings.macos.cmd_get     *auto-input-switch.ja.os_settings.macos.cmd_get*
+	- default: `'im-select'`
+	現在の入力言語 ID を取得するコマンド。
+
+------------------------------------------------------------------------------
+os_settings.macos.cmd_set     *auto-input-switch.ja.os_settings.macos.cmd_set*
+	- default: `'im-select %s'`
+	入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+
+------------------------------------------------------------------------------
+os_settings.macos.normal_input
+                         *auto-input-switch.ja.os_settings.macos.normal_input*
+	- default: `false`
+	Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+	例: >lua
+	  normal_input = 'com.apple.keylayout.ABC',
+	  normal_input = 'com.apple.keylayout.US',
+	  normal_input = 'com.apple.keylayout.USExtended',
+<
+	次のようにテーブルを使用することも可: >lua
+	  normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+<
+	  最初の文字列は `cmd_get` の出力と照合する値。
+	  二番目の文字列は `cmd_set` に渡される引数。
+
+------------------------------------------------------------------------------
+os_settings.macos.lang_inputs
+                          *auto-input-switch.ja.os_settings.macos.lang_inputs*
+	`match.languages` 内の各言語に紐づける入力言語の設定。
+	フォーマット: >lua
+	  lang_inputs = {
+	    言語名 = '入力言語ID',
+	  },
+<
+	`normal_input` 同様、テーブルも使用可: >lua
+	  lang_inputs = {
+	    言語名 = { '入力言語ID', '引数' },
+	  },
+<
+	  最初の文字列は `cmd_get` の出力と照合する値。
+	  二番目の文字列は `cmd_set` に渡される引数。
+
+------------------------------------------------------------------------------
+os_settings.macos.lang_inputs.Ru
+                       *auto-input-switch.ja.os_settings.macos.lang_inputs.Ru*
+	- default: `'com.apple.keylayout.Russian'`
+	ロシア語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.macos.lang_inputs.Ja
+                       *auto-input-switch.ja.os_settings.macos.lang_inputs.Ja*
+	- default: `'com.apple.inputmethod.Kotoeri.Japanese'`
+	日本語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.macos.lang_inputs.Zh
+                       *auto-input-switch.ja.os_settings.macos.lang_inputs.Zh*
+	- default: `'com.apple.inputmethod.SCIM.ITABC'`
+	中国語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.macos.lang_inputs.Ko
+                       *auto-input-switch.ja.os_settings.macos.lang_inputs.Ko*
+	- default: `'com.apple.inputmethod.Korean.2SetKorean'`
+	韓国語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.windows.enable
+                             *auto-input-switch.ja.os_settings.windows.enable*
+	- default: `true`
+	Windows 用の設定を有効にする？
+
+------------------------------------------------------------------------------
+os_settings.windows.cmd_get
+                            *auto-input-switch.ja.os_settings.windows.cmd_get*
+	- default: `'im-select.exe'`
+	現在の入力言語 ID を取得するコマンド。
+
+------------------------------------------------------------------------------
+os_settings.windows.cmd_set
+                            *auto-input-switch.ja.os_settings.windows.cmd_set*
+	- default: `'im-select.exe %s'`
+	入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+
+------------------------------------------------------------------------------
+os_settings.windows.normal_input
+                       *auto-input-switch.ja.os_settings.windows.normal_input*
+	- default: `false`
+	Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+	例: >lua
+	  normal_input = '1033', -- US English
+<
+	その他のフォーマット:
+	  参照: |auto-input-switch.ja.os_settings.macos.normal_input|
+
+------------------------------------------------------------------------------
+os_settings.windows.lang_inputs
+                        *auto-input-switch.ja.os_settings.windows.lang_inputs*
+	`match.languages` 内の各言語に紐づける入力言語の設定。
+	詳細は次を参照: |auto-input-switch.ja.os_settings.macos.lang_inputs|
+
+------------------------------------------------------------------------------
+os_settings.windows.lang_inputs.Ru
+                     *auto-input-switch.ja.os_settings.windows.lang_inputs.Ru*
+	- default: `'1049'`
+	ロシア語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.windows.lang_inputs.Ja
+                     *auto-input-switch.ja.os_settings.windows.lang_inputs.Ja*
+	- default: `'1041'`
+	日本語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.windows.lang_inputs.Zh
+                     *auto-input-switch.ja.os_settings.windows.lang_inputs.Zh*
+	- default: `'2052'`
+	中国語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.windows.lang_inputs.Ko
+                     *auto-input-switch.ja.os_settings.windows.lang_inputs.Ko*
+	- default: `'1042'`
+	韓国語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.linux.enable       *auto-input-switch.ja.os_settings.linux.enable*
+	- default: `true`
+	Linux 用の設定を有効にする？
+
+------------------------------------------------------------------------------
+os_settings.linux.cmd_get     *auto-input-switch.ja.os_settings.linux.cmd_get*
+	- default: `'ibus engine'`
+	現在の入力言語 ID を取得するコマンド。
+
+------------------------------------------------------------------------------
+os_settings.linux.cmd_set     *auto-input-switch.ja.os_settings.linux.cmd_set*
+	- default: `'ibus engine %s'`
+	入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+
+------------------------------------------------------------------------------
+os_settings.linux.normal_input
+                         *auto-input-switch.ja.os_settings.linux.normal_input*
+	- default: `false`
+	Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+	例: >lua
+	  normal_input = 'xkb:us::eng', -- US English
+<
+	その他のフォーマット:
+	  参照: |auto-input-switch.ja.os_settings.macos.normal_input|
+
+------------------------------------------------------------------------------
+os_settings.linux.lang_inputs
+                          *auto-input-switch.ja.os_settings.linux.lang_inputs*
+	`match.languages` 内の各言語に紐づける入力言語の設定。
+	詳細は次を参照: |auto-input-switch.ja.os_settings.macos.lang_inputs|
+
+------------------------------------------------------------------------------
+os_settings.linux.lang_inputs.Ru
+                       *auto-input-switch.ja.os_settings.linux.lang_inputs.Ru*
+	- default: `'xkb:ru::rus'`
+	ロシア語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.linux.lang_inputs.Ja
+                       *auto-input-switch.ja.os_settings.linux.lang_inputs.Ja*
+	- default: `'mozc-jp'`
+	日本語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.linux.lang_inputs.Zh
+                       *auto-input-switch.ja.os_settings.linux.lang_inputs.Zh*
+	- default: `'libpinyin'`
+	中国語の入力言語 ID 。
+
+------------------------------------------------------------------------------
+os_settings.linux.lang_inputs.Ko
+                       *auto-input-switch.ja.os_settings.linux.lang_inputs.Ko*
+	- default: `'hangul'`
+	韓国語の入力言語 ID 。
+
+
+==============================================================================
+Documents
+
+	* About the plugin: |auto-input-switch.nvim|
+	*          Options: |auto-input-switch-options|
+	*   Default config: |auto-input-switch-defaults|
+	*         Commands: |auto-input-switch-commands|
+
+	Note: CTRL-] to jump to the |link| under the cursor.
+	      CTRL-T or CTRL-O to jump back.
+
+==============================================================================
+ドキュメント
+
+	* プラグインについて: |auto-input-switch.nvim.ja|
+	*         オプション: |auto-input-switch-options.ja|
+	*     デフォルト設定: |auto-input-switch-defaults.ja|
+	*           コマンド: |auto-input-switch-commands.ja|
+
+	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
+	      CTRL-T または CTRL-O で戻る。
+
+
+vim:tw=78:ts=4:noet:ft=help:norl:

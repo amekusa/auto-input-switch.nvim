@@ -23,9 +23,17 @@
 local ns = (...)
 local vim = vim
 local api = vim.api
-local regex = vim.regex
+local uv  = vim.uv or vim.loop
+local bo  = vim.bo
 
--- lua 5.1 vs 5.2 compatibility
+local fmt  = string.format
+local find = string.find
+
+local emp = ''
+local t_tbl = 'table'
+local t_str = 'string'
+
+-- lua 5.1 compatibility
 local unpack = unpack or table.unpack
 
 -- levels:
@@ -35,16 +43,23 @@ local unpack = unpack or table.unpack
 --   - TRACE
 --   - WARN
 --   - OFF
-local function notify(msg, level)
+local notify = function(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
-local function trim(str)
-	return str:gsub('^%s*(.-)%s*$', '%1')
+local trim; do
+	local m = string.match
+	local p1 = '^()%s*$'
+	local p2 = '^%s*(.*%S)'
+	trim = function(str)
+		return m(str, p1) and emp or m(str, p2)
+	end
+	-- NOTE: Other implementations:
+	--       http://lua-users.org/wiki/StringTrim
 end
 
-local function detect_os()
-	local uname = vim.uv.os_uname().sysname:lower()
+local detect_os = function()
+	local uname = uv.os_uname().sysname:lower()
 	if uname:find('darwin') then
 		return 'macos'
 	elseif uname:find('windows') then
@@ -56,15 +71,25 @@ end
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
-	if opts and type(opts) == 'table'
+	if opts and type(opts) == t_tbl
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
 	end
+	defaults = nil -- #GC
 
 	local oss = opts.os_settings[opts.os or detect_os()]
 	if not oss.enable then return end
 
-	local log; if opts.log then
+	-- bit-wise operations module
+	local bnot, band, bor; do
+		local bit = require('bit')
+		bnot = bit.bnot
+		band = bit.band
+		bor  = bit.bor
+	end
+
+	local log, mem1, mem2
+	if opts.log then
 		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
 		local f = io.open(out, 'w')
 		if f then
@@ -84,8 +109,8 @@ function M.setup(opts)
 				for i = 1, #args do
 					item = args[i]
 					t = type(item)
-					if t ~= 'string' then
-						if t == 'table'
+					if t ~= t_str then
+						if t == t_tbl
 							then item = inspect(item)
 							else item = t..'('..item..')'
 						end
@@ -98,31 +123,63 @@ function M.setup(opts)
 		else
 			notify('cannot open the log file: '..out, 'WARN')
 		end
+
+		collectgarbage('collect')
+		mem1 = collectgarbage('count')
+		log('memory usage before setup:', mem1..' kb')
 	end
 
-	local cmd_get = oss.cmd_get
-	local cmd_set = oss.cmd_set
+	-- Format: <table> Cmd = { <string>, ... }
+	local format_cmd; do
+		local split = vim.split
+		local sep = ' '
 
-	----
-	-- input format: {
-	--   [1] = <InputName>,
-	--   [2] = <inputNameAlt>,
-	--   [3] = <CmdSetFormatted>,
-	--   cmd_set = <CmdSet>,
+		format_cmd = function(cmd, arg)
+			if type(cmd) ~= t_tbl then -- assume string
+				cmd = split(cmd, sep)
+			end
+			local r = {}
+			if arg then
+				for i = 1, #cmd do
+					r[i] = fmt(cmd[i], arg)
+				end
+			else
+				for i = 1, #cmd do
+					r[i] = cmd[i]
+				end
+			end
+			return r
+		end
+	end
+
+	local cmd_get = format_cmd(oss.cmd_get)
+	local cmd_set = format_cmd(oss.cmd_set)
+
+	-- Format: <table> Input = {
+	--   [1] = <string> InputName,
+	--   [2] = <string> inputNameAlt,
+	--   [3] = <table> Cmd,
+	--   cmd_set = <string> CmdString (Optional)
 	-- }
-	local function sanitize_input(input)
+	local format_input = function(input)
 		if not input then
-			return {false, false, ''}
+			return {}
 		end
-		if type(input) == 'table' then
-			input[3] = (input.cmd_set or cmd_set or ''):format(input[2] or input[1] or '')
-			return input
+		if type(input) == t_tbl then
+			local name     = input[1]
+			local name_alt = input[2]
+			return {
+				name,
+				name_alt,
+				input[3] or format_cmd(input.cmd_set or cmd_set, name_alt or name)
+			}
 		end
-		return {input, false, cmd_set:format(input)}
+		-- assume input is a string
+		return {input, false, format_cmd(cmd_set, input)}
 	end
 
-	local input_n = sanitize_input(oss.normal_input)
-	local input_i
+	local input_n = format_input(oss.normal_input)
+	local input_r -- input to Restore
 
 	local popup     = opts.popup.enable     and opts.popup
 	local normalize = opts.normalize.enable and opts.normalize
@@ -132,11 +189,60 @@ function M.setup(opts)
 	local active = opts.activate
 	local async  = opts.async
 	local prefix = opts.prefix
+	opts = nil -- #GC
 
-	local autocmd = api.nvim_create_autocmd
-	local usercmd = api.nvim_create_user_command
+	local schedule = vim.schedule
+	local strwidth = vim.fn.strdisplaywidth
+	local usercmd  = api.nvim_create_user_command
+	local autocmd  = api.nvim_create_autocmd
 
-	local schedule      = vim.schedule
+	-- flags for each buffer
+	local buf_flags = {}
+	--   key: <int> buffer
+	-- value: <int> bitmask
+	--       01(1): activated
+	--      010(2): normalize enabled
+	--     0100(4): restore enabled
+	--    01000(8): match enabled
+
+	-- clear the flags for deleted buffer
+	autocmd('BufWipeout', {
+		callback = function(ev)
+			buf_flags[ev.buf] = nil
+		end
+	})
+
+	-- create an autocmd that initializes the flags for new buffer
+	local buf_init_flags; do
+		local on = 'FileType'
+		buf_init_flags = function(pat, mask, cond)
+			autocmd(on, {
+				pattern = pat,
+				callback = function(ev)
+					local buf = ev.buf
+					if cond and not cond(buf) then return end
+					local flags = buf_flags[buf]; if flags
+						then buf_flags[buf] = bor(flags, mask)
+						else buf_flags[buf] = mask + 1 -- +01
+					end
+				end
+			})
+		end
+	end
+
+	-- checks the flags of the given buffer
+	local buf_has_flags = function(buf, mask)
+		buf = buf and buf_flags[buf]
+		return buf and band(buf, mask) == mask
+	end
+
+	-- event locking;
+	-- this is for preventing Normalize, Restore, and Match
+	-- from executing in the same event loop
+	local ev_unlocked = true
+	local ev_unlock = function()
+		ev_unlocked = true
+	end
 
 	-- Returns whether AIS is active or not.
 	-- @return boolean
@@ -150,32 +256,76 @@ function M.setup(opts)
 		active = x
 	end
 
-	usercmd(prefix,
-		function(cmd)
-			local arg = cmd.fargs[1]
-			if arg == 'on' then
-				active = true
-				notify('activated')
-			elseif arg == 'off' then
-				active = false
-				notify('deactivated')
-			else
-				notify('invalid argument: "'..arg..'"\nIt must be "on" or "off"', 'ERROR')
+	usercmd(prefix, function(cmd)
+		local arg = cmd.fargs[1]
+		if arg == 'on' then
+			active = true
+			notify('activated')
+		elseif arg == 'off' then
+			active = false
+			notify('deactivated')
+		else
+			notify(fmt('invalid argument: "%s"\nIt must be "on" or "off"', arg), 'ERROR')
+		end
+	end, {
+		desc = 'Activate/Deactivate auto-input-switch',
+		nargs = 1,
+		complete = function()
+			return {'on', 'off'}
+		end
+	})
+
+	do -- create AutoInputSwitchBuf* commands
+		local buf_get_curr = api.nvim_get_current_buf
+		local cmd_fn = function(mask, label)
+			return function(cmd)
+				local buf = buf_get_curr()
+				local flags = buf_flags[buf] or 1 -- 01
+				local arg = cmd.fargs[1]
+				if arg == 'on' then
+					buf_flags[buf] = bor(flags, mask)
+					if not cmd.bang then
+						if label
+							then notify(fmt('activated %s on current buffer', label))
+							else notify('activated on current buffer')
+						end
+					end
+				elseif arg == 'off' then
+					buf_flags[buf] = band(flags, bnot(mask))
+					if not cmd.bang then
+						if label
+							then notify(fmt('deactivated %s on current buffer', label))
+							else notify('deactivated on current buffer')
+						end
+					end
+				else
+					notify(fmt('invalid argument: "%s"\nIt must be "on" or "off"', arg), 'ERROR')
+				end
 			end
-		end,
-		{
-			desc = 'Activate/Deactivate auto-input-switch',
+		end
+
+		local cmd_opts = {
 			nargs = 1,
 			complete = function()
 				return {'on', 'off'}
 			end
 		}
-	)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch on current buffer'
+		usercmd(prefix..'Buf', cmd_fn(1), cmd_opts)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch:normalize on current buffer'
+		usercmd(prefix..'BufNormalize', cmd_fn(2, 'Normalize'), cmd_opts)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch:restore on current buffer'
+		usercmd(prefix..'BufRestore', cmd_fn(4, 'Restore'), cmd_opts)
+
+		cmd_opts.desc = 'Activate/Deactivate auto-input-switch:match on current buffer'
+		usercmd(prefix..'BufMatch', cmd_fn(8, 'Match'), cmd_opts)
+	end
 
 	-- functions to handle shell-commands
 	local exec, exec_get; do
-		local split = vim.split
-		local split_sep = ' '
 		local system = vim.system
 		local system_opts = {text = true}
 
@@ -192,35 +342,35 @@ function M.setup(opts)
 		if async then -- asynchronous implementation
 			if log then -- with logging
 				exec = function(cmd)
-					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+					system(log_pre(cmd), system_opts, function(r)
 						log_post(cmd, r)
 					end)
 				end
 				exec_get = function(cmd, handler)
-					system(split(log_pre(cmd), split_sep), system_opts, function(r)
+					system(log_pre(cmd), system_opts, function(r)
 						handler(log_post(cmd, r))
 					end)
 				end
 			else -- without logging
-				exec = function(cmd)
-					system(split(cmd, split_sep))
-				end
+				exec = system
 				exec_get = function(cmd, handler)
-					system(split(cmd, split_sep), system_opts, handler)
+					system(cmd, system_opts, handler)
 				end
 			end
 		else -- synchronous implementation
 			if log then -- with logging
 				exec = function(cmd)
-					log_post(cmd, system(split(log_pre(cmd), split_sep)):wait())
+					log_post(cmd, system(log_pre(cmd), system_opts):wait())
 				end
 				exec_get = function(cmd, handler)
-					handler(log_post(cmd, system(split(log_pre(cmd), split_sep), system_opts):wait()))
+					handler(log_post(cmd, system(log_pre(cmd), system_opts):wait()))
 				end
 			else -- without logging
-				exec = os.execute
+				exec = function(cmd)
+					system(cmd):wait()
+				end
 				exec_get = function(cmd, handler)
-					handler(system(split(cmd, split_sep), system_opts):wait())
+					handler(system(cmd, system_opts):wait())
 				end
 			end
 		end
@@ -232,12 +382,14 @@ function M.setup(opts)
 		local buf_is_valid   = api.nvim_buf_is_valid
 		local buf_create     = api.nvim_create_buf
 		local buf_set_lines  = api.nvim_buf_set_lines
+		local win_get_curr   = api.nvim_get_current_win
+		local win_call       = api.nvim_win_call
 		local win_is_valid   = api.nvim_win_is_valid
 		local win_open       = api.nvim_open_win
 		local win_hide       = api.nvim_win_hide
 		local win_set_config = api.nvim_win_set_config
 		local set_option     = api.nvim_set_option_value
-		local new_timer      = vim.uv.new_timer
+		local new_timer      = uv.new_timer
 
 		local duration = popup.duration
 		local pad      = popup.pad and ' '
@@ -249,35 +401,21 @@ function M.setup(opts)
 		-- 3: DEACTIVATING
 
 		local buf = -1
-		local buf_lines = {''}
+		local buf_lines = {emp}
 
 		local win = -1
-		local win_opts = {
-			relative = popup.relative,
-			row = popup.row,
-			col = popup.col,
-			anchor = popup.anchor,
-			border = popup.border,
-			zindex = popup.zindex,
+		local win_base = -1
+		local win_opts = vim.tbl_extend('force', {
+			focusable = false,
 			height = 1,
 			style = 'minimal',
-			focusable = false,
-		}
+		}, popup.window)
 
 		local whl = 'winhighlight'
 		local whl_group = 'NormalFloat:'..popup.hl_group
 		local whl_scope = {win = nil}
 
 		local updater = -1
-		local updater_ev = {'CursorMoved', 'CursorMovedI', 'WinScrolled'}
-		local updater_opts = {
-			callback = function()
-				if state == 2 and win_is_valid(win) then -- state == ACTIVE
-					win_set_config(win, win_opts)
-				end
-			end
-		}
-
 		local timer
 		local deactivate = function()
 			state = 0 -- state >> IDLE
@@ -287,8 +425,9 @@ function M.setup(opts)
 			end
 			if win_is_valid(win) then
 				win_hide(win)
-				win = -1
 			end
+			win = -1
+			win_base = -1
 		end
 		local on_timeout = function()
 			state = 3 -- state >> DEACTIVATING
@@ -296,6 +435,21 @@ function M.setup(opts)
 			timer:close()
 			schedule(deactivate)
 		end
+		local updater_ev = {'CursorMoved', 'CursorMovedI', 'WinScrolled'}
+		local updater_fn = function()
+			win_set_config(win, win_opts)
+		end
+		local updater_opts = {
+			callback = function()
+				if state == 2 then -- state == ACTIVE
+					if win_is_valid(win_base) and win_is_valid(win) then
+						win_call(win_base, updater_fn)
+					else
+						on_timeout()
+					end
+				end
+			end
+		}
 
 		local str, len
 		local activate = function()
@@ -312,6 +466,7 @@ function M.setup(opts)
 			if win_is_valid(win) then
 				win_hide(win)
 			end
+			win_base = win_get_curr()
 			win_opts.width = len
 			win = win_open(buf, false, win_opts)
 			whl_scope.win = win
@@ -342,170 +497,208 @@ function M.setup(opts)
 		end
 	end
 
+	-- updates timestamps and checks the given debounce time
+	local debounce; do
+		local now = uv.now
+		local ts = {0, 0, 0} -- timestamps for:
+		-- [1] Normalize
+		-- [2] Restore
+		-- [3] Match
+
+		debounce = function(ts_i, timeout)
+			local t = now()
+			if t > (ts[ts_i] + timeout) then
+				ts[1] = 0
+				ts[2] = 0
+				ts[3] = 0
+				ts[ts_i] = t
+				return true
+			end
+		end
+
+		-- reset timestamps on switching buffers
+		autocmd('BufEnter', {
+			callback = function()
+				ev_unlocked = true -- is this necessary?
+				ts[1] = 0
+				ts[2] = 0
+				ts[3] = 0
+			end
+		})
+	end
+
 	-- #normalize
 	if normalize then
+
+		-- set flag +010 to new buffer
+		buf_init_flags(normalize.filetypes or nil, 2, normalize.buf_condition) -- +010
 
 		--- auto-detect normal-input
 		if not input_n[1] then
 			autocmd('InsertEnter', {
-				pattern = normalize.file_pattern or nil,
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
-						sanitize_input(input_n)
+						input_n = format_input(input_n)
 					end)
 					return true -- oneshot
 				end
 			})
 		end
 
+		-- normalizes the input source
 		local label = popup and popup.labels.normal_input
 		local save_input = restore and function(r)
-			input_i = trim(r.stdout)
+			input_r = trim(r.stdout)
 		end
-		M.normalize = function()
-			if not active then return end
-
-			-- save input to input_i before normalize
+		local fn_normalize = function()
+			-- save input to input_r before normalize
 			if save_input then
 				exec_get(cmd_get, save_input)
 			end
 			-- switch to input_n
-			if input_n[1] and (async or input_n[1] ~= input_i) then
+			if input_n[1] and (async or input_n[1] ~= input_r) then
 				exec(input_n[3])
 				if label then
-					if type(label) ~= 'table' then
-						if type(label) == 'string'
-							then label = {label, #label}
+					if type(label) ~= t_tbl then
+						if type(label) == t_str
+							then label = {label, strwidth(label)}
 							else label = {'A', 1}
 						end
 					end
 					show_popup(label)
 				end
+				return true -- assume successful
 			end
 		end
 
-		usercmd(prefix..'Normalize',
-			M.normalize, {
-				desc = 'Normalize the input source',
-				nargs = 0
-			}
-		)
+		-- expose as a public method
+		M.normalize = fn_normalize
+
+		-- expose as a command
+		usercmd(prefix..'Normalize', fn_normalize, {
+			desc = 'Normalize the input source',
+			nargs = 0
+		})
+
+		local debnc = normalize.debounce
 
 		if normalize.on then
+			local get_mode = api.nvim_get_mode
+			local mode_i = 'i'
 			autocmd(normalize.on, {
-				pattern = normalize.file_pattern or nil,
-				callback = M.normalize
+				callback = function(ev)
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i then
+						fn_normalize() -- do NOT put this in the above conditional
+						ev_unlocked = false; schedule(ev_unlock)
+					end
+				end
+			})
+		end
+
+		if normalize.on_mode_change then
+			autocmd('ModeChanged', {
+				pattern = normalize.on_mode_change,
+				callback = function(ev)
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
+						fn_normalize() -- do NOT put this in the above conditional
+						ev_unlocked = false; schedule(ev_unlock)
+					end
+				end
 			})
 		end
 	end
 
 	if restore or match then
 
-		local valid_context; do
-			local event = 'InsertEnter'
-			local mode  = 'i'
-			local get_mode = api.nvim_get_mode
-			local get_option = api.nvim_get_option_value
-			local get_option_key = 'buflisted'
-			local get_option_scope = {buf = 0}
-			valid_context = function(c)
-				if c then
-					if c.event ~= event and get_mode().mode ~= mode then
-						return false
-					end
-					get_option_scope.buf = c.buf
-				end
-				return get_option(get_option_key, get_option_scope)
-			end
-		end
-
 		local max = function(a, b)
 			return a > b and a or b
 		end
 
-		local win_get_cursor = api.nvim_win_get_cursor
-		local buf_get_lines  = api.nvim_buf_get_lines
-
-		local lang_labels = popup and popup.labels.lang_inputs
-
-		-- sanitize entries of lang_inputs
-		local lang_inputs = {}
-		for k,v in pairs(oss.lang_inputs) do
-			lang_inputs[k] = sanitize_input(v)
+		local cond = function(buf) -- default condition
+			return bo[buf].modifiable
 		end
 
-		-- flag for prevending `restore` from executing after `match` in the same frame
-		local matched = false
+		local regex = vim.regex
+		local str_utfindex = vim.str_utfindex -- unicode-aware string index
+		local strcharpart  = vim.fn.strcharpart -- unicode-aware substring
+		local win_get_cursor = api.nvim_win_get_cursor
+		local buf_get_lines  = api.nvim_buf_get_lines
+		local lang_labels = popup and popup.labels.lang_inputs
+
+		-- format entries of lang_inputs
+		local lang_inputs = {}
+		for k,v in pairs(oss.lang_inputs) do
+			lang_inputs[k] = format_input(v)
+		end
 
 		-- #match
 		if match then
 
-			-- convert `match.languages` to `map`, which is an array sorted by `priority`
-			local map = {}; do
+			-- set flag +01000 to new buffer
+			buf_init_flags(
+				match.filetypes or nil, 8, -- +01000
+				match.buf_condition or (match.buf_condition == nil and cond)
+			)
+
+			-- finds a language matches with the given string
+			local match_lang; do
+				local langs = {} -- list to search in
 				for k,v in pairs(match.languages) do
 					if v.enable then
-						table.insert(map, {
-							name = k,
-							priority = v.priority,
-							pattern = regex(v.pattern),
-						})
+						langs[#langs + 1] = {
+							k,               -- [1]: name
+							v.priority,      -- [2]: priority
+							regex(v.pattern) -- [3]: regex
+						}
 					end
 				end
-				table.sort(map, function(a, b)
-					return a.priority > b.priority
+				table.sort(langs, function(a, b)
+					return a[2] > b[2] -- sort by priority (higher to lower)
 				end)
-			end
-
-			-- returns `name` of the item of `map`, matched with the given string
-			local map_len = #map
-			local function find_in_map(str)
-				for i = 1, map_len do
-					local item = map[i]
-					if item.pattern:match_str(str) then
-						return item.name, i
+				local n = #langs
+				match_lang = function(str)
+					for i = 1, n do
+						local l = langs[i]
+						if l[3]:match_str(str) then
+							return l[1], i -- name, index
+						end
 					end
 				end
 			end
 
-			-- schedule this:
-			local function reset_matched()
-				matched = false
-			end
-
+			-- matches the input source with the language of the text near the cursor
 			local lines_above = match.lines.above
 			local lines_below = match.lines.below
 			local exclude = match.lines.exclude_pattern and regex(match.lines.exclude_pattern)
 			local printable = '%S'
-			M.match = function(c)
-				if not active or not valid_context(c) then return end
-
+			local fn_match = function(buf)
 				local found -- language name to find
 				local row, col = unpack(win_get_cursor(0)) -- cusor position
 				local row_top = max(1, row - lines_above) -- top of the range of rows to search in
-				local lines = buf_get_lines(c and c.buf or 0, row_top - 1, row + lines_below, false) -- lines to search in
+				local lines = buf_get_lines(buf or 0, row_top - 1, row + lines_below, false) -- lines to search in
 				local n_lines = #lines
 				local cur = row - row_top + 1 -- the index of the current line in `lines`
 				local line = lines[cur] -- current line
 
-				if line:find(printable) then -- search in the current line
-					found = find_in_map(line:sub(max(1, col - 2), col + 3))
+				if find(line, printable) then -- search in the current line
+					found = match_lang(strcharpart(line, str_utfindex(line, col) - 1, 2, 1))
 					if found then
 						local input = lang_inputs[found]
 						if input then
-							matched = true; schedule(reset_matched)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
-								if type(label) ~= 'table' then
-									if type(label) == 'string'
-										then label = {label, #label}
-										else label = {found, #found}
+								if type(label) ~= t_tbl then
+									if type(label) == t_str
+										then label = {label, strwidth(label)}
+										else label = {found, strwidth(found)}
 									end
 									lang_labels[found] = label
 								end
 								show_popup(label)
 							end
+							return true
 						end
 					end
 
@@ -519,10 +712,10 @@ function M.setup(opts)
 						else
 							line = lines[cur - i]
 							if line then
-								if line:find(printable) then -- not an empty line
+								if find(line, printable) then -- not an empty line
 									above_done = true -- found or not, no more searching up
 									if not (exclude and exclude:match_str(line)) then
-										found, found_i = find_in_map(line)
+										found, found_i = match_lang(line)
 									end
 								end
 							else
@@ -534,16 +727,16 @@ function M.setup(opts)
 						if not below_done then
 							line = lines[cur + i]
 							if line then
-								if line:find(printable) then -- not an empty line
+								if find(line, printable) then -- not an empty line
 									below_done = true -- found or not, no more searching down
 									if not (exclude and exclude:match_str(line)) then
 										if found then -- already found in the lines above
-											local _found, _found_i = find_in_map(line)
+											local _found, _found_i = match_lang(line)
 											if _found and _found_i < found_i then -- more prioritized language is found
 												found = _found
 											end
 										else
-											found = find_in_map(line)
+											found = match_lang(line)
 										end
 									end
 								end
@@ -555,19 +748,19 @@ function M.setup(opts)
 						if found then
 							local input = lang_inputs[found]
 							if input then
-								matched = true; schedule(reset_matched)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
-									if type(label) ~= 'table' then
-										if type(label) == 'string'
-											then label = {label, #label}
-											else label = {found, #found}
+									if type(label) ~= t_tbl then
+										if type(label) == t_str
+											then label = {label, strwidth(label)}
+											else label = {found, strwidth(found)}
 										end
 										lang_labels[found] = label
 									end
 									show_popup(label)
 								end
+								return true
 							end
 							return
 						end
@@ -575,17 +768,37 @@ function M.setup(opts)
 				end
 			end
 
-			usercmd(prefix..'Match',
-				function() M.match() end, {
-					desc = 'Match the input source with the characters near the cursor',
-					nargs = 0
-				}
-			)
+			-- expose as a public method
+			M.match = fn_match
+
+			-- expose as a command
+			usercmd(prefix..'Match', function() fn_match() end, {
+				desc = 'Match the input source with the characters near the cursor',
+				nargs = 0
+			})
+
+			local debnc = match.debounce
 
 			if match.on then
 				autocmd(match.on, {
-					pattern = match.file_pattern or nil,
-					callback = M.match
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
+						end
+					end
+				})
+			end
+
+			if match.on_mode_change then
+				autocmd('ModeChanged', {
+					pattern = match.on_mode_change,
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
+						end
+					end
 				})
 			end
 		end
@@ -593,9 +806,18 @@ function M.setup(opts)
 		-- #restore
 		if restore then
 
+			-- set flag +0100 to new buffer
+			buf_init_flags(
+				restore.filetypes or nil, 4, -- +0100
+				restore.buf_condition or (restore.buf_condition == nil and cond)
+			)
+
 			-- create a reverse-lookup table of lang_inputs
 			local lang_lookup; if popup then
 				lang_lookup = {}
+				--   key: <InputName>
+				-- value: <LangCode>
+
 				for k,v in pairs(lang_inputs) do
 					if v[1] then
 						lang_lookup[v[1]] = k
@@ -603,53 +825,85 @@ function M.setup(opts)
 				end
 			end
 
-			local exclude = restore.exclude_pattern
-			M.restore = function(c)
-				if not active or matched or not valid_context(c) then return end
-
-				-- restore input_i that was saved on the last normalize
-				if input_i and (input_i ~= input_n[1]) then
-					if exclude then -- check if the chars before & after the cursor are alphanumeric
+			-- restores the input source to the one used before the last Normalize
+			local unknown_inputs = {}
+			local exclude = restore.exclude_pattern and regex(restore.exclude_pattern)
+			local fn_restore = function(buf)
+				if input_r and (input_r ~= input_n[1]) then
+					if exclude then
 						local row, col = unpack(win_get_cursor(0))
-						local line = buf_get_lines(c and c.buf or 0, row - 1, row, true)[1]
-						if line:sub(col, col + 1):find(exclude) then return end
+						local line = buf_get_lines(buf or 0, row - 1, row, true)[1]
+						if exclude:match_str(strcharpart(line, str_utfindex(line, col) - 1, 2, 1)) then return end
 					end
-					local lang = lang_lookup[input_i]
+					local lang = lang_lookup[input_r]
 					if lang then
 						local input = lang_inputs[lang]
 						exec(input[3])
 						if popup then
 							local label = lang_labels[lang]
-							if type(label) ~= 'table' then
-								if type(label) == 'string'
-									then label = {label, #label}
-									else label = {lang, #lang}
+							if type(label) ~= t_tbl then
+								if type(label) == t_str
+									then label = {label, strwidth(label)}
+									else label = {lang, strwidth(lang)}
 								end
 								lang_labels[lang] = label
 							end
 							show_popup(label)
 						end
 					else -- unknown input
-						exec(cmd_set:format(input_i))
+						local input = unknown_inputs[input_r]
+						if not input then
+							input = format_input(input_r)
+							unknown_inputs[input_r] = input
+						end
+						exec(input[3])
 					end
 				end
 			end
 
-			usercmd(prefix..'Restore',
-				function() M.restore() end, {
-					desc = 'Restore the input source to the state before tha last normalization',
-					nargs = 0
-				}
-			)
+			-- expose as a public method
+			M.restore = fn_restore
+
+			-- expose as a command
+			usercmd(prefix..'Restore', function() fn_restore() end, {
+				desc = 'Restore the input source to the state before tha last normalization',
+				nargs = 0
+			})
+
+			local debnc = restore.debounce
 
 			if restore.on then
 				autocmd(restore.on, {
-					pattern = restore.file_pattern or nil,
-					callback = M.restore
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
+						end
+					end
+				})
+			end
+
+			if restore.on_mode_change then
+				autocmd('ModeChanged', {
+					pattern = restore.on_mode_change,
+					callback = function(ev)
+						local buf = ev.buf
+						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
+							ev_unlocked = false; schedule(ev_unlock)
+						end
+					end
 				})
 			end
 		end
 
+	end
+
+	oss = nil -- #GC
+
+	if log then
+		collectgarbage('collect')
+		mem2 = collectgarbage('count')
+		log('memory usage  after setup:', mem2..' kb', '(diff: '..(mem2 - mem1)..' kb)')
 	end
 end
 

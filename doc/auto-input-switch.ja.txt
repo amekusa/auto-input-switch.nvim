@@ -1,0 +1,159 @@
+*auto-input-switch.ja.txt*                         *auto-input-switch.nvim.ja*
+English: |auto-input-switch.txt|
+
+
+   ▀█▀██              ▀██▀                 ▄█▀▀▄█
+   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
+   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
+  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
+ ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+
+
+入力言語 (IME) を状況に合わせて自動で切り替える Neovim プラグインです。
+英語以外の言語で文章を書く際、頻繁に入力言語を切り替える煩わしさを軽減します。
+
+macOS, Windows, Linux に対応しています。
+
+▎ WARNING:
+▎ v5.0.0 の変更点
+▎ v4.x から更新する場合は 変更履歴 (https://github.com/amekusa/auto-input-switch.nvim/#changelog) で詳細を確認してください。
+
+==============================================================================
+機能                                      *auto-input-switch.nvim.ja.features*
+
+- Normalize:
+  Insert 以外のモード時、入力言語を英数に強制します。
+- Restore:
+  Normalize 後に Insert モードに戻ると、入力言語を元の状態に復帰させます。
+- Match:
+  カーソル付近の文字の言語を検知し、一致する入力言語に自動で切り替えます。
+- Popup notifications:
+  プラグインが入力言語を切り替える際、ポップアップ表示で知らせます。
+
+==============================================================================
+インストール                          *auto-input-switch.nvim.ja.installation*
+
+lazy.nvim (https://github.com/folke/lazy.nvim) を使用する場合:
+>lua
+  require('lazy').setup({
+    {
+      'amekusa/auto-input-switch.nvim',
+      config = function()
+        require('auto-input-switch').setup({
+          -- 任意のオプション
+        })
+      end
+    },
+  })
+<
+
+==============================================================================
+設定                                 *auto-input-switch.nvim.ja.configuration*
+
+以下より全ての設定項目が確認できます。
+
+- `auto-input-switch-options.ja.txt` (https://github.com/amekusa/auto-input-switch.nvim/doc/auto-input-switch-options.ja.txt)
+- `auto-input-switch-defaults.ja.txt` (https://github.com/amekusa/auto-input-switch.nvim/doc/auto-input-switch-defaults.ja.txt)
+
+設定例: 日本語, 中国語, 韓国語に対する Match を有効にする:
+>lua
+  require('auto-input-switch').setup({
+    match = {
+      enable = true,
+      languages = {
+        Ja = { enable = true, priority = 1 },
+        Zh = { enable = true, priority = 0 },
+        Ko = { enable = true },
+      }
+    },
+    restore = {
+      enable = false,
+        -- Match を有効にする場合、混乱を避けるため
+        -- Restore を無効にすることを推奨します。
+    },
+  })
+<
+
+▎ NOTE:
+▎ 日本語と中国語はユニコード範囲を一部共有しているため、
+▎ `priority` でそれぞれの優先度を指定することを推奨します。
+
+==============================================================================
+動作環境                              *auto-input-switch.nvim.ja.requirements*
+
+- Neovim: v0.10+
+- OS: macOS, Windows, Linux
+
+You need a commanline program to switch input methods in the background.
+With the default config:
+コマンドラインで入力言語を切り替えるソフトが必要です。
+デフォルト設定の場合:
+
+- macOS / Windows: im-select (https://github.com/daipeihust/im-select)
+  (macOS の場合、macism (https://github.com/laishulu/macism) の方がいいかもしれません。)
+- Linux: ibus (https://github.com/ibus/ibus)
+
+==============================================================================
+変更履歴                                 *auto-input-switch.nvim.ja.changelog*
+
+------------------------------------------------------------------------------
+v5.0.0                                      *auto-input-switch.nvim.ja.v5-0-0*
+
+過去のバージョンとは非互換の変更が含まれます。
+アップグレードの際は注意してください。
+
+非互換の変更:
+
+- `*.file_pattern` を `*.filetypes` に変更 (拡張子ではなくファイルタイプ名を指定)。
+- `*.on_mode_change` を追加。
+  それに伴い `*.on` のデフォルト値から `InsertEnter/InsertLeave` を削除。
+- `restore.exclude_pattern` を正規表現に変更。
+- ポップウィンドウの設定を `popup.*` から `popup.window.*` へ移動。
+
+互換性のある変更:
+
+- `popup.labels.*` に単純な文字列を指定可能に (幅は自動計算されます)。
+- 追加オプション: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.
+- 追加コマンド:
+  - `:AutoInputSwitchBuf on|off`
+  - `:AutoInputSwitchBufNormalize on|off`
+  - `:AutoInputSwitchBufRestore on|off`
+  - `:AutoInputSwitchBufMatch on|off`
+
+過去の変更:
+
+- v4.1.0 – Override `cmd_set` per input method
+- v4.0.0 – Custom popup labels, bug fixes
+- v3.0.0 – Added Match feature
+- v2.0.0 – Added async support
+- v1.0.0 – Initial release
+
+==============================================================================
+License                                    *auto-input-switch.nvim.ja.license*
+
+MIT © 2025 Satoshi Soma (https://github.com/amekusa)
+
+==============================================================================
+Documents
+
+	* About the plugin: |auto-input-switch.nvim|
+	*          Options: |auto-input-switch-options|
+	*   Default config: |auto-input-switch-defaults|
+	*         Commands: |auto-input-switch-commands|
+
+	Note: CTRL-] to jump to the |link| under the cursor.
+	      CTRL-T or CTRL-O to jump back.
+
+==============================================================================
+ドキュメント
+
+	* プラグインについて: |auto-input-switch.nvim.ja|
+	*         オプション: |auto-input-switch-options.ja|
+	*     デフォルト設定: |auto-input-switch-defaults.ja|
+	*           コマンド: |auto-input-switch-commands.ja|
+
+	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
+	      CTRL-T または CTRL-O で戻る。
+
+
+vim:tw=78:ts=4:noet:ft=help:norl:

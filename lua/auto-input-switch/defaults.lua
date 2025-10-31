@@ -1,182 +1,273 @@
 return {
-	activate = true, -- Activate the plugin?
-	-- You can toggle this with `AutoInputSwitch on|off` command at any time.
+  activate = true, -- Enable the plugin.
+    -- You can toggle it anytime with the `:AutoInputSwitch on|off` command.
 
-	async = false, -- Run the shell-commands (`cmd_get/cmd_set`) to switch inputs asynchronously?
-	-- false: Runs synchronously. (Recommended)
-	--        You may encounter subtle lags if you switch between Insert-mode and Normal-mode very rapidly.
-	--  true: Runs asynchronously.
-	--        No lags, but less reliable than synchronous.
+  async = false, -- Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
+    --   * `false`: Run synchronously (recommended).
+    --              May cause slight lag if you switch rapidly between Insert and Normal mode.
+    --   *  `true`: Run asynchronously. Removes lag but may be less reliable.
 
-	log = false, -- Output logs to a file?
-	-- This is useful for debugging `cmd_get/cmd_set`.
-	-- The log file gets wiped out every time the plugin's setup() function is called.
-	-- The log file path: ~/.local/state/nvim/auto-input-switch.log (Linux, macOS)
-	--                    ~/AppData/Local/nvim-data/auto-input-switch.log (Windows)
+  log = false, -- Output logs to a file?
+    -- Useful for debugging `cmd_get` / `cmd_set`.
+    -- The log file is cleared every time `setup()` is called.
+    -- 
+    -- Log file path:
+    --   * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
+    --   *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
 
-	prefix = 'AutoInputSwitch', -- Prefix of the command names
-	-- If you prefer shorter command names, use this:
-	-- prefix = 'AIS',
+  prefix = 'AutoInputSwitch', -- Prefix for command names.
+    -- If you prefer shorter commands, set this to something like 'AIS'.
 
-	popup = {
-		-- When the plugin changed the input source, it can indicate the language of the current input source with a popup.
+  popup = { -- When the plugin switches the input method, it can show a popup notification.
+    enable = true, -- Show popups?
+    duration = 1500, -- How long the popup remains visible (ms).
+    pad = true, -- Add leading and trailing spaces to popup text?
+    hl_group = 'PmenuSel', -- Highlight group for the popup window.
+    window = { -- Popup window configuration. See: |nvim_open_win()|
+      border = 'none', -- Border style.
+      zindex = 50, -- Rendering priority.
+      row = 1, -- Horizontal offset.
+      col = 0, -- Vertical offset.
+      relative = 'cursor', -- Origin of the offsets.
+        -- One of: 'editor', 'win', 'cursor', or 'mouse'
 
-		enable = true, -- Show popups?
-		duration = 1500, -- How long does a popup remain visible? (ms)
-		pad = true, -- Whether to add leading & trailing spaces
-		hl_group = 'PmenuSel', -- Highlight group
+      anchor = 'NW', -- Corner used to anchor the popup.
+        --   * 'NW': Northwest
+        --   * 'NE': Northeast
+        --   * 'SW': Southwest
+        --   * 'SE': Southeast
 
-		-- Popup window settings (:h nvim_open_win())
-		border = 'none', -- Style of the window border
-		zindex = 50, -- Rendering priority
-		row = 1, -- Horizontal offset
-		col = 0, -- Vertical offset
-		relative = 'cursor', -- The offsets are relative to: editor/win/cursor/mouse
-		anchor = 'NW', -- Which corner should be used to align a popup window?
-		-- 'NW' : Northwest
-		-- 'NE' : Northeast
-		-- 'SW' : Southwest
-		-- 'SE' : Southeast
+    },
+    labels = { -- Popup text for each input method.
+      normal_input = 'A', -- Popup text for Normalize. Set `false` to disable.
+      lang_inputs = { -- Popup texts for Restore and Match.
+        Ja = 'あ', -- Popup text for Japanese input.
+        Zh = '拼', -- Popup text for Chinese input.
+        Ko = '한', -- Popup text for Korean input.
+      },
+    },
+  },
+  normalize = { -- Outside Insert mode, the plugin can force the input method to Latin.
+    -- This feature is called "Normalize".
 
-		labels = {
-			normal_input = { 'A', 1 },
-			-- Popup text to show on "Normalize". Set false to disable it.
-			-- The 1st value is the content string.
-			-- The 2nd value is the length of the content string.
+    enable = true, -- Enable Normalize?
+    on = { -- Events that trigger Normalize. See: |events|
+      'BufLeave',
+      'WinLeave',
+      'FocusGained',
+      'ExitPre',
+      'QuitPre',
+    },
+    on_mode_change = { -- Mode transition patterns that trigger Normalize.
+      -- If not `false`, Normalize is triggered by the 'ModeChanged' event matched with one of these patterns.
+      -- See:
+      --   * |autocmd-pattern|
+      --   * |ModeChanged|
+      --   * |mode()|
+      -- 
+      -- Default:
+      --   '[iR]:n' (From Insert/Replace to Normal mode)
 
-			lang_inputs = {
-				-- Popup texts to show on "Restore" and "Match".
-				-- The format of each entry is the same as that of `popup.labels.normal_input`.
-				Ja = { 'あ', 2 }, -- For Japanese
-				Zh = { '拼', 2 }, -- For Chinese
-				Ko = { '한', 2 }, -- For Korean
-			},
-		},
-	},
+      '[iR]:n',
+    },
+    filetypes = '*', -- Filetypes where Normalize is enabled.
+      -- Example:
+      --   filetypes = { 'markdown', 'text' },
 
-	normalize = {
-		-- Outside of Insert-mode, the plugin can force your input source to be the latin one.
-		-- We call this feature "Normalize".
+    debounce = 500, -- Debounce time (ms). Prevents repeated Normalize triggers.
+    buf_condition = nil, -- Optional function that decides whether Normalize is enabled for a buffer.
+      -- Called on each buffer creation with its buffer number.
+      -- Return `true` to enable Normalize for that buffer.
+      -- Example:
+      --   -- Enable only in listed buffers
+      --   buf_condition = function(buf)
+      --     return vim.bo[buf].buflisted
+      --   end,
 
-		enable = true, -- Enable Normalize?
-		on = { -- Events to trigger Normalize (:h events)
-			'InsertLeave',
-			'BufLeave',
-			'WinLeave',
-			'FocusLost',
-			'ExitPre',
-		},
-		file_pattern = false, -- File pattern to enable Normalize (Set false to any file)
-		-- Example:
-		-- file_pattern = { '*.md', '*.txt' },
-	},
+  },
+  restore = { -- When Normalize is about to run, the plugin saves the current input method.
+    -- When you next enter Insert or Replace mode, it restores that input method.
+    -- This feature is called "Restore".
 
-	restore = {
-		-- When "Normalize" is about to happen, the plugin saves the state of the input source at the moment.
-		-- Then, the next time you enter Insert-mode, the plugin automatically restores the saved state.
-		-- We call this feature "Restore".
+    enable = true, -- Enable Restore?
+    on = { -- Events that trigger Restore. See: |events|
+      'FocusGained',
+    },
+    on_mode_change = { -- Mode transition patterns that trigger Restore.
+      -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
+      -- Default: 'n:[iR]' (From Normal/Visual to Insert/Replace mode)
 
-		enable = true, -- Enable Restore?
-		on = { -- Events to trigger Restore (:h events)
-			'InsertEnter',
-			'FocusGained',
-		},
-		file_pattern = false, -- File pattern to enable Restore (Set false to any file)
-		-- Example:
-		-- file_pattern = { '*.md', '*.txt' },
+      '[nvV]:[iR]',
+    },
+    filetypes = '*', -- Filetypes where Restore is enabled.
+      -- Example:
+      --   filetypes = { 'markdown', 'text' },
 
-		exclude_pattern = '[-a-zA-Z0-9=~+/?!@#$%%^&_(){}%[%];:<>]',
-		-- When you switch to Insert-mode, the plugin checks the cursor position at the moment.
-		-- And if any of the characters before & after the position match with `exclude_pattern`,
-		-- the plugin cancel to restore the input source and leave it as it is.
-		-- The default value of `exclude_pattern` is alphanumeric characters with a few exceptions.
-		-- Set false to disable this feature.
-	},
+    debounce = 500, -- Debounce time (ms). Prevents repeated Restore triggers.
+    buf_condition = nil, -- Function that decides whether Restore is enabled for a buffer.
+      -- Called on each buffer creation with its buffer number.
+      -- Return `true` to enable Restore for that buffer.
+      -- By default, returns `true` if the buffer is 'modifiable'.
+      -- You can override this or disable it by setting `false`.
 
-	match = {
-		-- When you enter Insert-mode, the plugin can detect the language of the characters adjacent to the cursor at the moment.
-		-- Then, it can automatically switch the input source to the one that matches the detected language.
-		-- We call this feature "Match".
-		-- If you enable this feature, we recommend to set `restore.enable` to false.
-		-- This feature is disabled by default.
+    exclude_pattern = [==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==], -- Regex pattern checked before Restore runs.
+      -- If nearby characters match this, Restore is canceled.
+      -- Set `false` to disable this check.
+      -- Default: matches alphanumerics and common punctuation.
 
-		enable = false, -- Enable Match?
-		on = { -- Events to trigger Match (:h events)
-			'InsertEnter',
-			'FocusGained',
-		},
-		file_pattern = false, -- File pattern to enable Match (Set false to any file)
-		-- Example:
-		-- file_pattern = { '*.md', '*.txt' },
+  },
+  match = { -- Detects the language of nearby characters on Insert/Replace mode entry
+    -- and switches to the matching input method.
+    -- This feature is called "Match".
+    -- If Match and Restore trigger together, Match takes priority.
+    -- Disabled by default.
 
-		languages = {
-			-- Languages to match with the characters. Set `enable` to true for the ones you want to use.
-			-- `pattern` must be a valid regex string. Use the unicode ranges corresponding to the language.
-			-- You can also add your own languages.
-			-- If you do, do not forget to add the input sources for them as well, to `os_settings[Your OS].lang_inputs`.
-			Ru = { enable = false, priority = 0, pattern = '[\\u0400-\\u04ff]' },
-			Ja = { enable = false, priority = 0, pattern = '[\\u3000-\\u30ff\\uff00-\\uffef\\u4e00-\\u9fff]' },
-			Zh = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u4e00-\\u9fff\\u3400-\\u4dbf\\u3100-\\u312f]' },
-			Ko = { enable = false, priority = 0, pattern = '[\\u3000-\\u303f\\u1100-\\u11ff\\u3130-\\u318f\\uac00-\\ud7af]' },
-		},
+    enable = false, -- Enable Match?
+    on = { -- Events that trigger Match. See: |events|
+      'FocusGained',
+    },
+    on_mode_change = { -- Mode transition patterns that trigger Match.
+      -- If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
+      -- Default: '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
 
-		lines = {
-			-- If the current line is empty or has only whitespace characters,
-			-- the plugin also searches the languages in the lines above/below the current line.
-			above = 2, -- How many lines above the current line to search in
-			below = 1, -- How many lines below the current line to search in
+      '[nvV]:[iR]',
+    },
+    filetypes = '*', -- Filetypes where Match is enabled.
+      -- Example:
+      --   filetypes = { 'markdown', 'text' },
 
-			exclude_pattern = [[^\s*\([-+*:|>]\|[0-9]\+\.\)\s]],
-			-- If one of the lines above/below match with this regex pattern,
-			-- the plugin cancels searching the languages and leave the input source as it is.
-			-- This is useful for writing lists, tables, or blockquotes in a markdown document.
-			-- Set false to disable this feature.
-		},
-	},
+    debounce = 500, -- Debounce time (ms). Prevents repeated Match triggers.
+    buf_condition = nil, -- Function that decides whether Match is enabled for a buffer.
+      -- Called on each buffer creation with its buffer number.
+      -- Return `true` to enable Match for that buffer.
+      -- By default, returns `true` if the buffer is 'modifiable'.
+      -- You can override this or disable it by setting `false`.
 
-	os = false, -- 'macos', 'windows', 'linux', or false to auto-detect
-	os_settings = { -- OS-specific settings
-		macos = {
-			enable = true,
-			cmd_get = 'im-select', -- Shell-command to get the current input source
-			cmd_set = 'im-select %s', -- Shell-command to set the new input source (Use `%s` as a placeholder for the input source)
-			normal_input = false, -- Name of the input source for Normalize (Set false to auto-detect)
-			-- Examples:
-			-- normal_input = 'com.apple.keylayout.ABC',
-			-- normal_input = 'com.apple.keylayout.US',
-			-- normal_input = 'com.apple.keylayout.USExtended',
+    languages = { -- Languages to detect and match.
+      -- Format:
+      --   languages = {
+      --     LanguageName = {
+      --       enable = true,
+      --       priority = Number,
+      --       pattern = 'Regex'
+      --     },
+      --   },
+      -- 
+      -- Set `enable` of those you want to use to `true`.
+      -- Each `pattern` must be a valid regex. Specify the unicode ranges of the language.
+      -- Add custom languages if needed, and define the corresponding input methods as well in `os_settings[OS].lang_inputs`.
 
-			-- You can also use a table like this:
-			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
-			--   The 1st string is the name of the input source, which should match with the output of `cmd_get`.
-			--   The 2nd string is what is actually passed to `cmd_set`.
-			--
-			-- Additionally, you can override `cmd_set` like this:
-			-- normal_input = { 'com.apple.keylayout.ABC', 'eisu', cmd_set = 'some-alternative-command %s' },
+      Ru = { -- Unicode ranges for Russian.
+        enable = false,
+        priority = 0,
+        pattern = [==[[\u0400-\u04ff]]==],
+      },
+      Ja = { -- Unicode ranges for Japanese.
+        enable = false,
+        priority = 0,
+        pattern = [==[[\u3000-\u30ff\uff00-\uffef\u4e00-\u9fff]]==],
+      },
+      Zh = { -- Unicode ranges for Chinese.
+        enable = false,
+        priority = 0,
+        pattern = [==[[\u3000-\u303f\u4e00-\u9fff\u3400-\u4dbf\u3100-\u312f]]==],
+      },
+      Ko = { -- Unicode ranges for Korean.
+        enable = false,
+        priority = 0,
+        pattern = [==[[\u3000-\u303f\u1100-\u11ff\u3130-\u318f\uac00-\ud7af]]==],
+      },
+    },
+    lines = { -- When the current line is empty or contains only whitespace,
+      -- Match searches nearby lines as well.
 
-			lang_inputs = {
-				-- The input sources corresponding to `match.languages` for each.
-				-- You can also use a table for each entry just like `normal_input`.
-				Ru = 'com.apple.keylayout.Russian',
-				Ja = 'com.apple.inputmethod.Kotoeri.Japanese',
-				Zh = 'com.apple.inputmethod.SCIM.ITABC',
-				Ko = 'com.apple.inputmethod.Korean.2SetKorean',
-			},
-		},
-		windows = {
-			enable = true,
-			cmd_get = 'im-select.exe',
-			cmd_set = 'im-select.exe %s',
-			normal_input = false,
-			lang_inputs = {},
-		},
-		linux = {
-			enable = true,
-			cmd_get = 'ibus engine',
-			cmd_set = 'ibus engine %s',
-			normal_input = false,
-			lang_inputs = {},
-		},
-	},
+      above = 1, -- Number of lines above to search.
+      below = 1, -- Number of lines below to search.
+      exclude_pattern = [==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==], -- Regex pattern for lines that stop language detection.
+        -- Useful for Markdown lists, table rows, or blockquotes.
+        -- Set `false` to disable.
+
+    },
+  },
+  os = false, -- Specify the operating system.
+    -- One of: 'macos', 'windows', 'linux', or `false` for auto-detection.
+
+  os_settings = { -- OS-specific settings for input methods and commands.
+    macos = {
+      enable = true, -- Enable macOS-specific settings?
+      cmd_get = 'im-select', -- Command to get the current input method ID.
+      cmd_set = 'im-select %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
+      normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
+        -- Examples:
+        --   normal_input = 'com.apple.keylayout.ABC',
+        --   normal_input = 'com.apple.keylayout.US',
+        --   normal_input = 'com.apple.keylayout.USExtended',
+        -- 
+        -- You can also use a table like this:
+        --   normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+        -- 
+        --   The first string must match `cmd_get` output.
+        --   The second is the argument passed to `cmd_set`.
+
+      lang_inputs = { -- Input methods corresponding to `match.languages`.
+        -- Format:
+        --   lang_inputs = {
+        --     LanguageName = 'Input Method ID',
+        --   },
+        -- 
+        -- Just like `normal_input`, it can also be a table:
+        --   lang_inputs = {
+        --     LanguageName = { 'Input Method ID', 'Argument' },
+        --   },
+        -- 
+        --   The first string must match `cmd_get` output.
+        --   The second is the argument passed to `cmd_set`.
+
+        Ru = 'com.apple.keylayout.Russian', -- Input method ID for Russian.
+        Ja = 'com.apple.inputmethod.Kotoeri.Japanese', -- Input method ID for Japanese.
+        Zh = 'com.apple.inputmethod.SCIM.ITABC', -- Input method ID for Chinese.
+        Ko = 'com.apple.inputmethod.Korean.2SetKorean', -- Input method ID for Korean.
+      },
+    },
+    windows = {
+      enable = true, -- Enable Windows-specific settings?
+      cmd_get = 'im-select.exe', -- Command to get the current input method ID.
+      cmd_set = 'im-select.exe %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
+      normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
+        -- Example:
+        --   normal_input = '1033', -- US English
+        -- 
+        -- Other formats:
+        --   See: |auto-input-switch.os_settings.macos.normal_input|
+
+      lang_inputs = { -- Input methods corresponding to `match.languages`.
+        -- For details, see: |auto-input-switch.os_settings.macos.lang_inputs|
+
+        Ru = '1049', -- Input method ID for Russian.
+        Ja = '1041', -- Input method ID for Japanese.
+        Zh = '2052', -- Input method ID for Chinese.
+        Ko = '1042', -- Input method ID for Korean.
+      },
+    },
+    linux = {
+      enable = true, -- Enable Linux-specific settings?
+      cmd_get = 'ibus engine', -- Command to get the current input method ID.
+      cmd_set = 'ibus engine %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
+      normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
+        -- Example:
+        --   normal_input = 'xkb:us::eng', -- US English.
+        -- 
+        -- Other formats:
+        --   See: |auto-input-switch.os_settings.macos.normal_input|
+
+      lang_inputs = { -- Input methods corresponding to `match.languages`.
+        -- For details, see: |auto-input-switch.os_settings.macos.lang_inputs|
+
+        Ru = 'xkb:ru::rus', -- Input method ID for Russian.
+        Ja = 'mozc-jp', -- Input method ID for Japanese.
+        Zh = 'libpinyin', -- Input method ID for Chinese.
+        Ko = 'hangul', -- Input method ID for Korean.
+      },
+    },
+  },
 }
-

@@ -1,0 +1,312 @@
+*auto-input-switch-defaults.ja.txt*                |auto-input-switch.nvim.ja|
+
+
+   ▀█▀██              ▀██▀                 ▄█▀▀▄█
+   ▐▌ ██  █ █ ▀█▀ █▀▄  ██  █▀▄ █▀▄ █ █ ▀█▀ ██   █ █ █ █ █ ▀█▀ ▄▀▀ █ █
+   █▄▄██  █ █  █  █ █  ██  █ █ █▄█ █ █  █   ▀▀▄▄  █ █ █ █  █  █   █▀█
+  ▐▌  ██  ▀▄█  █  ▀▄█  ██  █ █ █   ▀▄█  █  █   ██ ▀▄█▄█ █  █  ▀▄▄ █ █
+ ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
+
+
+==============================================================================
+デフォルト設定                                 *auto-input-switch-defaults.ja*
+>lua
+  {
+    activate = true, -- プラグインを有効にする。
+      -- `:AutoInputSwitch on|off` コマンドでいつでも切り替えることができます。
+  
+    async = false, -- シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
+      --   * `false`: 同期実行 (推奨) 。
+      --              Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
+      --   *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
+  
+    log = false, -- ログをファイルに出力する？
+      -- `cmd_get` / `cmd_set` をデバッグする際に有用です。
+      -- ログファイルは `setup()` が実行される度に初期化されます。
+      -- 
+      -- ログファイルのパス:
+      --   * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
+      --   *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
+  
+    prefix = 'AutoInputSwitch', -- コマンド名のプリフィックス。
+      -- 例えば 'AIS' などにすることでコマンドを短くすることができます。
+  
+    popup = { -- プラグインによって入力言語が変更される際、ポップアップ表示でそれを知らせます。
+      enable = true, -- ポップアップを表示する？
+      duration = 1500, -- ポップアップが表示されている時間 (ms) 。
+      pad = true, -- ポップアップテキストの左右に空白を入れる？
+      hl_group = 'PmenuSel', -- ポップアップウィンドウのハイライトグループ。
+      window = { -- ポップアップウィンドウの設定。参照: |nvim_open_win()|
+        border = 'none', -- ボーダーのスタイル。
+        zindex = 50, -- 表示の優先度。
+        row = 1, -- 横方向のオフセット。
+        col = 0, -- 縦方向のオフセット。
+        relative = 'cursor', -- オフセットの基準となる対象。
+          -- 次の何れか: 'editor', 'win', 'cursor', 'mouse'
+  
+        anchor = 'NW', -- ポップアップの四隅のうちどれを基準位置に合わせるか。
+          --   * 'NW': 左上
+          --   * 'NE': 右上
+          --   * 'SW': 左下
+          --   * 'SE': 右下
+  
+      },
+      labels = { -- 各入力言語のポップアップテキスト。
+        normal_input = 'A', -- Normalize 時に表示するポップアップテキスト。`false` で非表示。
+        lang_inputs = { -- Restore と Match 時に表示するポップアップテキスト。
+          Ja = 'あ', -- 日本語入力時のポップアップテキスト。
+          Zh = '拼', -- 中国語入力時のポップアップテキスト。
+          Ko = '한', -- 韓国語入力時のポップアップテキスト。
+        },
+      },
+    },
+    normalize = { -- Insert モードではない時、入力言語を英数に強制することができます。
+      -- この機能を "Normalize" と呼称します。
+  
+      enable = true, -- Normalize を有効にする？
+      on = { -- Normalize を実行するイベント。参照: |events|
+        'BufLeave',
+        'WinLeave',
+        'FocusGained',
+        'ExitPre',
+        'QuitPre',
+      },
+      on_mode_change = { -- Normalize のトリガーとなる、モードの遷移パターン。
+        -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
+        -- 参照:
+        --   * |autocmd-pattern|
+        --   * |ModeChanged|
+        --   * |mode()|
+        -- 
+        -- Default:
+        --   '[iR]:n' (Insert/Replace から Normal モード)
+  
+        '[iR]:n',
+      },
+      filetypes = '*', -- Normalize が有効になるファイルタイプ。
+        -- 例:
+        --   filetypes = { 'markdown', 'text' },
+  
+      debounce = 500, -- デバウンス時間 (ms) 。Normalize の連続実行を抑制します。
+      buf_condition = nil, -- Normalize がバッファに対して有効となる条件を定義する関数です。
+        -- バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+        -- `true` が返された場合にのみ、そのバッファで Normalize が有効になります。
+        -- 例:
+        --   -- Enable only in listed buffers
+        --   buf_condition = function(buf)
+        --     return vim.bo[buf].buflisted
+        --   end,
+  
+    },
+    restore = { -- Normalize が実行される際、直前に使っていた入力言語がプラグインによって保存されます。
+      -- そして次に Insert か Replace モードに入った際、保存されていた入力言語に自動で復帰します。
+      -- この機能を "Restore" と呼称します。
+  
+      enable = true, -- Restore を有効にする？
+      on = { -- Restore を実行するイベント。参照: |events|
+        'FocusGained',
+      },
+      on_mode_change = { -- Restore のトリガーとなる、モードの遷移パターン。
+        -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
+        -- デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+  
+        '[nvV]:[iR]',
+      },
+      filetypes = '*', -- Restore が有効になるファイルタイプ。
+        -- 例:
+        --   filetypes = { 'markdown', 'text' },
+  
+      debounce = 500, -- デバウンス時間 (ms) 。Restore の連続実行を抑制します。
+      buf_condition = nil, -- Restore がバッファに対して有効となる条件を定義する関数です。
+        -- バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+        -- `true` が返された場合にのみ、そのバッファで Restore が有効になります。
+        -- デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
+        -- 自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
+  
+      exclude_pattern = [==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==], -- この正規表現は Restore が実行される直前にチェックされます。
+        -- カーソル付近の文字がこれにマッチすると、Restore がキャンセルされます。
+        -- `false` をセットするとこのチェックは無効になります。
+        -- デフォルト: 全ての半角英数と、ほとんどの半角記号にマッチします。
+  
+    },
+    match = { -- Insert/Replace モードに入った際、カーソル付近の文字にマッチする入力言語に
+      -- 自動で切り替えます。
+      -- この機能を "Match" と呼称します。
+      -- Match と Restore が同時に実行された場合は Match が優先されます。
+      -- この機能はデフォルトでは無効に設定されています。
+  
+      enable = false, -- Match を有効にする？
+      on = { -- Match を実行するイベント。参照: |events|
+        'FocusGained',
+      },
+      on_mode_change = { -- Match のトリガーとなる、モードの遷移パターン。
+        -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
+        -- デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+  
+        '[nvV]:[iR]',
+      },
+      filetypes = '*', -- Match が有効になるファイルタイプ。
+        -- 例:
+        --   filetypes = { 'markdown', 'text' },
+  
+      debounce = 500, -- デバウンス時間 (ms) 。Match の連続実行を抑制します。
+      buf_condition = nil, -- Match がバッファに対して有効となる条件を定義する関数です。
+        -- バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
+        -- `true` が返された場合にのみ、そのバッファで Match が有効になります。
+        -- デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
+        -- 自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
+  
+      languages = { -- Match が検知する言語のリスト。
+        -- フォーマット:
+        --   languages = {
+        --     言語名 = {
+        --       enable = true,
+        --       priority = 数値,
+        --       pattern = '正規表現'
+        --     },
+        --   },
+        -- 
+        -- 使用したい言語の `enable` を `true` に設定してください。
+        -- `pattern` は有効な正規表現でなければなりません。その言語のユニコード範囲を指定すると良いでしょう。
+        -- カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` に追加してください。
+  
+        Ru = { -- ロシア語のユニコード範囲。
+          enable = false,
+          priority = 0,
+          pattern = [==[[\u0400-\u04ff]]==],
+        },
+        Ja = { -- 日本語のユニコード範囲。
+          enable = false,
+          priority = 0,
+          pattern = [==[[\u3000-\u30ff\uff00-\uffef\u4e00-\u9fff]]==],
+        },
+        Zh = { -- 中国語のユニコード範囲。
+          enable = false,
+          priority = 0,
+          pattern = [==[[\u3000-\u303f\u4e00-\u9fff\u3400-\u4dbf\u3100-\u312f]]==],
+        },
+        Ko = { -- 韓国語のユニコード範囲。
+          enable = false,
+          priority = 0,
+          pattern = [==[[\u3000-\u303f\u1100-\u11ff\u3130-\u318f\uac00-\ud7af]]==],
+        },
+      },
+      lines = { -- 現在の行が空行か空白文字のみ場合、
+        -- 前後の行に対しても Match による検索を行います。
+  
+        above = 1, -- 上方向に最大で何行検索するか。
+        below = 1, -- 下方向に最大で何行検索するか。
+        exclude_pattern = [==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==], -- 検索行がこの正規表現にマッチしたら、検索をキャンセルします。
+          -- マークダウン記法でリストやテーブル、引用ブロック等を記述する際に有用です。
+          -- `false` で無効化できます。
+  
+      },
+    },
+    os = false, -- 使用する OS を明示してください。
+      -- 次の何れか: 'macos', 'windows', 'linux', または `false` で自動検出。
+  
+    os_settings = { -- OS 毎の入力言語とコマンドの設定。
+      macos = {
+        enable = true, -- macOS 用の設定を有効にする？
+        cmd_get = 'im-select', -- 現在の入力言語 ID を取得するコマンド。
+        cmd_set = 'im-select %s', -- 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+        normal_input = false, -- Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          -- 例:
+          --   normal_input = 'com.apple.keylayout.ABC',
+          --   normal_input = 'com.apple.keylayout.US',
+          --   normal_input = 'com.apple.keylayout.USExtended',
+          -- 
+          -- 次のようにテーブルを使用することも可:
+          --   normal_input = { 'com.apple.keylayout.ABC', 'eisu' },
+          -- 
+          --   最初の文字列は `cmd_get` の出力と照合する値。
+          --   二番目の文字列は `cmd_set` に渡される引数。
+  
+        lang_inputs = { -- `match.languages` 内の各言語に紐づける入力言語の設定。
+          -- フォーマット:
+          --   lang_inputs = {
+          --     言語名 = '入力言語ID',
+          --   },
+          -- 
+          -- `normal_input` 同様、テーブルも使用可:
+          --   lang_inputs = {
+          --     言語名 = { '入力言語ID', '引数' },
+          --   },
+          -- 
+          --   最初の文字列は `cmd_get` の出力と照合する値。
+          --   二番目の文字列は `cmd_set` に渡される引数。
+  
+          Ru = 'com.apple.keylayout.Russian', -- ロシア語の入力言語 ID 。
+          Ja = 'com.apple.inputmethod.Kotoeri.Japanese', -- 日本語の入力言語 ID 。
+          Zh = 'com.apple.inputmethod.SCIM.ITABC', -- 中国語の入力言語 ID 。
+          Ko = 'com.apple.inputmethod.Korean.2SetKorean', -- 韓国語の入力言語 ID 。
+        },
+      },
+      windows = {
+        enable = true, -- Windows 用の設定を有効にする？
+        cmd_get = 'im-select.exe', -- 現在の入力言語 ID を取得するコマンド。
+        cmd_set = 'im-select.exe %s', -- 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+        normal_input = false, -- Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          -- 例:
+          --   normal_input = '1033', -- US English
+          -- 
+          -- その他のフォーマット:
+          --   参照: |auto-input-switch.ja.os_settings.macos.normal_input|
+  
+        lang_inputs = { -- `match.languages` 内の各言語に紐づける入力言語の設定。
+          -- 詳細は次を参照: |auto-input-switch.ja.os_settings.macos.lang_inputs|
+  
+          Ru = '1049', -- ロシア語の入力言語 ID 。
+          Ja = '1041', -- 日本語の入力言語 ID 。
+          Zh = '2052', -- 中国語の入力言語 ID 。
+          Ko = '1042', -- 韓国語の入力言語 ID 。
+        },
+      },
+      linux = {
+        enable = true, -- Linux 用の設定を有効にする？
+        cmd_get = 'ibus engine', -- 現在の入力言語 ID を取得するコマンド。
+        cmd_set = 'ibus engine %s', -- 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+        normal_input = false, -- Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          -- 例:
+          --   normal_input = 'xkb:us::eng', -- US English
+          -- 
+          -- その他のフォーマット:
+          --   参照: |auto-input-switch.ja.os_settings.macos.normal_input|
+  
+        lang_inputs = { -- `match.languages` 内の各言語に紐づける入力言語の設定。
+          -- 詳細は次を参照: |auto-input-switch.ja.os_settings.macos.lang_inputs|
+  
+          Ru = 'xkb:ru::rus', -- ロシア語の入力言語 ID 。
+          Ja = 'mozc-jp', -- 日本語の入力言語 ID 。
+          Zh = 'libpinyin', -- 中国語の入力言語 ID 。
+          Ko = 'hangul', -- 韓国語の入力言語 ID 。
+        },
+      },
+    },
+  }
+<
+
+==============================================================================
+Documents
+
+	* About the plugin: |auto-input-switch.nvim|
+	*          Options: |auto-input-switch-options|
+	*   Default config: |auto-input-switch-defaults|
+	*         Commands: |auto-input-switch-commands|
+
+	Note: CTRL-] to jump to the |link| under the cursor.
+	      CTRL-T or CTRL-O to jump back.
+
+==============================================================================
+ドキュメント
+
+	* プラグインについて: |auto-input-switch.nvim.ja|
+	*         オプション: |auto-input-switch-options.ja|
+	*     デフォルト設定: |auto-input-switch-defaults.ja|
+	*           コマンド: |auto-input-switch-commands.ja|
+
+	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
+	      CTRL-T または CTRL-O で戻る。
+
+
+vim:tw=78:ts=4:noet:ft=help:norl:
