@@ -8,6 +8,11 @@ import {
 
 const lf = '\n';
 
+/**
+ * MD2Doc
+ * @author Satoshi Soma (github.com/amekusa)
+ */
+
 function docRenderer(opts) {
 	const {
 		ns, // namespace
