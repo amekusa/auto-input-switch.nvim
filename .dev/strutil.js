@@ -24,15 +24,18 @@ export function wrap(str, width, opts = {}) {
 	let {
 		indent = '',
 		indentWidth = undefined,
+		forceBreak = false,
 		sep = [
 			/[\s,]/,
+			'、',
+			'。',
 		],
 	} = opts;
 	if (typeof indentWidth != 'number') indentWidth = strWidth(indent);
 
 	let r = [];
 
-	let wrapMarker = [lf + indent, indentWidth];
+	let lineBreak = [lf + indent];
 	let lines = str.split(lf);
 	for (let i = 0; i < lines.length; i++) {
 		let l = lines[i];
@@ -49,7 +52,7 @@ export function wrap(str, width, opts = {}) {
 				find_sep:
 				for (let j = chars.length - 1; j > 0; j--) {
 					let c = chars[j];
-					if (c === wrapMarker) break;
+					if (c === lineBreak) break;
 
 					for (let ii = 0; ii < sep.length; ii++) {
 						let s = sep[ii];
@@ -65,13 +68,13 @@ export function wrap(str, width, opts = {}) {
 					}
 					lw += c[1];
 				}
-				if (found) {
-					chars.splice(found+1, 0, wrapMarker);
-				} else {
-					chars.push(wrapMarker);
-					lw = cw;
+				if (found) { // separator found
+					chars.splice(found+1, 0, lineBreak);
+					lw += indentWidth;
+				} else if (forceBreak || cw > 1) { // separator not found; force break
+					chars.push(lineBreak);
+					lw = cw + indentWidth;
 				}
-				lw += indentWidth;
 			}
 			chars.push([char, cw]);
 		}
