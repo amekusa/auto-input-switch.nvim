@@ -25,6 +25,7 @@ export function wrap(str, width, opts = {}) {
 		indent = '',
 		indentWidth = undefined,
 		forceBreak = false,
+		minWidth = width * 0.75,
 		sep = [
 			' ',
 			'、',
@@ -45,8 +46,8 @@ export function wrap(str, width, opts = {}) {
 
 		for (let char of l) {
 			let cw = charWidth(char);
-			lw += cw;
-			if (lw > width) { // needs to wrap
+			if (lw + cw <= width) lw += cw;
+			else { // needs wrap
 				let ww = 0; // wrap width
 				let wp = 0; // wrap position
 
@@ -55,6 +56,7 @@ export function wrap(str, width, opts = {}) {
 					let c = chars[j];
 					if (c === lineBreak) break;
 					ww += c[1];
+					if (lw - ww < minWidth) break;
 
 					for (let ii = 0; ii < sep.length; ii++) {
 						let s = sep[ii];
