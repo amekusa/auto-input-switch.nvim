@@ -20,6 +20,53 @@ export function strWidth(str) {
 	return r;
 }
 
+export function wrap(str, width, opts = {}) {
+	let {
+		indent = '',
+		indentWidth = undefined,
+		sep = [
+			/[\s,.]/,
+		],
+	} = opts;
+	if (typeof indentWidth != 'number') indentWidth = strWidth(indent);
+
+	let r = [];
+	let lines = str.split(lf);
+	for (let i = 0; i < lines.length; i++) {
+		let l = lines[i];
+		let lw = 0;
+		let chars = [];
+		for (let char of l) {
+			lw += charWidth(char);
+			if (lw > width) { // needs to wrap
+				let found = false;
+				find_sep:
+				for (let ii = chars.length - 1; ii > 0; ii--) {
+					let _char = chars[ii];
+					for (let j = 0; j < sep.length; j++) {
+						let s = sep[j];
+						if (s instanceof RegExp) {
+							if (_char.match(s)) {
+								found = ii;
+								break find_sep;
+							}
+						} else if (_char == s) {
+							found = ii;
+							break find_sep;
+						}
+					}
+				}
+				if (found) chars.splice(found+1, 0, lf);
+				else chars.push(lf);
+				lw = 0;
+			}
+			chars.push(char);
+		}
+		r.push(chars.join(''));
+	}
+	return r.join(lf);
+}
+
 export function padStart(str, width, pad = ' ') {
 	let short = width - strWidth(str);
 	return short <= 0 ? str : (pad.repeat(Math.floor(short / strWidth(pad))) + str);
