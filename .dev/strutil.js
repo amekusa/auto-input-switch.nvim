@@ -26,17 +26,18 @@ export function wrap(str, width, opts = {}) {
 		indentWidth = undefined,
 		forceBreak = false,
 		sep = [
-			/[\s,]/,
+			' ',
 			'、',
 			'。',
 		],
 	} = opts;
-	if (typeof indentWidth != 'number') indentWidth = strWidth(indent);
+	if (typeof indentWidth != 'number') indentWidth = indent ? strWidth(indent) : 0;
 
 	let r = [];
 
 	let lineBreak = [lf + indent];
 	let lines = str.split(lf);
+
 	for (let i = 0; i < lines.length; i++) {
 		let l = lines[i];
 		let lw = 0; // line width
@@ -46,34 +47,35 @@ export function wrap(str, width, opts = {}) {
 			let cw = charWidth(char);
 			lw += cw;
 			if (lw > width) { // needs to wrap
-				lw = 0;
+				let ww = 0; // wrap width
+				let wp = 0; // wrap position
 
-				let found = false;
 				find_sep:
 				for (let j = chars.length - 1; j > 0; j--) {
 					let c = chars[j];
 					if (c === lineBreak) break;
+					ww += c[1];
 
 					for (let ii = 0; ii < sep.length; ii++) {
 						let s = sep[ii];
 						if (s instanceof RegExp) {
 							if (c[0].match(s)) {
-								found = j;
+								wp = j;
 								break find_sep;
 							}
-						} else if (c[0] == s) {
-							found = j;
+						} else if (c[0] === s) {
+							wp = j;
 							break find_sep;
 						}
 					}
-					lw += c[1];
 				}
-				if (found) { // separator found
-					chars.splice(found+1, 0, lineBreak);
-					lw += indentWidth;
+				if (wp) { // separator found
+					chars.splice(wp + 1, 0, lineBreak); // insert linebreak
+					lw = indentWidth + ww; // new line width
+
 				} else if (forceBreak || cw > 1) { // separator not found; force break
-					chars.push(lineBreak);
-					lw = cw + indentWidth;
+					chars.push(lineBreak); // linebreak here
+					lw = indentWidth + cw; // new line width
 				}
 			}
 			chars.push([char, cw]);
