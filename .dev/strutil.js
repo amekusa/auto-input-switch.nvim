@@ -9,12 +9,14 @@ export function indent(str, ind = '\t') {
 	return ind + str.replaceAll(lf, lf + ind);
 }
 
+export function charWidth(char) {
+	let cp = char.codePointAt(0);
+	return (0x00 <= cp && cp < 0x7f) ? 1 : 2;
+}
+
 export function strWidth(str) {
 	let r = 0;
-	for (let char of str) {
-		let cp = char.codePointAt(0);
-		r += (0x00 <= cp && cp < 0x7f) ? 1 : 2
-	}
+	for (let char of str) r += charWidth(char);
 	return r;
 }
 
