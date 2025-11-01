@@ -32,7 +32,7 @@ export function wrap(str, width, opts = {}) {
 
 	let r = [];
 
-	let wrapMarker = [lf, 1];
+	let wrapMarker = [lf + indent, indentWidth];
 	let lines = str.split(lf);
 	for (let i = 0; i < lines.length; i++) {
 		let l = lines[i];
@@ -71,6 +71,7 @@ export function wrap(str, width, opts = {}) {
 					chars.push(wrapMarker);
 					lw = cw;
 				}
+				lw += indentWidth;
 			}
 			chars.push([char, cw]);
 		}
