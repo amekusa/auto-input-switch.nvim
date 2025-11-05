@@ -13,14 +13,16 @@ async:
   __desc:
     en: |-
       Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
-        * `false`: Run synchronously (recommended).
-                   May cause slight lag if you switch rapidly between Insert and Normal mode.
-        *  `true`: Run asynchronously. Removes lag but may be less reliable.
+        * false: Run synchronously (recommended).
+                 May cause slight lag if you switch rapidly between Insert and
+                 Normal mode.
+        *  true: Run asynchronously. Removes lag but may be less reliable.
     ja: |-
       シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
-        * `false`: 同期実行 (推奨) 。
-                   Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
-        *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
+        * false: 同期実行 (推奨) 。
+                 Insert と Normal モードを素早く切り替えた際などに僅かなラグが
+                 発生する可能性があります。
+        *  true: 非同期実行。ラグはありませんが、動作がやや不安定です。
 log:
   __default: false
   __desc:
@@ -214,7 +216,7 @@ normalize:
           * |mode()|
 
         Default:
-          '[iR]:n' (From Insert/Replace to Normal mode)
+          `'[iR]:n'` (From Insert/Replace to Normal mode)
       ja: |-
         Normalize のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
@@ -224,7 +226,7 @@ normalize:
           * |mode()|
 
         Default:
-          '[iR]:n' (Insert/Replace から Normal モード)
+          `'[iR]:n'` (Insert/Replace から Normal モード)
 
   filetypes:
     __default: '*'
@@ -305,11 +307,15 @@ restore:
       en: |-
         Mode transition patterns that trigger Restore.
         If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
-        Default: 'n:[iR]' (From Normal/Visual to Insert/Replace mode)
+
+        Default:
+          `'n:[iR]'` (From Normal/Visual to Insert/Replace mode)
       ja: |-
         Restore のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
-        デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+
+        デフォルト:
+          `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
 
 
   filetypes:
@@ -401,11 +407,15 @@ match:
       en: |-
         Mode transition patterns that trigger Match.
         If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
-        Default: '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
+
+        Default:
+          `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
       ja: |-
         Match のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
-        デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+
+        デフォルト:
+          `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
 
   filetypes:
     __default: '*'

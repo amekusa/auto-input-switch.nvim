@@ -20,9 +20,10 @@ activate                                       *auto-input-switch.ja.activate*
 async                                             *auto-input-switch.ja.async*
   ⇢ デフォルト: `false`
   シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
-    * `false`: 同期実行 (推奨) 。
-               Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
-    *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
+    * false: 同期実行 (推奨) 。
+             Insert と Normal モードを素早く切り替えた際などに僅かなラグが
+             発生する可能性があります。
+    *  true: 非同期実行。ラグはありませんが、動作がやや不安定です。
 
 ------------------------------------------------------------------------------
 log                                                 *auto-input-switch.ja.log*
@@ -43,7 +44,8 @@ prefix                                           *auto-input-switch.ja.prefix*
 
 ------------------------------------------------------------------------------
 popup                                             *auto-input-switch.ja.popup*
-  プラグインによって入力言語が変更される際、ポップアップ表示でそれを知らせます。
+  プラグインによって入力言語が変更される際、ポップアップ表示でそれを知らせます
+  。
 
 ------------------------------------------------------------------------------
 popup.enable                               *auto-input-switch.ja.popup.enable*
@@ -166,14 +168,15 @@ normalize.on_mode_change       *auto-input-switch.ja.normalize.on_mode_change*
     }
 <
   Normalize のトリガーとなる、モードの遷移パターン。
-  `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
+  `false` ではない場合、このパターンに該当する 'ModeChanged' 
+  イベントが発生した際に Normalize が実行されます。
   参照:
     * |autocmd-pattern|
     * |ModeChanged|
     * |mode()|
   
   Default:
-    '[iR]:n' (Insert/Replace から Normal モード)
+    `'[iR]:n'` (Insert/Replace から Normal モード)
 
 ------------------------------------------------------------------------------
 normalize.filetypes                 *auto-input-switch.ja.normalize.filetypes*
@@ -203,8 +206,10 @@ normalize.buf_condition         *auto-input-switch.ja.normalize.buf_condition*
 
 ------------------------------------------------------------------------------
 restore                                         *auto-input-switch.ja.restore*
-  Normalize が実行される際、直前に使っていた入力言語がプラグインによって保存されます。
-  そして次に Insert か Replace モードに入った際、保存されていた入力言語に自動で復帰します。
+  Normalize が実行される際、直前に使っていた入力言語がプラグインによって保存さ
+  れます。
+  そして次に Insert か Replace モードに入った際、保存されていた入力言語に自動
+  で復帰します。
   この機能を "Restore" と呼称します。
 
 ------------------------------------------------------------------------------
@@ -229,8 +234,11 @@ restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
     }
 <
   Restore のトリガーとなる、モードの遷移パターン。
-  `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
-  デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+  `false` ではない場合、このパターンに該当する 'ModeChanged' 
+  イベントが発生した際に Restore が実行されます。
+  
+  デフォルト:
+    `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
 
 ------------------------------------------------------------------------------
 restore.filetypes                     *auto-input-switch.ja.restore.filetypes*
@@ -252,7 +260,8 @@ restore.buf_condition             *auto-input-switch.ja.restore.buf_condition*
   バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
   `true` が返された場合にのみ、そのバッファで Restore が有効になります。
   デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
-  自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
+  自作の関数で上書きするか、`false` をセットすることで無効化することもできます
+  。
 
 ------------------------------------------------------------------------------
 restore.exclude_pattern         *auto-input-switch.ja.restore.exclude_pattern*
@@ -292,8 +301,11 @@ match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
     }
 <
   Match のトリガーとなる、モードの遷移パターン。
-  `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
-  デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+  `false` ではない場合、このパターンに該当する 'ModeChanged' 
+  イベントが発生した際に Match が実行されます。
+  
+  デフォルト:
+    `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
 
 ------------------------------------------------------------------------------
 match.filetypes                         *auto-input-switch.ja.match.filetypes*
@@ -315,7 +327,8 @@ match.buf_condition                 *auto-input-switch.ja.match.buf_condition*
   バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
   `true` が返された場合にのみ、そのバッファで Match が有効になります。
   デフォルトでは、バッファが 'modifiable' の場合に `true` が返されます。
-  自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
+  自作の関数で上書きするか、`false` をセットすることで無効化することもできます
+  。
 
 ------------------------------------------------------------------------------
 match.languages                         *auto-input-switch.ja.match.languages*
@@ -330,8 +343,10 @@ match.languages                         *auto-input-switch.ja.match.languages*
     },
 <
   使用したい言語の `enable` を `true` に設定してください。
-  `pattern` は有効な正規表現でなければなりません。その言語のユニコード範囲を指定すると良いでしょう。
-  カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` に追加してください。
+  `pattern` は有効な正規表現でなければなりません。その言語のユニコード範囲を指
+  定すると良いでしょう。
+  カスタム言語を追加する場合は、併せて対応する入力言語も `os_settings[OS].lang_inputs` 
+  に追加してください。
 
 ------------------------------------------------------------------------------
 match.languages.Ru                   *auto-input-switch.ja.match.languages.Ru*
@@ -423,7 +438,8 @@ os_settings.macos.cmd_get     *auto-input-switch.ja.os_settings.macos.cmd_get*
 ------------------------------------------------------------------------------
 os_settings.macos.cmd_set     *auto-input-switch.ja.os_settings.macos.cmd_set*
   ⇢ デフォルト: `'im-select %s'`
-  入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+  入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 
+  。
 
 ------------------------------------------------------------------------------
 os_settings.macos.normal_input
@@ -498,7 +514,8 @@ os_settings.windows.cmd_get
 os_settings.windows.cmd_set
                             *auto-input-switch.ja.os_settings.windows.cmd_set*
   ⇢ デフォルト: `'im-select.exe %s'`
-  入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+  入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 
+  。
 
 ------------------------------------------------------------------------------
 os_settings.windows.normal_input
@@ -554,7 +571,8 @@ os_settings.linux.cmd_get     *auto-input-switch.ja.os_settings.linux.cmd_get*
 ------------------------------------------------------------------------------
 os_settings.linux.cmd_set     *auto-input-switch.ja.os_settings.linux.cmd_set*
   ⇢ デフォルト: `'ibus engine %s'`
-  入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
+  入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 
+  。
 
 ------------------------------------------------------------------------------
 os_settings.linux.normal_input

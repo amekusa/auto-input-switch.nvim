@@ -3,9 +3,10 @@ return {
     -- You can toggle it anytime with the `:AutoInputSwitch on|off` command.
 
   async = false, -- Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
-    --   * `false`: Run synchronously (recommended).
-    --              May cause slight lag if you switch rapidly between Insert and Normal mode.
-    --   *  `true`: Run asynchronously. Removes lag but may be less reliable.
+    --   * false: Run synchronously (recommended).
+    --            May cause slight lag if you switch rapidly between Insert and
+    --            Normal mode.
+    --   *  true: Run asynchronously. Removes lag but may be less reliable.
 
   log = false, -- Output logs to a file?
     -- Useful for debugging `cmd_get` / `cmd_set`.
@@ -95,7 +96,9 @@ return {
     },
     on_mode_change = { -- Mode transition patterns that trigger Restore.
       -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
-      -- Default: 'n:[iR]' (From Normal/Visual to Insert/Replace mode)
+      -- 
+      -- Default:
+      --   'n:[iR]' (From Normal/Visual to Insert/Replace mode)
 
       '[nvV]:[iR]',
     },
@@ -128,7 +131,9 @@ return {
     },
     on_mode_change = { -- Mode transition patterns that trigger Match.
       -- If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
-      -- Default: '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
+      -- 
+      -- Default:
+      --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
 
       '[nvV]:[iR]',
     },

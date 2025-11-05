@@ -16,9 +16,10 @@
       -- `:AutoInputSwitch on|off` コマンドでいつでも切り替えることができます。
   
     async = false, -- シェルコマンド (`cmd_get` / `cmd_set`) の実行を非同期で行う？
-      --   * `false`: 同期実行 (推奨) 。
-      --              Insert と Normal モードを素早く切り替えた際などに僅かなラグが発生する可能性があります。
-      --   *  `true`: 非同期実行。ラグはありませんが、動作がやや不安定です。
+      --   * false: 同期実行 (推奨) 。
+      --            Insert と Normal モードを素早く切り替えた際などに僅かなラグが
+      --            発生する可能性があります。
+      --   *  true: 非同期実行。ラグはありませんが、動作がやや不安定です。
   
     log = false, -- ログをファイルに出力する？
       -- `cmd_get` / `cmd_set` をデバッグする際に有用です。
@@ -108,7 +109,9 @@
       },
       on_mode_change = { -- Restore のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
-        -- デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+        -- 
+        -- デフォルト:
+        --   '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
   
         '[nvV]:[iR]',
       },
@@ -141,7 +144,9 @@
       },
       on_mode_change = { -- Match のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
-        -- デフォルト: '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+        -- 
+        -- デフォルト:
+        --   '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
   
         '[nvV]:[iR]',
       },

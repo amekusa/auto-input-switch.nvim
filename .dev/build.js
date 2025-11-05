@@ -163,7 +163,7 @@ function toDoc(data, opts, stack = null) {
 			delete data.__default;
 		}
 		if ('__desc' in data) {
-			if (data.__desc[lang]) r += data.__desc[lang];
+			if (data.__desc[lang]) r += wrap(data.__desc[lang], docw - 2);
 			delete data.__desc;
 		}
 		if (r) { // register section

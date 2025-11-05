@@ -20,9 +20,10 @@ activate                                          *auto-input-switch.activate*
 async                                                *auto-input-switch.async*
   ⇢ default: `false`
   Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
-    * `false`: Run synchronously (recommended).
-               May cause slight lag if you switch rapidly between Insert and Normal mode.
-    *  `true`: Run asynchronously. Removes lag but may be less reliable.
+    * false: Run synchronously (recommended).
+             May cause slight lag if you switch rapidly between Insert and
+             Normal mode.
+    *  true: Run asynchronously. Removes lag but may be less reliable.
 
 ------------------------------------------------------------------------------
 log                                                    *auto-input-switch.log*
@@ -30,7 +31,7 @@ log                                                    *auto-input-switch.log*
   Output logs to a file?
   Useful for debugging `cmd_get` / `cmd_set`.
   The log file is cleared every time `setup()` is called.
-  
+
   Log file path:
     * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
     *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
@@ -166,14 +167,15 @@ normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
     }
 <
   Mode transition patterns that trigger Normalize.
-  If not `false`, Normalize is triggered by the 'ModeChanged' event matched with one of these patterns.
+  If not `false`, Normalize is triggered by the 'ModeChanged' event matched
+  with one of these patterns.
   See:
     * |autocmd-pattern|
     * |ModeChanged|
     * |mode()|
-  
+
   Default:
-    '[iR]:n' (From Insert/Replace to Normal mode)
+    `'[iR]:n'` (From Insert/Replace to Normal mode)
 
 ------------------------------------------------------------------------------
 normalize.filetypes                    *auto-input-switch.normalize.filetypes*
@@ -229,8 +231,11 @@ restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
     }
 <
   Mode transition patterns that trigger Restore.
-  If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
-  Default: 'n:[iR]' (From Normal/Visual to Insert/Replace mode)
+  If not `false`, Restore is triggered by the 'ModeChanged' event matched
+  with one of these patterns.
+
+  Default:
+    `'n:[iR]'` (From Normal/Visual to Insert/Replace mode)
 
 ------------------------------------------------------------------------------
 restore.filetypes                        *auto-input-switch.restore.filetypes*
@@ -292,8 +297,11 @@ match.on_mode_change                  *auto-input-switch.match.on_mode_change*
     }
 <
   Mode transition patterns that trigger Match.
-  If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
-  Default: '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
+  If not `false`, Match is triggered by the 'ModeChanged' event matched with
+  one of these patterns.
+
+  Default:
+    `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
 
 ------------------------------------------------------------------------------
 match.filetypes                            *auto-input-switch.match.filetypes*
@@ -330,8 +338,10 @@ match.languages                            *auto-input-switch.match.languages*
     },
 <
   Set `enable` of those you want to use to `true`.
-  Each `pattern` must be a valid regex. Specify the unicode ranges of the language.
-  Add custom languages if needed, and define the corresponding input methods as well in `os_settings[OS].lang_inputs`.
+  Each `pattern` must be a valid regex. Specify the unicode ranges of the
+  language.
+  Add custom languages if needed, and define the corresponding input methods
+  as well in `os_settings[OS].lang_inputs`.
 
 ------------------------------------------------------------------------------
 match.languages.Ru                      *auto-input-switch.match.languages.Ru*
@@ -423,7 +433,8 @@ os_settings.macos.cmd_get        *auto-input-switch.os_settings.macos.cmd_get*
 ------------------------------------------------------------------------------
 os_settings.macos.cmd_set        *auto-input-switch.os_settings.macos.cmd_set*
   ⇢ default: `'im-select %s'`
-  Command to set a new input method (`%s` will be replaced with the target ID).
+  Command to set a new input method (`%s` will be replaced with the target
+  ID).
 
 ------------------------------------------------------------------------------
 os_settings.macos.normal_input
@@ -497,7 +508,8 @@ os_settings.windows.cmd_get
 os_settings.windows.cmd_set
                                *auto-input-switch.os_settings.windows.cmd_set*
   ⇢ default: `'im-select.exe %s'`
-  Command to set a new input method (`%s` will be replaced with the target ID).
+  Command to set a new input method (`%s` will be replaced with the target
+  ID).
 
 ------------------------------------------------------------------------------
 os_settings.windows.normal_input
@@ -553,7 +565,8 @@ os_settings.linux.cmd_get        *auto-input-switch.os_settings.linux.cmd_get*
 ------------------------------------------------------------------------------
 os_settings.linux.cmd_set        *auto-input-switch.os_settings.linux.cmd_set*
   ⇢ default: `'ibus engine %s'`
-  Command to set a new input method (`%s` will be replaced with the target ID).
+  Command to set a new input method (`%s` will be replaced with the target
+  ID).
 
 ------------------------------------------------------------------------------
 os_settings.linux.normal_input
