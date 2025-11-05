@@ -1,9 +1,9 @@
 import {Marked} from 'marked';
 import ContextStack from './cstack.js';
 import {
-	docWidth, lines,
-	h, tag, link, sr,
-	codeblock, indent,
+	strWidth, docWidth,
+	lines, h, tag, link, sr,
+	indent, wrap, codeblock,
 } from './helpers.js';
 
 const lf = '\n';
@@ -14,14 +14,17 @@ const lf = '\n';
  */
 
 function docRenderer(opts) {
-	const {
+	let {
 		ns, // namespace
 		docw = 78, // doc width
 		shiftHL = 0, // shift heading level
 		indentStr = '  ',
+		indentWidth,
 		baseURL = '', // for relative URLs
 		images = true,
 	} = opts;
+
+	if (!indentWidth) indentWidth = strWidth(indentStr);
 
 	const cs = new ContextStack();
 
@@ -48,11 +51,11 @@ function docRenderer(opts) {
 		},
 		paragraph({tokens}) {
 			let text = this.parser.parseInline(tokens).trim();
+			text = wrap(text, docw);
 			return cs.get('list') ? text : block(text);
 		},
 		br() {
-			let c = cs.get('list');
-			return c ? (lf + indentStr.repeat(c.depth + 1)) : lf;
+			return lf;
 		},
 		em({tokens}) {
 			let text = this.parser.parseInline(tokens);
@@ -63,17 +66,21 @@ function docRenderer(opts) {
 			return text;
 		},
 		list({items, ordered}) {
-			let c = cs.get('list', {depth: 0}, next => {next.depth++});
-			let ind = c.depth ? indentStr.repeat(c.depth) : '';
+			let c = cs.push('list', {depth: 0}, next => {next.depth++});
+			c.ordered = ordered;
 			let body = lf;
 			for (let i = 0; i < items.length; i++) {
-				body += ind + (ordered ? `${i+1}. ` : '- ') + this.listitem(items[i]) + lf;
+				c.nth = i + 1;
+				body += this.listitem(items[i]) + lf;
 			}
 			cs.pop();
 			return body;
 		},
 		listitem({tokens, loose}) {
+			let c = cs.get('list');
 			let text = this.parser.parse(tokens, !!loose).trim();
+			text = wrap(text, docw - (c.depth + 1) * 2);
+			text = (c.ordered ? `${c.nth}. ` : '- ') + indent(text, '  ', true);
 			return text;
 		},
 		link({href, tokens}) {
@@ -87,7 +94,8 @@ function docRenderer(opts) {
 		},
 		blockquote({tokens}) {
 			let body = this.parser.parse(tokens).trim();
-			body = body.replace(/^\[!([A-Z]+)\]\n/, '$1:\n');
+			body = wrap(body, docw - 2);
+			body = body.replace(/^\[!([A-Z]+)\]\n/, '$1:\n'); // gfm special tag
 			return sr(indent(body, '▎ '), lf);
 		},
 		codespan({text}) {

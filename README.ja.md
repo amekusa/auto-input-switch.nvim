@@ -88,8 +88,6 @@ require('auto-input-switch').setup({
 - **Neovim:** v0.10+
 - **OS:** macOS, Windows, Linux
 
-You need a commanline program to switch input methods in the background.  
-With the default config:
 コマンドラインで入力言語を切り替えるソフトが必要です。
 デフォルト設定の場合:
 
