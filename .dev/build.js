@@ -13,7 +13,7 @@ import {MD2Doc} from './md2doc.js';
 import {
 	docWidth,
 	lines, h, h1, h2, tag, link, sr,
-	wrap, codeblock, indentBlock,
+	wrap, indent, codeblock, indentBlock,
 } from './helpers.js';
 
 const base = import.meta.dirname;
@@ -21,6 +21,16 @@ const root = dirname(base); // project root
 
 const docw = docWidth(78);
 const lf = '\n';
+
+const trMap = {
+	ja: {
+		[`default`]: `デフォルト`,
+	},
+}
+function tr(str, lang = 'en') {
+	let _str = str.toLowerCase();
+	return (lang != 'en' && trMap[lang] && trMap[lang][_str]) ? trMap[lang][_str] : str;
+}
 
 /**
  * Converts the given value into a Lua expression.
@@ -148,8 +158,8 @@ function toDoc(data, opts, stack = null) {
 	if (stack) {
 		if ('__default' in data) {
 			r = toLua(data.__default, {lang});
-			if (r.includes('\n')) r = '- default: >lua\n' + r + '\n<\n';
-			else                  r = '- default: `' + r + '`\n';
+			if (r.includes('\n')) r = '⇢ ' + tr('default', lang) + ': >lua\n' + indent(r, '  ') + '\n<\n';
+			else                  r = '⇢ ' + tr('default', lang) + ': `' + r + '`\n';
 			delete data.__default;
 		}
 		if ('__desc' in data) {
@@ -157,7 +167,7 @@ function toDoc(data, opts, stack = null) {
 			delete data.__desc;
 		}
 		if (r) { // register section
-			r = indentBlock(r);
+			r = indentBlock(r, '  ');
 			// section header
 			let head = stack.join('.');
 			r = h2(head, `*${ns}.${head}*`) + '\n' + r + '\n\n';
@@ -203,7 +213,7 @@ function written(file) {
 	};
 }
 
-let logo = `
+const logo = `
 
 
    ▀█▀██              ▀██▀                 ▄█▀▀▄█
@@ -214,7 +224,7 @@ let logo = `
 
 
 `;
-let footer = `
+const footer = `
 ${h1('Documents')}
 
 	* About the plugin: |auto-input-switch.nvim|
@@ -238,7 +248,7 @@ ${h1('ドキュメント')}
 
 vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
 
-let enc = 'utf8'; // encoding
+const enc = 'utf8'; // encoding
 
 // options
 fs.readFile(base + '/options.yml', enc, (err, data) => {
