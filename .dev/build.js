@@ -199,7 +199,7 @@ function toCmdDoc(data, opts) {
 		if (v.args) head += ' ' + v.args;
 		r += '-'.repeat(docw) + '\n' + h(head, `*${ns}:${k}*`) + '\n';
 		if (v.desc && v.desc[lang]) {
-			r += indentBlock(v.desc[lang]) + '\n';
+			r += indentBlock(v.desc[lang], '  ') + '\n';
 		}
 		r += '\n';
 	}

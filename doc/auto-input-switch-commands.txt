@@ -12,35 +12,35 @@
 Commands                                          *auto-input-switch-commands*
 ------------------------------------------------------------------------------
 :AutoInputSwitch on|off                                     *:AutoInputSwitch*
-	Enable or disable the plugin globally.
+  Enable or disable the plugin globally.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBuf on|off                               *:AutoInputSwitchBuf*
-	Enable or disable the plugin on the current buffer.
+  Enable or disable the plugin on the current buffer.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBufNormalize on|off             *:AutoInputSwitchBufNormalize*
-	Enable or disable Normalize on the current buffer.
+  Enable or disable Normalize on the current buffer.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBufRestore on|off                 *:AutoInputSwitchBufRestore*
-	Enable or disable Restore on the current buffer.
+  Enable or disable Restore on the current buffer.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBufMatch on|off                     *:AutoInputSwitchBufMatch*
-	Enable or disable Match on the current buffer.
+  Enable or disable Match on the current buffer.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchNormalize                          *:AutoInputSwitchNormalize*
-	Manually perform Normalize.
+  Manually perform Normalize.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchRestore                              *:AutoInputSwitchRestore*
-	Manually perform Restore.
+  Manually perform Restore.
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchMatch                                  *:AutoInputSwitchMatch*
-	Manually perform Match.
+  Manually perform Match.
 
 
 ==============================================================================
