@@ -5,8 +5,8 @@
 
 const lf = '\n';
 
-export function indent(str, ind = '\t') {
-	return ind + str.replaceAll(lf, lf + ind);
+export function indent(str, ind = '\t', ignoreFirstLine = false) {
+	return (ignoreFirstLine ? '' : ind) + str.replaceAll(lf, lf + ind);
 }
 
 export function charWidth(char) {
