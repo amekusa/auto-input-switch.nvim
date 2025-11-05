@@ -227,23 +227,23 @@ const logo = `
 const footer = `
 ${h1('Documents')}
 
-	* About the plugin: |auto-input-switch.nvim|
-	*          Options: |auto-input-switch-options|
-	*   Default config: |auto-input-switch-defaults|
-	*         Commands: |auto-input-switch-commands|
+  * About the plugin: |auto-input-switch.nvim|
+  *          Options: |auto-input-switch-options|
+  *   Default config: |auto-input-switch-defaults|
+  *         Commands: |auto-input-switch-commands|
 
-	Note: CTRL-] to jump to the |link| under the cursor.
-	      CTRL-T or CTRL-O to jump back.
+  Note: CTRL-] to jump to the |link| under the cursor.
+        CTRL-T or CTRL-O to jump back.
 
 ${h1('ドキュメント')}
 
-	* プラグインについて: |auto-input-switch.nvim.ja|
-	*         オプション: |auto-input-switch-options.ja|
-	*     デフォルト設定: |auto-input-switch-defaults.ja|
-	*           コマンド: |auto-input-switch-commands.ja|
+  * プラグインについて: |auto-input-switch.nvim.ja|
+  *         オプション: |auto-input-switch-options.ja|
+  *     デフォルト設定: |auto-input-switch-defaults.ja|
+  *           コマンド: |auto-input-switch-commands.ja|
 
-	Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
-	      CTRL-T または CTRL-O で戻る。
+  Note: CTRL-] を押すとカーソル下の |リンク| に飛ぶ。
+        CTRL-T または CTRL-O で戻る。
 
 
 vim:tw=${docw}:ts=4:noet:ft=help:norl:`;
