@@ -12,35 +12,35 @@
 コマンド                                       *auto-input-switch-commands.ja*
 ------------------------------------------------------------------------------
 :AutoInputSwitch on|off                                   *ja:AutoInputSwitch*
-	プラグインを有効化、または無効化します。
+  プラグインを有効化、または無効化します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBuf on|off                             *ja:AutoInputSwitchBuf*
-	現在のバッファに対してプラグインを有効化、または無効化します。
+  現在のバッファに対してプラグインを有効化、または無効化します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBufNormalize on|off           *ja:AutoInputSwitchBufNormalize*
-	現在のバッファに対して Normalize を有効化、または無効化します。
+  現在のバッファに対して Normalize を有効化、または無効化します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBufRestore on|off               *ja:AutoInputSwitchBufRestore*
-	現在のバッファに対して Restore を有効化、または無効化します。
+  現在のバッファに対して Restore を有効化、または無効化します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchBufMatch on|off                   *ja:AutoInputSwitchBufMatch*
-	現在のバッファに対して Match を有効化、または無効化します。
+  現在のバッファに対して Match を有効化、または無効化します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchNormalize                        *ja:AutoInputSwitchNormalize*
-	手動で Normalize を実行します。
+  手動で Normalize を実行します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchRestore                            *ja:AutoInputSwitchRestore*
-	手動で Restore を実行します。
+  手動で Restore を実行します。
 
 ------------------------------------------------------------------------------
 :AutoInputSwitchMatch                                *ja:AutoInputSwitchMatch*
-	手動で Match を実行します。
+  手動で Match を実行します。
 
 
 ==============================================================================
