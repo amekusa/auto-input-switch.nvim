@@ -11,9 +11,9 @@ import yaml from 'yaml';
 
 import {MD2Doc} from './md2doc.js';
 import {
-	docWidth, lines,
-	h, h1, h2, tag, link, sr,
-	codeblock, indentBlock,
+	docWidth,
+	lines, h, h1, h2, tag, link, sr,
+	wrap, codeblock, indentBlock,
 } from './helpers.js';
 
 const base = import.meta.dirname;

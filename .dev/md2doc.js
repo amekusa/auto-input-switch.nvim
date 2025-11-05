@@ -1,10 +1,9 @@
 import {Marked} from 'marked';
 import ContextStack from './cstack.js';
 import {
-	docWidth, lines,
-	h, tag, link, sr,
-	codeblock, indent,
-	wrap, strWidth,
+	strWidth, docWidth,
+	lines, h, tag, link, sr,
+	indent, wrap, codeblock,
 } from './helpers.js';
 
 const lf = '\n';

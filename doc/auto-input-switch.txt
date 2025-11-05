@@ -10,14 +10,17 @@
 
 
 
-A Neovim plugin that automatically switches your input method (IME / input source) based on context.
-It removes the friction of constantly toggling between English and non-English input methods when coding, writing, or taking notes.
+A Neovim plugin that automatically switches your input method (IME / input 
+source) based on context.
+It removes the friction of constantly toggling between English and 
+non-English input methods when coding, writing, or taking notes.
 
 Works on macOS, Windows, and Linux.
 
 ▎ WARNING:
 ▎ Breaking changes in v5.0.0
-▎ If you’re upgrading from v4.x or earlier, please check the Changelog (https://github.com/amekusa/auto-input-switch.nvim/#changelog) for details.
+▎ If you’re upgrading from v4.x or earlier, please check the Changelog 
+▎ (https://github.com/amekusa/auto-input-switch.nvim/#changelog) for details.
 
 ==============================================================================
 Features                                     *auto-input-switch.nvim.features*
@@ -25,9 +28,11 @@ Features                                     *auto-input-switch.nvim.features*
 - Normalize:
   Always return to Latin input (e.g. US keyboard) outside of Insert mode.
 - Restore:
-  When you return to Insert mode, restore the input method you were using last time.
+  When you return to Insert mode, restore the input method you were using 
+  last time.
 - Match:
-  Detect nearby text and automatically switch to the matching input method (Japanese, Chinese, Korean, Russian, …).
+  Detect nearby text and automatically switch to the matching input method 
+  (Japanese, Chinese, Korean, Russian, …).
 - Popup notifications:
   Show a small popup whenever the plugin switches your input method.
 
@@ -78,7 +83,8 @@ Example: enable Match for Japanese, Chinese, and Korean:
 
 ▎ NOTE:
 ▎ Since Japanese and Chinese share some Unicode ranges,
-▎ it’s recommended to set `priority` to control which language takes precedence.
+▎ it’s recommended to set `priority` to control which language takes 
+▎ precedence.
 
 ==============================================================================
 Requirements                             *auto-input-switch.nvim.requirements*
@@ -90,7 +96,8 @@ You need a commanline program to switch input methods in the background.
 With the default config:
 
 - macOS / Windows: im-select (https://github.com/daipeihust/im-select)
-  (Alternatively, macism (https://github.com/laishulu/macism) may work better on macOS.)
+  (Alternatively, macism (https://github.com/laishulu/macism) may work better 
+  on macOS.)
 - Linux: ibus (https://github.com/ibus/ibus)
 
 ==============================================================================
@@ -104,15 +111,18 @@ If you’re upgrading, please review carefully.
 
 Breaking Changes:
 
-- Replaced `*.file_pattern` with `*.filetypes` (takes filetype names, not extensions).
-- New `*.on_mode_change` options replace some `InsertEnter/InsertLeave` defaults.
+- Replaced `*.file_pattern` with `*.filetypes` (takes filetype names, not 
+  extensions).
+- New `*.on_mode_change` options replace some `InsertEnter/InsertLeave` 
+  defaults.
 - `restore.exclude_pattern` now uses regex (not Lua patterns).
 - Popup window options moved from `popup.*` → `popup.window.*`.
 
 Non-breaking Changes:
 
 - `popup.labels.*` simplified (accepts plain strings).
-- New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.
+- New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, 
+  `*.buf_condition`.
 - New buffer-local commands:
   - `:AutoInputSwitchBuf on|off`
   - `:AutoInputSwitchBufNormalize on|off`

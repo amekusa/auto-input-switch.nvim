@@ -17,7 +17,8 @@ macOS, Windows, Linux に対応しています。
 
 ▎ WARNING:
 ▎ v5.0.0 の変更点
-▎ v4.x から更新する場合は 変更履歴 (https://github.com/amekusa/auto-input-switch.nvim/#changelog) で詳細を確認してください。
+▎ v4.x から更新する場合は 変更履歴 (https://github.com/amekusa/auto-input-switch.nvim/#changelog) 
+▎ で詳細を確認してください。
 
 ==============================================================================
 機能                                      *auto-input-switch.nvim.ja.features*
@@ -91,7 +92,8 @@ With the default config:
 デフォルト設定の場合:
 
 - macOS / Windows: im-select (https://github.com/daipeihust/im-select)
-  (macOS の場合、macism (https://github.com/laishulu/macism) の方がいいかもしれません。)
+  (macOS の場合、macism (https://github.com/laishulu/macism) 
+  の方がいいかもしれません。)
 - Linux: ibus (https://github.com/ibus/ibus)
 
 ==============================================================================
@@ -105,7 +107,8 @@ v5.0.0                                      *auto-input-switch.nvim.ja.v5-0-0*
 
 非互換の変更:
 
-- `*.file_pattern` を `*.filetypes` に変更 (拡張子ではなくファイルタイプ名を指定)。
+- `*.file_pattern` を `*.filetypes` に変更 (拡張子ではなくファイルタイプ名を指
+  定)。
 - `*.on_mode_change` を追加。
   それに伴い `*.on` のデフォルト値から `InsertEnter/InsertLeave` を削除。
 - `restore.exclude_pattern` を正規表現に変更。
@@ -114,7 +117,8 @@ v5.0.0                                      *auto-input-switch.nvim.ja.v5-0-0*
 互換性のある変更:
 
 - `popup.labels.*` に単純な文字列を指定可能に (幅は自動計算されます)。
-- 追加オプション: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.
+- 追加オプション: `normalize.debounce`, `restore.debounce`, `match.debounce`, 
+  `*.buf_condition`.
 - 追加コマンド:
   - `:AutoInputSwitchBuf on|off`
   - `:AutoInputSwitchBufNormalize on|off`
