@@ -158,8 +158,8 @@ function toDoc(data, opts, stack = null) {
 	if (stack) {
 		if ('__default' in data) {
 			r = toLua(data.__default, {lang});
-			if (r.includes('\n')) r = '⇢ ' + tr('default', lang) + ': >lua\n' + indent(r, '  ') + '\n<\n';
-			else                  r = '⇢ ' + tr('default', lang) + ': `' + r + '`\n';
+			if (r.includes('\n')) r = '⇢  ' + tr('default', lang) + ': >lua\n' + indent(r, '  ') + '\n<\n';
+			else                  r = '⇢  ' + tr('default', lang) + ': `' + r + '`\n';
 			delete data.__default;
 		}
 		if ('__desc' in data) {
