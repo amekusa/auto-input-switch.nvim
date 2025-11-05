@@ -1,5 +1,5 @@
 import {sr, indent, padMiddle} from './strutil.js';
-export {sr, indent, lines} from './strutil.js';
+export {sr, indent, wrap, lines, strWidth} from './strutil.js';
 
 const lf = '\n';
 
