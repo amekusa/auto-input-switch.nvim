@@ -235,7 +235,7 @@ restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   with one of these patterns.
   
   Default:
-    `'n:[iR]'` (From Normal/Visual to Insert/Replace mode)
+    `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
 
 ------------------------------------------------------------------------------
 restore.filetypes                        *auto-input-switch.restore.filetypes*
