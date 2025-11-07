@@ -309,7 +309,7 @@ restore:
         If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
 
         Default:
-          `'n:[iR]'` (From Normal/Visual to Insert/Replace mode)
+          `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
       ja: |-
         Restore のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。

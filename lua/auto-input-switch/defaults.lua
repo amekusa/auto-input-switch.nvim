@@ -98,7 +98,7 @@ return {
       -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- 
       -- Default:
-      --   'n:[iR]' (From Normal/Visual to Insert/Replace mode)
+      --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
 
       '[nvV]:[iR]',
     },

@@ -12,13 +12,13 @@
 Options                                            *auto-input-switch-options*
 ------------------------------------------------------------------------------
 activate                                          *auto-input-switch.activate*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Enable the plugin.
   You can toggle it anytime with the `:AutoInputSwitch on|off` command.
 
 ------------------------------------------------------------------------------
 async                                                *auto-input-switch.async*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Run shell commands (`cmd_get` / `cmd_set`) asynchronously?
     * false: Run synchronously (recommended).
              May cause slight lag if you switch rapidly between Insert and
@@ -27,7 +27,7 @@ async                                                *auto-input-switch.async*
 
 ------------------------------------------------------------------------------
 log                                                    *auto-input-switch.log*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Output logs to a file?
   Useful for debugging `cmd_get` / `cmd_set`.
   The log file is cleared every time `setup()` is called.
@@ -38,7 +38,7 @@ log                                                    *auto-input-switch.log*
 
 ------------------------------------------------------------------------------
 prefix                                              *auto-input-switch.prefix*
-  ⇢ default: `'AutoInputSwitch'`
+  ⇢  default: `'AutoInputSwitch'`
   Prefix for command names.
   If you prefer shorter commands, set this to something like `'AIS'`.
 
@@ -48,22 +48,22 @@ popup                                                *auto-input-switch.popup*
 
 ------------------------------------------------------------------------------
 popup.enable                                  *auto-input-switch.popup.enable*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Show popups?
 
 ------------------------------------------------------------------------------
 popup.duration                              *auto-input-switch.popup.duration*
-  ⇢ default: `1500`
+  ⇢  default: `1500`
   How long the popup remains visible (ms).
 
 ------------------------------------------------------------------------------
 popup.pad                                        *auto-input-switch.popup.pad*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Add leading and trailing spaces to popup text?
 
 ------------------------------------------------------------------------------
 popup.hl_group                              *auto-input-switch.popup.hl_group*
-  ⇢ default: `'PmenuSel'`
+  ⇢  default: `'PmenuSel'`
   Highlight group for the popup window.
 
 ------------------------------------------------------------------------------
@@ -72,33 +72,33 @@ popup.window                                  *auto-input-switch.popup.window*
 
 ------------------------------------------------------------------------------
 popup.window.border                    *auto-input-switch.popup.window.border*
-  ⇢ default: `'none'`
+  ⇢  default: `'none'`
   Border style.
 
 ------------------------------------------------------------------------------
 popup.window.zindex                    *auto-input-switch.popup.window.zindex*
-  ⇢ default: `50`
+  ⇢  default: `50`
   Rendering priority.
 
 ------------------------------------------------------------------------------
 popup.window.row                          *auto-input-switch.popup.window.row*
-  ⇢ default: `1`
+  ⇢  default: `1`
   Horizontal offset.
 
 ------------------------------------------------------------------------------
 popup.window.col                          *auto-input-switch.popup.window.col*
-  ⇢ default: `0`
+  ⇢  default: `0`
   Vertical offset.
 
 ------------------------------------------------------------------------------
 popup.window.relative                *auto-input-switch.popup.window.relative*
-  ⇢ default: `'cursor'`
+  ⇢  default: `'cursor'`
   Origin of the offsets.
   One of: `'editor'`, `'win'`, `'cursor'`, or `'mouse'`
 
 ------------------------------------------------------------------------------
 popup.window.anchor                    *auto-input-switch.popup.window.anchor*
-  ⇢ default: `'NW'`
+  ⇢  default: `'NW'`
   Corner used to anchor the popup.
     * `'NW'`: Northwest
     * `'NE'`: Northeast
@@ -111,7 +111,7 @@ popup.labels                                  *auto-input-switch.popup.labels*
 
 ------------------------------------------------------------------------------
 popup.labels.normal_input        *auto-input-switch.popup.labels.normal_input*
-  ⇢ default: `'A'`
+  ⇢  default: `'A'`
   Popup text for Normalize. Set `false` to disable.
 
 ------------------------------------------------------------------------------
@@ -121,19 +121,19 @@ popup.labels.lang_inputs          *auto-input-switch.popup.labels.lang_inputs*
 ------------------------------------------------------------------------------
 popup.labels.lang_inputs.Ja
                                *auto-input-switch.popup.labels.lang_inputs.Ja*
-  ⇢ default: `'あ'`
+  ⇢  default: `'あ'`
   Popup text for Japanese input.
 
 ------------------------------------------------------------------------------
 popup.labels.lang_inputs.Zh
                                *auto-input-switch.popup.labels.lang_inputs.Zh*
-  ⇢ default: `'拼'`
+  ⇢  default: `'拼'`
   Popup text for Chinese input.
 
 ------------------------------------------------------------------------------
 popup.labels.lang_inputs.Ko
                                *auto-input-switch.popup.labels.lang_inputs.Ko*
-  ⇢ default: `'한'`
+  ⇢  default: `'한'`
   Popup text for Korean input.
 
 ------------------------------------------------------------------------------
@@ -143,12 +143,12 @@ normalize                                        *auto-input-switch.normalize*
 
 ------------------------------------------------------------------------------
 normalize.enable                          *auto-input-switch.normalize.enable*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Enable Normalize?
 
 ------------------------------------------------------------------------------
 normalize.on                                  *auto-input-switch.normalize.on*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       'BufLeave',
       'WinLeave',
@@ -161,7 +161,7 @@ normalize.on                                  *auto-input-switch.normalize.on*
 
 ------------------------------------------------------------------------------
 normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       '[iR]:n',
     }
@@ -179,7 +179,7 @@ normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
 
 ------------------------------------------------------------------------------
 normalize.filetypes                    *auto-input-switch.normalize.filetypes*
-  ⇢ default: `'*'`
+  ⇢  default: `'*'`
   Filetypes where Normalize is enabled.
   Example: >lua
     filetypes = { 'markdown', 'text' },
@@ -187,12 +187,12 @@ normalize.filetypes                    *auto-input-switch.normalize.filetypes*
 
 ------------------------------------------------------------------------------
 normalize.debounce                      *auto-input-switch.normalize.debounce*
-  ⇢ default: `500`
+  ⇢  default: `500`
   Debounce time (ms). Prevents repeated Normalize triggers.
 
 ------------------------------------------------------------------------------
 normalize.buf_condition            *auto-input-switch.normalize.buf_condition*
-  ⇢ default: `nil`
+  ⇢  default: `nil`
   Optional function that decides whether Normalize is enabled for a buffer.
   Called on each buffer creation with its buffer number.
   Return `true` to enable Normalize for that buffer.
@@ -211,12 +211,12 @@ restore                                            *auto-input-switch.restore*
 
 ------------------------------------------------------------------------------
 restore.enable                              *auto-input-switch.restore.enable*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Enable Restore?
 
 ------------------------------------------------------------------------------
 restore.on                                      *auto-input-switch.restore.on*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       'FocusGained',
     }
@@ -225,7 +225,7 @@ restore.on                                      *auto-input-switch.restore.on*
 
 ------------------------------------------------------------------------------
 restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       '[nvV]:[iR]',
     }
@@ -235,11 +235,11 @@ restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   with one of these patterns.
   
   Default:
-    `'n:[iR]'` (From Normal/Visual to Insert/Replace mode)
+    `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
 
 ------------------------------------------------------------------------------
 restore.filetypes                        *auto-input-switch.restore.filetypes*
-  ⇢ default: `'*'`
+  ⇢  default: `'*'`
   Filetypes where Restore is enabled.
   Example: >lua
     filetypes = { 'markdown', 'text' },
@@ -247,12 +247,12 @@ restore.filetypes                        *auto-input-switch.restore.filetypes*
 
 ------------------------------------------------------------------------------
 restore.debounce                          *auto-input-switch.restore.debounce*
-  ⇢ default: `500`
+  ⇢  default: `500`
   Debounce time (ms). Prevents repeated Restore triggers.
 
 ------------------------------------------------------------------------------
 restore.buf_condition                *auto-input-switch.restore.buf_condition*
-  ⇢ default: `nil`
+  ⇢  default: `nil`
   Function that decides whether Restore is enabled for a buffer.
   Called on each buffer creation with its buffer number.
   Return `true` to enable Restore for that buffer.
@@ -261,7 +261,7 @@ restore.buf_condition                *auto-input-switch.restore.buf_condition*
 
 ------------------------------------------------------------------------------
 restore.exclude_pattern            *auto-input-switch.restore.exclude_pattern*
-  ⇢ default: `[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]`
+  ⇢  default: `[==[[-+a-zA-Z0-9@#$%^&/\\¥=~<>(){}\[\];:`]]==]`
   Regex pattern checked before Restore runs.
   If nearby characters match this, Restore is canceled.
   Set `false` to disable this check.
@@ -277,12 +277,12 @@ match                                                *auto-input-switch.match*
 
 ------------------------------------------------------------------------------
 match.enable                                  *auto-input-switch.match.enable*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Enable Match?
 
 ------------------------------------------------------------------------------
 match.on                                          *auto-input-switch.match.on*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       'FocusGained',
     }
@@ -291,7 +291,7 @@ match.on                                          *auto-input-switch.match.on*
 
 ------------------------------------------------------------------------------
 match.on_mode_change                  *auto-input-switch.match.on_mode_change*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       '[nvV]:[iR]',
     }
@@ -305,7 +305,7 @@ match.on_mode_change                  *auto-input-switch.match.on_mode_change*
 
 ------------------------------------------------------------------------------
 match.filetypes                            *auto-input-switch.match.filetypes*
-  ⇢ default: `'*'`
+  ⇢  default: `'*'`
   Filetypes where Match is enabled.
   Example: >lua
     filetypes = { 'markdown', 'text' },
@@ -313,12 +313,12 @@ match.filetypes                            *auto-input-switch.match.filetypes*
 
 ------------------------------------------------------------------------------
 match.debounce                              *auto-input-switch.match.debounce*
-  ⇢ default: `500`
+  ⇢  default: `500`
   Debounce time (ms). Prevents repeated Match triggers.
 
 ------------------------------------------------------------------------------
 match.buf_condition                    *auto-input-switch.match.buf_condition*
-  ⇢ default: `nil`
+  ⇢  default: `nil`
   Function that decides whether Match is enabled for a buffer.
   Called on each buffer creation with its buffer number.
   Return `true` to enable Match for that buffer.
@@ -345,7 +345,7 @@ match.languages                            *auto-input-switch.match.languages*
 
 ------------------------------------------------------------------------------
 match.languages.Ru                      *auto-input-switch.match.languages.Ru*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       enable = false,
       priority = 0,
@@ -356,7 +356,7 @@ match.languages.Ru                      *auto-input-switch.match.languages.Ru*
 
 ------------------------------------------------------------------------------
 match.languages.Ja                      *auto-input-switch.match.languages.Ja*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       enable = false,
       priority = 0,
@@ -367,7 +367,7 @@ match.languages.Ja                      *auto-input-switch.match.languages.Ja*
 
 ------------------------------------------------------------------------------
 match.languages.Zh                      *auto-input-switch.match.languages.Zh*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       enable = false,
       priority = 0,
@@ -378,7 +378,7 @@ match.languages.Zh                      *auto-input-switch.match.languages.Zh*
 
 ------------------------------------------------------------------------------
 match.languages.Ko                      *auto-input-switch.match.languages.Ko*
-  ⇢ default: >lua
+  ⇢  default: >lua
     {
       enable = false,
       priority = 0,
@@ -394,25 +394,25 @@ match.lines                                    *auto-input-switch.match.lines*
 
 ------------------------------------------------------------------------------
 match.lines.above                        *auto-input-switch.match.lines.above*
-  ⇢ default: `1`
+  ⇢  default: `1`
   Number of lines above to search.
 
 ------------------------------------------------------------------------------
 match.lines.below                        *auto-input-switch.match.lines.below*
-  ⇢ default: `1`
+  ⇢  default: `1`
   Number of lines below to search.
 
 ------------------------------------------------------------------------------
 match.lines.exclude_pattern
                                *auto-input-switch.match.lines.exclude_pattern*
-  ⇢ default: `[==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==]`
+  ⇢  default: `[==[^\s*\%([-+*:|>]\|[0-9]\+\.\)\s]==]`
   Regex pattern for lines that stop language detection.
   Useful for Markdown lists, table rows, or blockquotes.
   Set `false` to disable.
 
 ------------------------------------------------------------------------------
 os                                                      *auto-input-switch.os*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Specify the operating system.
   One of: `'macos'`, `'windows'`, `'linux'`, or `false` for auto-detection.
 
@@ -422,24 +422,24 @@ os_settings                                    *auto-input-switch.os_settings*
 
 ------------------------------------------------------------------------------
 os_settings.macos.enable          *auto-input-switch.os_settings.macos.enable*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Enable macOS-specific settings?
 
 ------------------------------------------------------------------------------
 os_settings.macos.cmd_get        *auto-input-switch.os_settings.macos.cmd_get*
-  ⇢ default: `'im-select'`
+  ⇢  default: `'im-select'`
   Command to get the current input method ID.
 
 ------------------------------------------------------------------------------
 os_settings.macos.cmd_set        *auto-input-switch.os_settings.macos.cmd_set*
-  ⇢ default: `'im-select %s'`
+  ⇢  default: `'im-select %s'`
   Command to set a new input method (`%s` will be replaced with the target 
   ID).
 
 ------------------------------------------------------------------------------
 os_settings.macos.normal_input
                             *auto-input-switch.os_settings.macos.normal_input*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Input method used for Normalize (`false` = auto-detect).
   Examples: >lua
     normal_input = 'com.apple.keylayout.ABC',
@@ -472,49 +472,49 @@ os_settings.macos.lang_inputs
 ------------------------------------------------------------------------------
 os_settings.macos.lang_inputs.Ru
                           *auto-input-switch.os_settings.macos.lang_inputs.Ru*
-  ⇢ default: `'com.apple.keylayout.Russian'`
+  ⇢  default: `'com.apple.keylayout.Russian'`
   Input method ID for Russian.
 
 ------------------------------------------------------------------------------
 os_settings.macos.lang_inputs.Ja
                           *auto-input-switch.os_settings.macos.lang_inputs.Ja*
-  ⇢ default: `'com.apple.inputmethod.Kotoeri.Japanese'`
+  ⇢  default: `'com.apple.inputmethod.Kotoeri.Japanese'`
   Input method ID for Japanese.
 
 ------------------------------------------------------------------------------
 os_settings.macos.lang_inputs.Zh
                           *auto-input-switch.os_settings.macos.lang_inputs.Zh*
-  ⇢ default: `'com.apple.inputmethod.SCIM.ITABC'`
+  ⇢  default: `'com.apple.inputmethod.SCIM.ITABC'`
   Input method ID for Chinese.
 
 ------------------------------------------------------------------------------
 os_settings.macos.lang_inputs.Ko
                           *auto-input-switch.os_settings.macos.lang_inputs.Ko*
-  ⇢ default: `'com.apple.inputmethod.Korean.2SetKorean'`
+  ⇢  default: `'com.apple.inputmethod.Korean.2SetKorean'`
   Input method ID for Korean.
 
 ------------------------------------------------------------------------------
 os_settings.windows.enable      *auto-input-switch.os_settings.windows.enable*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Enable Windows-specific settings?
 
 ------------------------------------------------------------------------------
 os_settings.windows.cmd_get
                                *auto-input-switch.os_settings.windows.cmd_get*
-  ⇢ default: `'im-select.exe'`
+  ⇢  default: `'im-select.exe'`
   Command to get the current input method ID.
 
 ------------------------------------------------------------------------------
 os_settings.windows.cmd_set
                                *auto-input-switch.os_settings.windows.cmd_set*
-  ⇢ default: `'im-select.exe %s'`
+  ⇢  default: `'im-select.exe %s'`
   Command to set a new input method (`%s` will be replaced with the target 
   ID).
 
 ------------------------------------------------------------------------------
 os_settings.windows.normal_input
                           *auto-input-switch.os_settings.windows.normal_input*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Input method used for Normalize (`false` = auto-detect).
   Example: >lua
     normal_input = '1033', -- US English
@@ -531,47 +531,47 @@ os_settings.windows.lang_inputs
 ------------------------------------------------------------------------------
 os_settings.windows.lang_inputs.Ru
                         *auto-input-switch.os_settings.windows.lang_inputs.Ru*
-  ⇢ default: `'1049'`
+  ⇢  default: `'1049'`
   Input method ID for Russian.
 
 ------------------------------------------------------------------------------
 os_settings.windows.lang_inputs.Ja
                         *auto-input-switch.os_settings.windows.lang_inputs.Ja*
-  ⇢ default: `'1041'`
+  ⇢  default: `'1041'`
   Input method ID for Japanese.
 
 ------------------------------------------------------------------------------
 os_settings.windows.lang_inputs.Zh
                         *auto-input-switch.os_settings.windows.lang_inputs.Zh*
-  ⇢ default: `'2052'`
+  ⇢  default: `'2052'`
   Input method ID for Chinese.
 
 ------------------------------------------------------------------------------
 os_settings.windows.lang_inputs.Ko
                         *auto-input-switch.os_settings.windows.lang_inputs.Ko*
-  ⇢ default: `'1042'`
+  ⇢  default: `'1042'`
   Input method ID for Korean.
 
 ------------------------------------------------------------------------------
 os_settings.linux.enable          *auto-input-switch.os_settings.linux.enable*
-  ⇢ default: `true`
+  ⇢  default: `true`
   Enable Linux-specific settings?
 
 ------------------------------------------------------------------------------
 os_settings.linux.cmd_get        *auto-input-switch.os_settings.linux.cmd_get*
-  ⇢ default: `'ibus engine'`
+  ⇢  default: `'ibus engine'`
   Command to get the current input method ID.
 
 ------------------------------------------------------------------------------
 os_settings.linux.cmd_set        *auto-input-switch.os_settings.linux.cmd_set*
-  ⇢ default: `'ibus engine %s'`
+  ⇢  default: `'ibus engine %s'`
   Command to set a new input method (`%s` will be replaced with the target 
   ID).
 
 ------------------------------------------------------------------------------
 os_settings.linux.normal_input
                             *auto-input-switch.os_settings.linux.normal_input*
-  ⇢ default: `false`
+  ⇢  default: `false`
   Input method used for Normalize (`false` = auto-detect).
   Example: >lua
     normal_input = 'xkb:us::eng', -- US English.
@@ -588,25 +588,25 @@ os_settings.linux.lang_inputs
 ------------------------------------------------------------------------------
 os_settings.linux.lang_inputs.Ru
                           *auto-input-switch.os_settings.linux.lang_inputs.Ru*
-  ⇢ default: `'xkb:ru::rus'`
+  ⇢  default: `'xkb:ru::rus'`
   Input method ID for Russian.
 
 ------------------------------------------------------------------------------
 os_settings.linux.lang_inputs.Ja
                           *auto-input-switch.os_settings.linux.lang_inputs.Ja*
-  ⇢ default: `'mozc-jp'`
+  ⇢  default: `'mozc-jp'`
   Input method ID for Japanese.
 
 ------------------------------------------------------------------------------
 os_settings.linux.lang_inputs.Zh
                           *auto-input-switch.os_settings.linux.lang_inputs.Zh*
-  ⇢ default: `'libpinyin'`
+  ⇢  default: `'libpinyin'`
   Input method ID for Chinese.
 
 ------------------------------------------------------------------------------
 os_settings.linux.lang_inputs.Ko
                           *auto-input-switch.os_settings.linux.lang_inputs.Ko*
-  ⇢ default: `'hangul'`
+  ⇢  default: `'hangul'`
   Input method ID for Korean.
 
 
