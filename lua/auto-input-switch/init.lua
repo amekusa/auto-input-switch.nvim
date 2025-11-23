@@ -213,21 +213,25 @@ function M.setup(opts)
 	})
 
 	-- create an autocmd that initializes the flags for new buffer
-	local buf_init_flags; do
-		local on = 'FileType'
-		buf_init_flags = function(pat, mask, cond)
-			autocmd(on, {
-				pattern = pat,
-				callback = function(ev)
-					local buf = ev.buf
-					if cond and not cond(buf) then return end
-					local flags = buf_flags[buf]; if flags
-						then buf_flags[buf] = bor(flags, mask)
-						else buf_flags[buf] = mask + 1 -- +01
-					end
-				end
-			})
+	local buf_init_flags = function(pat, mask, cond)
+		local on
+		if pat and pat ~= '*' then
+			on = 'FileType'
+		else
+			on = {'BufNew', 'VimEnter'}
+			pat = nil
 		end
+		autocmd(on, {
+			pattern = pat,
+			callback = function(ev)
+				local buf = ev.buf
+				if not buf or buf < 1 or (cond and not cond(buf)) then return end
+				local flags = buf_flags[buf]; if flags
+					then buf_flags[buf] = bor(flags, mask)
+					else buf_flags[buf] = mask + 1 -- +01
+				end
+			end
+		})
 	end
 
 	-- checks the flags of the given buffer
@@ -531,7 +535,7 @@ function M.setup(opts)
 	if normalize then
 
 		-- set flag +010 to new buffer
-		buf_init_flags(normalize.filetypes or nil, 2, normalize.buf_condition) -- +010
+		buf_init_flags(normalize.filetypes, 2, normalize.buf_condition) -- +010
 
 		--- auto-detect normal-input
 		if not input_n[1] then
@@ -637,7 +641,7 @@ function M.setup(opts)
 
 			-- set flag +01000 to new buffer
 			buf_init_flags(
-				match.filetypes or nil, 8, -- +01000
+				match.filetypes, 8, -- +01000
 				match.buf_condition or (match.buf_condition == nil and cond)
 			)
 
@@ -808,7 +812,7 @@ function M.setup(opts)
 
 			-- set flag +0100 to new buffer
 			buf_init_flags(
-				restore.filetypes or nil, 4, -- +0100
+				restore.filetypes, 4, -- +0100
 				restore.buf_condition or (restore.buf_condition == nil and cond)
 			)
 

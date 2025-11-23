@@ -108,6 +108,9 @@ With the default config:
 <!--TRUNCATE:END-->
 ## Changelog
 
+### v5.1.0
+Now Normalize, Restore, and Match work on the buffers without any filetype if `normalize|restore|match.filetypes = '*'`.
+
 ### v5.0.0
 This release includes **major breaking changes**.  
 If you’re upgrading, please review carefully.

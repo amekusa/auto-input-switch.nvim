@@ -104,6 +104,12 @@ With the default config:
 Changelog                                   *auto-input-switch.nvim.changelog*
 
 ------------------------------------------------------------------------------
+v5.1.0                                         *auto-input-switch.nvim.v5-1-0*
+
+Now Normalize, Restore, and Match work on the buffers without any filetype if 
+`normalize|restore|match.filetypes = '*'`.
+
+------------------------------------------------------------------------------
 v5.0.0                                         *auto-input-switch.nvim.v5-0-0*
 
 This release includes major breaking changes.

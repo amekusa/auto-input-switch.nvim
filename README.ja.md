@@ -107,6 +107,9 @@ require('auto-input-switch').setup({
 <!--TRUNCATE:END-->
 ## 変更履歴 <!-- #changelog -->
 
+### v5.1.0
+`normalize|restore|match.filetypes = '*'` の場合、Normalize, Restore, Match がファイルタイプを持たないバッファに対しても動作するようになりました。
+
 ### v5.0.0
 過去のバージョンとは**非互換の変更**が含まれます。  
 アップグレードの際は注意してください。
