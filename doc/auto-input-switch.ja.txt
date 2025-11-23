@@ -98,6 +98,12 @@ lazy.nvim (https://github.com/folke/lazy.nvim) を使用する場合:
 変更履歴                                 *auto-input-switch.nvim.ja.changelog*
 
 ------------------------------------------------------------------------------
+v5.1.0                                      *auto-input-switch.nvim.ja.v5-1-0*
+
+`normalize|restore|match.filetypes = '*'` の場合、Normalize, Restore, Match 
+がファイルタイプを持たないバッファに対しても動作するようになりました。
+
+------------------------------------------------------------------------------
 v5.0.0                                      *auto-input-switch.nvim.ja.v5-0-0*
 
 過去のバージョンとは非互換の変更が含まれます。
