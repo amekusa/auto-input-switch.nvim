@@ -214,8 +214,14 @@ function M.setup(opts)
 
 	-- create an autocmd that initializes the flags for new buffer
 	local buf_init_flags; do
-		local on = 'FileType'
 		buf_init_flags = function(pat, mask, cond)
+			local on
+			if pat and pat ~= '*' then
+				on = 'FileType'
+			else
+				on = {'BufNew', 'VimEnter'}
+				pat = nil
+			end
 			autocmd(on, {
 				pattern = pat,
 				callback = function(ev)
