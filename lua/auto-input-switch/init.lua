@@ -225,7 +225,7 @@ function M.setup(opts)
 			pattern = pat,
 			callback = function(ev)
 				local buf = ev.buf
-				if cond and not cond(buf) then return end
+				if not buf or buf < 1 or (cond and not cond(buf)) then return end
 				local flags = buf_flags[buf]; if flags
 					then buf_flags[buf] = bor(flags, mask)
 					else buf_flags[buf] = mask + 1 -- +01
