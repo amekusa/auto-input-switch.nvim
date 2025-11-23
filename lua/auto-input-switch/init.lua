@@ -213,27 +213,25 @@ function M.setup(opts)
 	})
 
 	-- create an autocmd that initializes the flags for new buffer
-	local buf_init_flags; do
-		buf_init_flags = function(pat, mask, cond)
-			local on
-			if pat and pat ~= '*' then
-				on = 'FileType'
-			else
-				on = {'BufNew', 'VimEnter'}
-				pat = nil
-			end
-			autocmd(on, {
-				pattern = pat,
-				callback = function(ev)
-					local buf = ev.buf
-					if cond and not cond(buf) then return end
-					local flags = buf_flags[buf]; if flags
-						then buf_flags[buf] = bor(flags, mask)
-						else buf_flags[buf] = mask + 1 -- +01
-					end
-				end
-			})
+	local buf_init_flags = function(pat, mask, cond)
+		local on
+		if pat and pat ~= '*' then
+			on = 'FileType'
+		else
+			on = {'BufNew', 'VimEnter'}
+			pat = nil
 		end
+		autocmd(on, {
+			pattern = pat,
+			callback = function(ev)
+				local buf = ev.buf
+				if cond and not cond(buf) then return end
+				local flags = buf_flags[buf]; if flags
+					then buf_flags[buf] = bor(flags, mask)
+					else buf_flags[buf] = mask + 1 -- +01
+				end
+			end
+		})
 	end
 
 	-- checks the flags of the given buffer
