@@ -585,28 +585,25 @@ function M.setup(opts)
 			nargs = 0
 		})
 
+		-- event handler
 		local debnc = normalize.debounce
-
-		if normalize.on then
-			autocmd(normalize.on, {
-				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
-						fn_normalize() -- do NOT put this in the above conditional
-						ev_unlocked = false; schedule(ev_unlock)
-					end
-				end
-			})
+		local evh = function(ev)
+			if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
+				fn_normalize() -- do NOT put this in the above conditional
+				ev_unlocked = false; schedule(ev_unlock)
+			end
 		end
 
+		-- register autocommands
+		if normalize.on then
+			autocmd(normalize.on, {
+				callback = evh
+			})
+		end
 		if normalize.on_mode_change then
 			autocmd('ModeChanged', {
 				pattern = normalize.on_mode_change,
-				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
-						fn_normalize() -- do NOT put this in the above conditional
-						ev_unlocked = false; schedule(ev_unlock)
-					end
-				end
+				callback = evh
 			})
 		end
 	end
@@ -779,28 +776,25 @@ function M.setup(opts)
 				nargs = 0
 			})
 
+			-- event handler
 			local debnc = match.debounce
-
-			if match.on then
-				autocmd(match.on, {
-					callback = function(ev)
-						local buf = ev.buf
-						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
-							ev_unlocked = false; schedule(ev_unlock)
-						end
-					end
-				})
+			local evh = function(ev)
+				local buf = ev.buf
+				if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
+					ev_unlocked = false; schedule(ev_unlock)
+				end
 			end
 
+			-- register autocommands
+			if match.on then
+				autocmd(match.on, {
+					callback = evh
+				})
+			end
 			if match.on_mode_change then
 				autocmd('ModeChanged', {
 					pattern = match.on_mode_change,
-					callback = function(ev)
-						local buf = ev.buf
-						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
-							ev_unlocked = false; schedule(ev_unlock)
-						end
-					end
+					callback = evh
 				})
 			end
 		end
@@ -872,28 +866,25 @@ function M.setup(opts)
 				nargs = 0
 			})
 
+			-- event handler
 			local debnc = restore.debounce
-
-			if restore.on then
-				autocmd(restore.on, {
-					callback = function(ev)
-						local buf = ev.buf
-						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
-							ev_unlocked = false; schedule(ev_unlock)
-						end
-					end
-				})
+			local evh = function(ev)
+				local buf = ev.buf
+				if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
+					ev_unlocked = false; schedule(ev_unlock)
+				end
 			end
 
+			-- register autocommands
+			if restore.on then
+				autocmd(restore.on, {
+					callback = evh
+				})
+			end
 			if restore.on_mode_change then
 				autocmd('ModeChanged', {
 					pattern = restore.on_mode_change,
-					callback = function(ev)
-						local buf = ev.buf
-						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
-							ev_unlocked = false; schedule(ev_unlock)
-						end
-					end
+					callback = evh
 				})
 			end
 		end
