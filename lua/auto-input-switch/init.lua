@@ -588,11 +588,9 @@ function M.setup(opts)
 		local debnc = normalize.debounce
 
 		if normalize.on then
-			local get_mode = api.nvim_get_mode
-			local mode_i = 'i'
 			autocmd(normalize.on, {
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i then
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
 						fn_normalize() -- do NOT put this in the above conditional
 						ev_unlocked = false; schedule(ev_unlock)
 					end
