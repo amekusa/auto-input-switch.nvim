@@ -190,10 +190,6 @@ normalize:
 
   on:
     __default:
-      - BufLeave
-      - WinLeave
-      - FocusGained
-      - ExitPre
       - QuitPre
 
     __desc:
