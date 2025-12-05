@@ -113,10 +113,10 @@ Some default option values have been changed:
 - `normalize.on`
   - New default: `{ 'QuitPre' }`
   - Old default: `{ 'BufLeave', 'WinLeave', 'FocusGained', 'ExitPre', 'QuitPre' }`
-- `restore.one`
+- `restore.on`
   - New default: `nil`
   - Old default: `{ 'FocusGained }`
-- `match.one`
+- `match.on`
   - New default: `nil`
   - Old default: `{ 'FocusGained }`
 

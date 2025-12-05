@@ -112,10 +112,10 @@ require('auto-input-switch').setup({
 - `normalize.on`
   - 新デフォルト: `{ 'QuitPre' }`
   - 旧デフォルト: `{ 'BufLeave', 'WinLeave', 'FocusGained', 'ExitPre', 'QuitPre' }`
-- `restore.one`
+- `restore.on`
   - 新デフォルト: `nil`
   - 旧デフォルト: `{ 'FocusGained }`
-- `match.one`
+- `match.on`
   - 新デフォルト: `nil`
   - 旧デフォルト: `{ 'FocusGained }`
 
