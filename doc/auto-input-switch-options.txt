@@ -178,6 +178,7 @@ normalize.on                                  *auto-input-switch.normalize.on*
 normalize.filetypes                    *auto-input-switch.normalize.filetypes*
   ⇢  default: `'*'`
   Filetypes where Normalize is enabled.
+  
   Example: >lua
     filetypes = { 'markdown', 'text' },
 <
@@ -193,6 +194,7 @@ normalize.buf_condition            *auto-input-switch.normalize.buf_condition*
   Optional function that decides whether Normalize is enabled for a buffer.
   Called on each buffer creation with its buffer number.
   Return `true` to enable Normalize for that buffer.
+  
   Example: >lua
     -- Enable only in listed buffers
     buf_condition = function(buf)
@@ -228,8 +230,9 @@ restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
 ------------------------------------------------------------------------------
 restore.on                                      *auto-input-switch.restore.on*
   ⇢  default: `nil`
-  Extra events in addition to 'ModeChanged' that trigger Restore. See: 
-  |events|
+  Extra events in addition to 'ModeChanged' that trigger Restore.
+  See: |events|
+  
   Example: >lua
     on = { 'FocusGained' },
 <
@@ -238,6 +241,7 @@ restore.on                                      *auto-input-switch.restore.on*
 restore.filetypes                        *auto-input-switch.restore.filetypes*
   ⇢  default: `'*'`
   Filetypes where Restore is enabled.
+  
   Example: >lua
     filetypes = { 'markdown', 'text' },
 <
@@ -294,7 +298,9 @@ match.on_mode_change                  *auto-input-switch.match.on_mode_change*
 ------------------------------------------------------------------------------
 match.on                                          *auto-input-switch.match.on*
   ⇢  default: `nil`
-  Extra events in addition to 'ModeChanged' that trigger Match. See: |events|
+  Extra events in addition to 'ModeChanged' that trigger Match.
+  See: |events|
+  
   Example: >lua
     on = { 'FocusGained' },
 <
@@ -303,6 +309,7 @@ match.on                                          *auto-input-switch.match.on*
 match.filetypes                            *auto-input-switch.match.filetypes*
   ⇢  default: `'*'`
   Filetypes where Match is enabled.
+  
   Example: >lua
     filetypes = { 'markdown', 'text' },
 <
@@ -324,6 +331,7 @@ match.buf_condition                    *auto-input-switch.match.buf_condition*
 ------------------------------------------------------------------------------
 match.languages                            *auto-input-switch.match.languages*
   Languages to detect and match.
+  
   Format: >lua
     languages = {
       LanguageName = {
@@ -437,6 +445,7 @@ os_settings.macos.normal_input
                             *auto-input-switch.os_settings.macos.normal_input*
   ⇢  default: `false`
   Input method used for Normalize (`false` = auto-detect).
+  
   Examples: >lua
     normal_input = 'com.apple.keylayout.ABC',
     normal_input = 'com.apple.keylayout.US',
@@ -452,6 +461,7 @@ os_settings.macos.normal_input
 os_settings.macos.lang_inputs
                              *auto-input-switch.os_settings.macos.lang_inputs*
   Input methods corresponding to `match.languages`.
+  
   Format: >lua
     lang_inputs = {
       LanguageName = 'Input Method ID',
@@ -512,6 +522,7 @@ os_settings.windows.normal_input
                           *auto-input-switch.os_settings.windows.normal_input*
   ⇢  default: `false`
   Input method used for Normalize (`false` = auto-detect).
+  
   Example: >lua
     normal_input = '1033', -- US English
 <
@@ -569,6 +580,7 @@ os_settings.linux.normal_input
                             *auto-input-switch.os_settings.linux.normal_input*
   ⇢  default: `false`
   Input method used for Normalize (`false` = auto-detect).
+  
   Example: >lua
     normal_input = 'xkb:us::eng', -- US English.
 <

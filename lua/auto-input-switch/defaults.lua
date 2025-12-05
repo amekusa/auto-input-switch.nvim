@@ -68,6 +68,7 @@ return {
       'QuitPre',
     },
     filetypes = '*', -- Filetypes where Normalize is enabled.
+      -- 
       -- Example:
       --   filetypes = { 'markdown', 'text' },
 
@@ -75,6 +76,7 @@ return {
     buf_condition = nil, -- Optional function that decides whether Normalize is enabled for a buffer.
       -- Called on each buffer creation with its buffer number.
       -- Return `true` to enable Normalize for that buffer.
+      -- 
       -- Example:
       --   -- Enable only in listed buffers
       --   buf_condition = function(buf)
@@ -95,11 +97,14 @@ return {
 
       '[nvV]:[iR]',
     },
-    on = nil, -- Extra events in addition to 'ModeChanged' that trigger Restore. See: |events|
+    on = nil, -- Extra events in addition to 'ModeChanged' that trigger Restore.
+      -- See: |events|
+      -- 
       -- Example:
       --   on = { 'FocusGained' },
 
     filetypes = '*', -- Filetypes where Restore is enabled.
+      -- 
       -- Example:
       --   filetypes = { 'markdown', 'text' },
 
@@ -131,11 +136,14 @@ return {
 
       '[nvV]:[iR]',
     },
-    on = nil, -- Extra events in addition to 'ModeChanged' that trigger Match. See: |events|
+    on = nil, -- Extra events in addition to 'ModeChanged' that trigger Match.
+      -- See: |events|
+      -- 
       -- Example:
       --   on = { 'FocusGained' },
 
     filetypes = '*', -- Filetypes where Match is enabled.
+      -- 
       -- Example:
       --   filetypes = { 'markdown', 'text' },
 
@@ -147,6 +155,7 @@ return {
       -- You can override this or disable it by setting `false`.
 
     languages = { -- Languages to detect and match.
+      -- 
       -- Format:
       --   languages = {
       --     LanguageName = {
@@ -201,6 +210,7 @@ return {
       cmd_get = 'im-select', -- Command to get the current input method ID.
       cmd_set = 'im-select %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
       normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
+        -- 
         -- Examples:
         --   normal_input = 'com.apple.keylayout.ABC',
         --   normal_input = 'com.apple.keylayout.US',
@@ -213,6 +223,7 @@ return {
         --   The second is the argument passed to `cmd_set`.
 
       lang_inputs = { -- Input methods corresponding to `match.languages`.
+        -- 
         -- Format:
         --   lang_inputs = {
         --     LanguageName = 'Input Method ID',
@@ -237,6 +248,7 @@ return {
       cmd_get = 'im-select.exe', -- Command to get the current input method ID.
       cmd_set = 'im-select.exe %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
       normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
+        -- 
         -- Example:
         --   normal_input = '1033', -- US English
         -- 
@@ -257,6 +269,7 @@ return {
       cmd_get = 'ibus engine', -- Command to get the current input method ID.
       cmd_set = 'ibus engine %s', -- Command to set a new input method (`%s` will be replaced with the target ID).
       normal_input = false, -- Input method used for Normalize (`false` = auto-detect).
+        -- 
         -- Example:
         --   normal_input = 'xkb:us::eng', -- US English.
         -- 

@@ -229,11 +229,13 @@ normalize:
     __desc:
       en: |-
         Filetypes where Normalize is enabled.
+
         Example: >lua
           filetypes = { 'markdown', 'text' },
         <
       ja: |-
         Normalize が有効になるファイルタイプ。
+
         例: >lua
           filetypes = { 'markdown', 'text' },
         <
@@ -251,6 +253,7 @@ normalize:
         Optional function that decides whether Normalize is enabled for a buffer.
         Called on each buffer creation with its buffer number.
         Return `true` to enable Normalize for that buffer.
+
         Example: >lua
           -- Enable only in listed buffers
           buf_condition = function(buf)
@@ -261,6 +264,7 @@ normalize:
         Normalize がバッファに対して有効となる条件を定義する関数です。
         バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
         `true` が返された場合にのみ、そのバッファで Normalize が有効になります。
+
         例: >lua
           -- Enable only in listed buffers
           buf_condition = function(buf)
@@ -307,13 +311,17 @@ restore:
     __default: null
     __desc:
       en: |-
-        Extra events in addition to 'ModeChanged' that trigger Restore. See: |events|
+        Extra events in addition to 'ModeChanged' that trigger Restore.
+        See: |events|
+
         Example: >lua
           on = { 'FocusGained' },
         <
       ja: |-
-        'ModeChanged' に加え、Restore を実行するイベントを追加します。参照: |events|
-        参照: >lua
+        'ModeChanged' に加え、Restore を実行するイベントを追加します。
+        参照: |events|
+
+        例: >lua
           on = { 'FocusGained' },
         <
   filetypes:
@@ -321,11 +329,13 @@ restore:
     __desc:
       en: |-
         Filetypes where Restore is enabled.
+
         Example: >lua
           filetypes = { 'markdown', 'text' },
         <
       ja: |-
         Restore が有効になるファイルタイプ。
+
         例: >lua
           filetypes = { 'markdown', 'text' },
         <
@@ -409,12 +419,16 @@ match:
     __default: null
     __desc:
       en: |-
-        Extra events in addition to 'ModeChanged' that trigger Match. See: |events|
+        Extra events in addition to 'ModeChanged' that trigger Match.
+        See: |events|
+
         Example: >lua
           on = { 'FocusGained' },
         <
       ja: |-
-        'ModeChanged' に加え、Match を実行するイベントを追加します。参照: |events|
+        'ModeChanged' に加え、Match を実行するイベントを追加します。
+        参照: |events|
+
         例: >lua
           on = { 'FocusGained' },
         <
@@ -424,11 +438,13 @@ match:
     __desc:
       en: |-
         Filetypes where Match is enabled.
+
         Example: >lua
           filetypes = { 'markdown', 'text' },
         <
       ja: |-
         Match が有効になるファイルタイプ。
+
         例: >lua
           filetypes = { 'markdown', 'text' },
         <
@@ -459,6 +475,7 @@ match:
     __desc:
       en: |-
         Languages to detect and match.
+
         Format: >lua
           languages = {
             LanguageName = {
@@ -473,6 +490,7 @@ match:
         Add custom languages if needed, and define the corresponding input methods as well in `os_settings[OS].lang_inputs`.
       ja: |-
         Match が検知する言語のリスト。
+
         フォーマット: >lua
           languages = {
             言語名 = {
@@ -598,6 +616,7 @@ os_settings:
       __desc:
         en: |-
           Input method used for Normalize (`false` = auto-detect).
+
           Examples: >lua
             normal_input = 'com.apple.keylayout.ABC',
             normal_input = 'com.apple.keylayout.US',
@@ -610,6 +629,7 @@ os_settings:
             The second is the argument passed to `cmd_set`.
         ja: |-
           Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+
           例: >lua
             normal_input = 'com.apple.keylayout.ABC',
             normal_input = 'com.apple.keylayout.US',
@@ -625,6 +645,7 @@ os_settings:
       __desc:
         en: |-
           Input methods corresponding to `match.languages`.
+
           Format: >lua
             lang_inputs = {
               LanguageName = 'Input Method ID',
@@ -640,6 +661,7 @@ os_settings:
 
         ja: |-
           `match.languages` 内の各言語に紐づける入力言語の設定。
+
           フォーマット: >lua
             lang_inputs = {
               言語名 = '入力言語ID',
@@ -701,6 +723,7 @@ os_settings:
       __desc:
         en: |-
           Input method used for Normalize (`false` = auto-detect).
+
           Example: >lua
             normal_input = '1033', -- US English
           <
@@ -708,6 +731,7 @@ os_settings:
             See: |auto-input-switch.os_settings.macos.normal_input|
         ja: |-
           Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+
           例: >lua
             normal_input = '1033', -- US English
           <
@@ -771,6 +795,7 @@ os_settings:
       __desc:
         en: |-
           Input method used for Normalize (`false` = auto-detect).
+
           Example: >lua
             normal_input = 'xkb:us::eng', -- US English.
           <
@@ -778,6 +803,7 @@ os_settings:
             See: |auto-input-switch.os_settings.macos.normal_input|
         ja: |-
           Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+
           例: >lua
             normal_input = 'xkb:us::eng', -- US English
           <

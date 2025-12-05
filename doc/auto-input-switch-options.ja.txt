@@ -179,6 +179,7 @@ normalize.on                               *auto-input-switch.ja.normalize.on*
 normalize.filetypes                 *auto-input-switch.ja.normalize.filetypes*
   ⇢  デフォルト: `'*'`
   Normalize が有効になるファイルタイプ。
+  
   例: >lua
     filetypes = { 'markdown', 'text' },
 <
@@ -194,6 +195,7 @@ normalize.buf_condition         *auto-input-switch.ja.normalize.buf_condition*
   Normalize がバッファに対して有効となる条件を定義する関数です。
   バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
   `true` が返された場合にのみ、そのバッファで Normalize が有効になります。
+  
   例: >lua
     -- Enable only in listed buffers
     buf_condition = function(buf)
@@ -231,8 +233,10 @@ restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
 ------------------------------------------------------------------------------
 restore.on                                   *auto-input-switch.ja.restore.on*
   ⇢  デフォルト: `nil`
-  'ModeChanged' に加え、Restore を実行するイベントを追加します。参照: |events|
-  参照: >lua
+  'ModeChanged' に加え、Restore を実行するイベントを追加します。
+  参照: |events|
+  
+  例: >lua
     on = { 'FocusGained' },
 <
 
@@ -240,6 +244,7 @@ restore.on                                   *auto-input-switch.ja.restore.on*
 restore.filetypes                     *auto-input-switch.ja.restore.filetypes*
   ⇢  デフォルト: `'*'`
   Restore が有効になるファイルタイプ。
+  
   例: >lua
     filetypes = { 'markdown', 'text' },
 <
@@ -297,7 +302,9 @@ match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
 ------------------------------------------------------------------------------
 match.on                                       *auto-input-switch.ja.match.on*
   ⇢  デフォルト: `nil`
-  'ModeChanged' に加え、Match を実行するイベントを追加します。参照: |events|
+  'ModeChanged' に加え、Match を実行するイベントを追加します。
+  参照: |events|
+  
   例: >lua
     on = { 'FocusGained' },
 <
@@ -306,6 +313,7 @@ match.on                                       *auto-input-switch.ja.match.on*
 match.filetypes                         *auto-input-switch.ja.match.filetypes*
   ⇢  デフォルト: `'*'`
   Match が有効になるファイルタイプ。
+  
   例: >lua
     filetypes = { 'markdown', 'text' },
 <
@@ -328,6 +336,7 @@ match.buf_condition                 *auto-input-switch.ja.match.buf_condition*
 ------------------------------------------------------------------------------
 match.languages                         *auto-input-switch.ja.match.languages*
   Match が検知する言語のリスト。
+  
   フォーマット: >lua
     languages = {
       言語名 = {
@@ -441,6 +450,7 @@ os_settings.macos.normal_input
                          *auto-input-switch.ja.os_settings.macos.normal_input*
   ⇢  デフォルト: `false`
   Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+  
   例: >lua
     normal_input = 'com.apple.keylayout.ABC',
     normal_input = 'com.apple.keylayout.US',
@@ -456,6 +466,7 @@ os_settings.macos.normal_input
 os_settings.macos.lang_inputs
                           *auto-input-switch.ja.os_settings.macos.lang_inputs*
   `match.languages` 内の各言語に紐づける入力言語の設定。
+  
   フォーマット: >lua
     lang_inputs = {
       言語名 = '入力言語ID',
@@ -517,6 +528,7 @@ os_settings.windows.normal_input
                        *auto-input-switch.ja.os_settings.windows.normal_input*
   ⇢  デフォルト: `false`
   Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+  
   例: >lua
     normal_input = '1033', -- US English
 <
@@ -574,6 +586,7 @@ os_settings.linux.normal_input
                          *auto-input-switch.ja.os_settings.linux.normal_input*
   ⇢  デフォルト: `false`
   Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+  
   例: >lua
     normal_input = 'xkb:us::eng', -- US English
 <
