@@ -65,13 +65,6 @@
       -- この機能を "Normalize" と呼称します。
   
       enable = true, -- Normalize を有効にする？
-      on = { -- Normalize を実行するイベント。参照: |events|
-        'BufLeave',
-        'WinLeave',
-        'FocusGained',
-        'ExitPre',
-        'QuitPre',
-      },
       on_mode_change = { -- Normalize のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
         -- 参照:
@@ -84,7 +77,11 @@
   
         '[iR]:n',
       },
+      on = { -- 'ModeChanged' に加え、Normalize を実行するイベントを追加します。参照: |events|
+        'QuitPre',
+      },
       filetypes = '*', -- Normalize が有効になるファイルタイプ。
+        -- 
         -- 例:
         --   filetypes = { 'markdown', 'text' },
   
@@ -92,6 +89,7 @@
       buf_condition = nil, -- Normalize がバッファに対して有効となる条件を定義する関数です。
         -- バッファが作成される度、そのバッファ番号を引数にして呼び出されます。
         -- `true` が返された場合にのみ、そのバッファで Normalize が有効になります。
+        -- 
         -- 例:
         --   -- Enable only in listed buffers
         --   buf_condition = function(buf)
@@ -104,9 +102,6 @@
       -- この機能を "Restore" と呼称します。
   
       enable = true, -- Restore を有効にする？
-      on = { -- Restore を実行するイベント。参照: |events|
-        'FocusGained',
-      },
       on_mode_change = { -- Restore のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
         -- 
@@ -115,7 +110,14 @@
   
         '[nvV]:[iR]',
       },
+      on = nil, -- 'ModeChanged' に加え、Restore を実行するイベントを追加します。
+        -- 参照: |events|
+        -- 
+        -- 例:
+        --   on = { 'FocusGained' },
+  
       filetypes = '*', -- Restore が有効になるファイルタイプ。
+        -- 
         -- 例:
         --   filetypes = { 'markdown', 'text' },
   
@@ -139,9 +141,6 @@
       -- この機能はデフォルトでは無効に設定されています。
   
       enable = false, -- Match を有効にする？
-      on = { -- Match を実行するイベント。参照: |events|
-        'FocusGained',
-      },
       on_mode_change = { -- Match のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
         -- 
@@ -150,7 +149,14 @@
   
         '[nvV]:[iR]',
       },
+      on = nil, -- 'ModeChanged' に加え、Match を実行するイベントを追加します。
+        -- 参照: |events|
+        -- 
+        -- 例:
+        --   on = { 'FocusGained' },
+  
       filetypes = '*', -- Match が有効になるファイルタイプ。
+        -- 
         -- 例:
         --   filetypes = { 'markdown', 'text' },
   
@@ -162,6 +168,7 @@
         -- 自作の関数で上書きするか、`false` をセットすることで無効化することもできます。
   
       languages = { -- Match が検知する言語のリスト。
+        -- 
         -- フォーマット:
         --   languages = {
         --     言語名 = {
@@ -216,6 +223,7 @@
         cmd_get = 'im-select', -- 現在の入力言語 ID を取得するコマンド。
         cmd_set = 'im-select %s', -- 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
         normal_input = false, -- Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          -- 
           -- 例:
           --   normal_input = 'com.apple.keylayout.ABC',
           --   normal_input = 'com.apple.keylayout.US',
@@ -228,6 +236,7 @@
           --   二番目の文字列は `cmd_set` に渡される引数。
   
         lang_inputs = { -- `match.languages` 内の各言語に紐づける入力言語の設定。
+          -- 
           -- フォーマット:
           --   lang_inputs = {
           --     言語名 = '入力言語ID',
@@ -252,6 +261,7 @@
         cmd_get = 'im-select.exe', -- 現在の入力言語 ID を取得するコマンド。
         cmd_set = 'im-select.exe %s', -- 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
         normal_input = false, -- Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          -- 
           -- 例:
           --   normal_input = '1033', -- US English
           -- 
@@ -272,6 +282,7 @@
         cmd_get = 'ibus engine', -- 現在の入力言語 ID を取得するコマンド。
         cmd_set = 'ibus engine %s', -- 入力言語を切り替えるコマンド (`%s` が切り替え先の入力言語 ID で置換される) 。
         normal_input = false, -- Normalize 時に使用する入力言語 (`false` = 自動検出) 。
+          -- 
           -- 例:
           --   normal_input = 'xkb:us::eng', -- US English
           -- 

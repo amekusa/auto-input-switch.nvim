@@ -588,11 +588,9 @@ function M.setup(opts)
 		local debnc = normalize.debounce
 
 		if normalize.on then
-			local get_mode = api.nvim_get_mode
-			local mode_i = 'i'
 			autocmd(normalize.on, {
 				callback = function(ev)
-					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) and get_mode().mode ~= mode_i then
+					if active and ev_unlocked and debounce(1, debnc) and buf_has_flags(ev.buf, 3) then
 						fn_normalize() -- do NOT put this in the above conditional
 						ev_unlocked = false; schedule(ev_unlock)
 					end
@@ -628,6 +626,13 @@ function M.setup(opts)
 		local strcharpart  = vim.fn.strcharpart -- unicode-aware substring
 		local win_get_cursor = api.nvim_win_get_cursor
 		local buf_get_lines  = api.nvim_buf_get_lines
+		local get_mode = api.nvim_get_mode
+
+		local modes_allowed = {
+			i = true,
+			R = true,
+		}
+
 		local lang_labels = popup and popup.labels.lang_inputs
 
 		-- format entries of lang_inputs
@@ -787,7 +792,7 @@ function M.setup(opts)
 				autocmd(match.on, {
 					callback = function(ev)
 						local buf = ev.buf
-						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and fn_match(buf) then
+						if active and ev_unlocked and debounce(3, debnc) and buf_has_flags(buf, 9) and modes_allowed[get_mode().mode] and fn_match(buf) then
 							ev_unlocked = false; schedule(ev_unlock)
 						end
 					end
@@ -880,7 +885,7 @@ function M.setup(opts)
 				autocmd(restore.on, {
 					callback = function(ev)
 						local buf = ev.buf
-						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and fn_restore(buf) then
+						if active and ev_unlocked and debounce(2, debnc) and buf_has_flags(buf, 5) and modes_allowed[get_mode().mode] and fn_restore(buf) then
 							ev_unlocked = false; schedule(ev_unlock)
 						end
 					end

@@ -107,6 +107,18 @@ require('auto-input-switch').setup({
 <!--TRUNCATE:END-->
 ## 変更履歴 <!-- #changelog -->
 
+### v5.2.0
+いくつかのオプションのデフォルト値が変更:
+- `normalize.on`
+  - 新デフォルト: `{ 'QuitPre' }`
+  - 旧デフォルト: `{ 'BufLeave', 'WinLeave', 'FocusGained', 'ExitPre', 'QuitPre' }`
+- `restore.on`
+  - 新デフォルト: `nil`
+  - 旧デフォルト: `{ 'FocusGained }`
+- `match.on`
+  - 新デフォルト: `nil`
+  - 旧デフォルト: `{ 'FocusGained }`
+
 ### v5.1.0
 `normalize|restore|match.filetypes = '*'` の場合、Normalize, Restore, Match がファイルタイプを持たないバッファに対しても動作するようになりました。
 

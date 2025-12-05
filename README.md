@@ -108,6 +108,18 @@ With the default config:
 <!--TRUNCATE:END-->
 ## Changelog
 
+### v5.2.0
+Some default option values have been changed:
+- `normalize.on`
+  - New default: `{ 'QuitPre' }`
+  - Old default: `{ 'BufLeave', 'WinLeave', 'FocusGained', 'ExitPre', 'QuitPre' }`
+- `restore.on`
+  - New default: `nil`
+  - Old default: `{ 'FocusGained }`
+- `match.on`
+  - New default: `nil`
+  - Old default: `{ 'FocusGained }`
+
 ### v5.1.0
 Now Normalize, Restore, and Match work on the buffers without any filetype if `normalize|restore|match.filetypes = '*'`.
 
