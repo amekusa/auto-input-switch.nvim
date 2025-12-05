@@ -147,19 +147,6 @@ normalize.enable                          *auto-input-switch.normalize.enable*
   Enable Normalize?
 
 ------------------------------------------------------------------------------
-normalize.on                                  *auto-input-switch.normalize.on*
-  ⇢  default: >lua
-    {
-      'BufLeave',
-      'WinLeave',
-      'FocusGained',
-      'ExitPre',
-      'QuitPre',
-    }
-<
-  Events that trigger Normalize. See: |events|
-
-------------------------------------------------------------------------------
 normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
   ⇢  default: >lua
     {
@@ -176,6 +163,16 @@ normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
   
   Default:
     `'[iR]:n'` (From Insert/Replace to Normal mode)
+
+------------------------------------------------------------------------------
+normalize.on                                  *auto-input-switch.normalize.on*
+  ⇢  default: >lua
+    {
+      'QuitPre',
+    }
+<
+  Extra events in addition to 'ModeChanged' that trigger Normalize. See: 
+  |events|
 
 ------------------------------------------------------------------------------
 normalize.filetypes                    *auto-input-switch.normalize.filetypes*
@@ -215,15 +212,6 @@ restore.enable                              *auto-input-switch.restore.enable*
   Enable Restore?
 
 ------------------------------------------------------------------------------
-restore.on                                      *auto-input-switch.restore.on*
-  ⇢  default: >lua
-    {
-      'FocusGained',
-    }
-<
-  Events that trigger Restore. See: |events|
-
-------------------------------------------------------------------------------
 restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   ⇢  default: >lua
     {
@@ -236,6 +224,15 @@ restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   
   Default:
     `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
+
+------------------------------------------------------------------------------
+restore.on                                      *auto-input-switch.restore.on*
+  ⇢  default: `nil`
+  Extra events in addition to 'ModeChanged' that trigger Restore. See: 
+  |events|
+  Example: >lua
+    on = { 'FocusGained' },
+<
 
 ------------------------------------------------------------------------------
 restore.filetypes                        *auto-input-switch.restore.filetypes*
@@ -281,15 +278,6 @@ match.enable                                  *auto-input-switch.match.enable*
   Enable Match?
 
 ------------------------------------------------------------------------------
-match.on                                          *auto-input-switch.match.on*
-  ⇢  default: >lua
-    {
-      'FocusGained',
-    }
-<
-  Events that trigger Match. See: |events|
-
-------------------------------------------------------------------------------
 match.on_mode_change                  *auto-input-switch.match.on_mode_change*
   ⇢  default: >lua
     {
@@ -302,6 +290,14 @@ match.on_mode_change                  *auto-input-switch.match.on_mode_change*
   
   Default:
     `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
+
+------------------------------------------------------------------------------
+match.on                                          *auto-input-switch.match.on*
+  ⇢  default: `nil`
+  Extra events in addition to 'ModeChanged' that trigger Match. See: |events|
+  Example: >lua
+    on = { 'FocusGained' },
+<
 
 ------------------------------------------------------------------------------
 match.filetypes                            *auto-input-switch.match.filetypes*

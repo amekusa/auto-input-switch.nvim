@@ -148,19 +148,6 @@ normalize.enable                       *auto-input-switch.ja.normalize.enable*
   Normalize を有効にする？
 
 ------------------------------------------------------------------------------
-normalize.on                               *auto-input-switch.ja.normalize.on*
-  ⇢  デフォルト: >lua
-    {
-      'BufLeave',
-      'WinLeave',
-      'FocusGained',
-      'ExitPre',
-      'QuitPre',
-    }
-<
-  Normalize を実行するイベント。参照: |events|
-
-------------------------------------------------------------------------------
 normalize.on_mode_change       *auto-input-switch.ja.normalize.on_mode_change*
   ⇢  デフォルト: >lua
     {
@@ -177,6 +164,16 @@ normalize.on_mode_change       *auto-input-switch.ja.normalize.on_mode_change*
   
   Default:
     `'[iR]:n'` (Insert/Replace から Normal モード)
+
+------------------------------------------------------------------------------
+normalize.on                               *auto-input-switch.ja.normalize.on*
+  ⇢  デフォルト: >lua
+    {
+      'QuitPre',
+    }
+<
+  'ModeChanged' に加え、Normalize を実行するイベントを追加します。参照: 
+  |events|
 
 ------------------------------------------------------------------------------
 normalize.filetypes                 *auto-input-switch.ja.normalize.filetypes*
@@ -218,15 +215,6 @@ restore.enable                           *auto-input-switch.ja.restore.enable*
   Restore を有効にする？
 
 ------------------------------------------------------------------------------
-restore.on                                   *auto-input-switch.ja.restore.on*
-  ⇢  デフォルト: >lua
-    {
-      'FocusGained',
-    }
-<
-  Restore を実行するイベント。参照: |events|
-
-------------------------------------------------------------------------------
 restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
   ⇢  デフォルト: >lua
     {
@@ -239,6 +227,14 @@ restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
   
   デフォルト:
     `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
+
+------------------------------------------------------------------------------
+restore.on                                   *auto-input-switch.ja.restore.on*
+  ⇢  デフォルト: `nil`
+  'ModeChanged' に加え、Restore を実行するイベントを追加します。参照: |events|
+  参照: >lua
+    on = { 'FocusGained' },
+<
 
 ------------------------------------------------------------------------------
 restore.filetypes                     *auto-input-switch.ja.restore.filetypes*
@@ -285,15 +281,6 @@ match.enable                               *auto-input-switch.ja.match.enable*
   Match を有効にする？
 
 ------------------------------------------------------------------------------
-match.on                                       *auto-input-switch.ja.match.on*
-  ⇢  デフォルト: >lua
-    {
-      'FocusGained',
-    }
-<
-  Match を実行するイベント。参照: |events|
-
-------------------------------------------------------------------------------
 match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
   ⇢  デフォルト: >lua
     {
@@ -306,6 +293,14 @@ match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
   
   デフォルト:
     `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
+
+------------------------------------------------------------------------------
+match.on                                       *auto-input-switch.ja.match.on*
+  ⇢  デフォルト: `nil`
+  'ModeChanged' に加え、Match を実行するイベントを追加します。参照: |events|
+  例: >lua
+    on = { 'FocusGained' },
+<
 
 ------------------------------------------------------------------------------
 match.filetypes                         *auto-input-switch.ja.match.filetypes*

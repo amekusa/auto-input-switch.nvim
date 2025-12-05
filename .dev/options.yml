@@ -188,16 +188,6 @@ normalize:
       en: Enable Normalize?
       ja: Normalize を有効にする？
 
-  on:
-    __default:
-      - QuitPre
-
-    __desc:
-      en: |-
-        Events that trigger Normalize. See: |events|
-      ja: |-
-        Normalize を実行するイベント。参照: |events|
-
   on_mode_change:
     __default:
       - '[iR]:n'
@@ -223,6 +213,16 @@ normalize:
 
         Default:
           `'[iR]:n'` (Insert/Replace から Normal モード)
+
+  on:
+    __default:
+      - QuitPre
+
+    __desc:
+      en: |-
+        Extra events in addition to 'ModeChanged' that trigger Normalize. See: |events|
+      ja: |-
+        'ModeChanged' に加え、Normalize を実行するイベントを追加します。参照: |events|
 
   filetypes:
     __default: '*'
@@ -285,16 +285,6 @@ restore:
       en: Enable Restore?
       ja: Restore を有効にする？
 
-  on:
-    __default:
-      - FocusGained
-
-    __desc:
-      en: |-
-        Events that trigger Restore. See: |events|
-      ja: |-
-        Restore を実行するイベント。参照: |events|
-
   on_mode_change:
     __default:
       - '[nvV]:[iR]'
@@ -313,7 +303,19 @@ restore:
         デフォルト:
           `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
 
-
+  on:
+    __default: null
+    __desc:
+      en: |-
+        Extra events in addition to 'ModeChanged' that trigger Restore. See: |events|
+        Example: >lua
+          on = { 'FocusGained' },
+        <
+      ja: |-
+        'ModeChanged' に加え、Restore を実行するイベントを追加します。参照: |events|
+        参照: >lua
+          on = { 'FocusGained' },
+        <
   filetypes:
     __default: '*'
     __desc:
@@ -385,16 +387,6 @@ match:
       en: Enable Match?
       ja: Match を有効にする？
 
-  on:
-    __default:
-      - FocusGained
-
-    __desc:
-      en: |-
-        Events that trigger Match. See: |events|
-      ja: |-
-        Match を実行するイベント。参照: |events|
-
   on_mode_change:
     __default:
       - '[nvV]:[iR]'
@@ -412,6 +404,20 @@ match:
 
         デフォルト:
           `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
+
+  on:
+    __default: null
+    __desc:
+      en: |-
+        Extra events in addition to 'ModeChanged' that trigger Match. See: |events|
+        Example: >lua
+          on = { 'FocusGained' },
+        <
+      ja: |-
+        'ModeChanged' に加え、Match を実行するイベントを追加します。参照: |events|
+        例: >lua
+          on = { 'FocusGained' },
+        <
 
   filetypes:
     __default: '*'

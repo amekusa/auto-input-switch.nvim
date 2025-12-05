@@ -52,13 +52,6 @@ return {
     -- This feature is called "Normalize".
 
     enable = true, -- Enable Normalize?
-    on = { -- Events that trigger Normalize. See: |events|
-      'BufLeave',
-      'WinLeave',
-      'FocusGained',
-      'ExitPre',
-      'QuitPre',
-    },
     on_mode_change = { -- Mode transition patterns that trigger Normalize.
       -- If not `false`, Normalize is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- See:
@@ -70,6 +63,9 @@ return {
       --   '[iR]:n' (From Insert/Replace to Normal mode)
 
       '[iR]:n',
+    },
+    on = { -- Extra events in addition to 'ModeChanged' that trigger Normalize. See: |events|
+      'QuitPre',
     },
     filetypes = '*', -- Filetypes where Normalize is enabled.
       -- Example:
@@ -91,9 +87,6 @@ return {
     -- This feature is called "Restore".
 
     enable = true, -- Enable Restore?
-    on = { -- Events that trigger Restore. See: |events|
-      'FocusGained',
-    },
     on_mode_change = { -- Mode transition patterns that trigger Restore.
       -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- 
@@ -102,6 +95,10 @@ return {
 
       '[nvV]:[iR]',
     },
+    on = nil, -- Extra events in addition to 'ModeChanged' that trigger Restore. See: |events|
+      -- Example:
+      --   on = { 'FocusGained' },
+
     filetypes = '*', -- Filetypes where Restore is enabled.
       -- Example:
       --   filetypes = { 'markdown', 'text' },
@@ -126,9 +123,6 @@ return {
     -- Disabled by default.
 
     enable = false, -- Enable Match?
-    on = { -- Events that trigger Match. See: |events|
-      'FocusGained',
-    },
     on_mode_change = { -- Mode transition patterns that trigger Match.
       -- If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- 
@@ -137,6 +131,10 @@ return {
 
       '[nvV]:[iR]',
     },
+    on = nil, -- Extra events in addition to 'ModeChanged' that trigger Match. See: |events|
+      -- Example:
+      --   on = { 'FocusGained' },
+
     filetypes = '*', -- Filetypes where Match is enabled.
       -- Example:
       --   filetypes = { 'markdown', 'text' },

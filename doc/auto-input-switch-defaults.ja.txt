@@ -65,13 +65,6 @@
       -- この機能を "Normalize" と呼称します。
   
       enable = true, -- Normalize を有効にする？
-      on = { -- Normalize を実行するイベント。参照: |events|
-        'BufLeave',
-        'WinLeave',
-        'FocusGained',
-        'ExitPre',
-        'QuitPre',
-      },
       on_mode_change = { -- Normalize のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
         -- 参照:
@@ -83,6 +76,9 @@
         --   '[iR]:n' (Insert/Replace から Normal モード)
   
         '[iR]:n',
+      },
+      on = { -- 'ModeChanged' に加え、Normalize を実行するイベントを追加します。参照: |events|
+        'QuitPre',
       },
       filetypes = '*', -- Normalize が有効になるファイルタイプ。
         -- 例:
@@ -104,9 +100,6 @@
       -- この機能を "Restore" と呼称します。
   
       enable = true, -- Restore を有効にする？
-      on = { -- Restore を実行するイベント。参照: |events|
-        'FocusGained',
-      },
       on_mode_change = { -- Restore のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
         -- 
@@ -115,6 +108,10 @@
   
         '[nvV]:[iR]',
       },
+      on = nil, -- 'ModeChanged' に加え、Restore を実行するイベントを追加します。参照: |events|
+        -- 参照:
+        --   on = { 'FocusGained' },
+  
       filetypes = '*', -- Restore が有効になるファイルタイプ。
         -- 例:
         --   filetypes = { 'markdown', 'text' },
@@ -139,9 +136,6 @@
       -- この機能はデフォルトでは無効に設定されています。
   
       enable = false, -- Match を有効にする？
-      on = { -- Match を実行するイベント。参照: |events|
-        'FocusGained',
-      },
       on_mode_change = { -- Match のトリガーとなる、モードの遷移パターン。
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
         -- 
@@ -150,6 +144,10 @@
   
         '[nvV]:[iR]',
       },
+      on = nil, -- 'ModeChanged' に加え、Match を実行するイベントを追加します。参照: |events|
+        -- 例:
+        --   on = { 'FocusGained' },
+  
       filetypes = '*', -- Match が有効になるファイルタイプ。
         -- 例:
         --   filetypes = { 'markdown', 'text' },
