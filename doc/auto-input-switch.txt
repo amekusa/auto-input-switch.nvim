@@ -104,6 +104,22 @@ With the default config:
 Changelog                                   *auto-input-switch.nvim.changelog*
 
 ------------------------------------------------------------------------------
+v5.2.0                                         *auto-input-switch.nvim.v5-2-0*
+
+Some default option values have been changed:
+
+- `normalize.on`
+  - New default: `{ 'QuitPre' }`
+  - Old default: `{ 'BufLeave', 'WinLeave', 'FocusGained', 'ExitPre', 
+    'QuitPre' }`
+- `restore.one`
+  - New default: `nil`
+  - Old default: `{ 'FocusGained }`
+- `match.one`
+  - New default: `nil`
+  - Old default: `{ 'FocusGained }`
+
+------------------------------------------------------------------------------
 v5.1.0                                         *auto-input-switch.nvim.v5-1-0*
 
 Now Normalize, Restore, and Match work on the buffers without any filetype if 
