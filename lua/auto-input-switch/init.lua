@@ -215,23 +215,45 @@ function M.setup(opts)
 	-- create an autocmd that initializes the flags for new buffer
 	local buf_init_flags = function(pat, mask, cond)
 		local on
+		local ft_list
 		if pat and pat ~= '*' then
 			on = 'FileType'
+			ft_list = type(pat) == t_tbl and pat or {pat}
 		else
 			on = {'BufNew', 'VimEnter'}
 			pat = nil
 		end
+
+		local apply = function(buf)
+			if not buf or buf < 1 or (cond and not cond(buf)) then return end
+			local flags = buf_flags[buf]; if flags
+				then buf_flags[buf] = bor(flags, mask)
+				else buf_flags[buf] = mask + 1 -- +01
+			end
+		end
+
 		autocmd(on, {
 			pattern = pat,
-			callback = function(ev)
-				local buf = ev.buf
-				if not buf or buf < 1 or (cond and not cond(buf)) then return end
-				local flags = buf_flags[buf]; if flags
-					then buf_flags[buf] = bor(flags, mask)
-					else buf_flags[buf] = mask + 1 -- +01
+			callback = function(ev) apply(ev.buf) end
+		})
+
+		-- also flag buffers that already existed before setup() ran
+		-- (e.g. the buffer nvim opens on startup, created before this autocmd existed)
+		for _, buf in ipairs(api.nvim_list_bufs()) do
+			if api.nvim_buf_is_loaded(buf) then
+				if not ft_list then
+					apply(buf)
+				else
+					local ft = bo[buf].filetype
+					for i = 1, #ft_list do
+						if ft_list[i] == ft then
+							apply(buf)
+							break
+						end
+					end
 				end
 			end
-		})
+		end
 	end
 
 	-- checks the flags of the given buffer
