@@ -104,6 +104,12 @@ With the default config:
 Changelog                                   *auto-input-switch.nvim.changelog*
 
 ------------------------------------------------------------------------------
+v5.2.1                                         *auto-input-switch.nvim.v5-2-1*
+
+Fix the issue that the buffers that already existed before `setup()` never 
+get flagged automatically.
+
+------------------------------------------------------------------------------
 v5.2.0                                         *auto-input-switch.nvim.v5-2-0*
 
 Some default option values have been changed:
