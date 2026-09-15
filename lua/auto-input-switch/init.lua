@@ -26,12 +26,9 @@ local api = vim.api
 local uv  = vim.uv or vim.loop
 local bo  = vim.bo
 
+local type = type
 local fmt  = string.format
 local find = string.find
-
-local emp = ''
-local t_tbl = 'table'
-local t_str = 'string'
 
 -- lua 5.1 compatibility
 local unpack = unpack or table.unpack
@@ -52,7 +49,7 @@ local trim; do
 	local p1 = '^()%s*$'
 	local p2 = '^%s*(.*%S)'
 	trim = function(str)
-		return m(str, p1) and emp or m(str, p2)
+		return m(str, p1) and '' or m(str, p2)
 	end
 	-- NOTE: Other implementations:
 	--       http://lua-users.org/wiki/StringTrim
@@ -71,7 +68,7 @@ end
 local M = {}
 function M.setup(opts)
 	local defaults = require(ns..'.defaults')
-	if opts and type(opts) == t_tbl
+	if opts and type(opts) == 'table'
 		then opts = vim.tbl_deep_extend('force', defaults, opts)
 		else opts = defaults
 	end
@@ -109,8 +106,8 @@ function M.setup(opts)
 				for i = 1, #args do
 					item = args[i]
 					t = type(item)
-					if t ~= t_str then
-						if t == t_tbl
+					if t ~= 'string' then
+						if t == 'table'
 							then item = inspect(item)
 							else item = t..'('..item..')'
 						end
@@ -135,7 +132,7 @@ function M.setup(opts)
 		local sep = ' '
 
 		format_cmd = function(cmd, arg)
-			if type(cmd) ~= t_tbl then -- assume string
+			if type(cmd) ~= 'table' then -- assume string
 				cmd = split(cmd, sep)
 			end
 			local r = {}
@@ -165,7 +162,7 @@ function M.setup(opts)
 		if not input then
 			return {}
 		end
-		if type(input) == t_tbl then
+		if type(input) == 'table' then
 			local name     = input[1]
 			local name_alt = input[2]
 			return {
@@ -189,6 +186,7 @@ function M.setup(opts)
 	local active = opts.activate
 	local async  = opts.async
 	local prefix = opts.prefix
+
 	opts = nil -- #GC
 
 	local schedule = vim.schedule
@@ -218,7 +216,7 @@ function M.setup(opts)
 		local ft_list
 		if pat and pat ~= '*' then
 			on = 'FileType'
-			ft_list = type(pat) == t_tbl and pat or {pat}
+			ft_list = type(pat) == 'table' and pat or {pat}
 		else
 			on = {'BufNew', 'VimEnter'}
 			pat = nil
@@ -429,7 +427,7 @@ function M.setup(opts)
 		-- 3: DEACTIVATING
 
 		local buf = -1
-		local buf_lines = {emp}
+		local buf_lines = {''}
 
 		local win = -1
 		local win_base = -1
@@ -588,8 +586,8 @@ function M.setup(opts)
 			if input_n[1] and (async or input_n[1] ~= input_r) then
 				exec(input_n[3])
 				if label then
-					if type(label) ~= t_tbl then
-						if type(label) == t_str
+					if type(label) ~= 'table' then
+						if type(label) == 'string'
 							then label = {label, strwidth(label)}
 							else label = {'A', 1}
 						end
@@ -722,8 +720,8 @@ function M.setup(opts)
 							exec(input[3])
 							if popup then
 								local label = lang_labels[found]
-								if type(label) ~= t_tbl then
-									if type(label) == t_str
+								if type(label) ~= 'table' then
+									if type(label) == 'string'
 										then label = {label, strwidth(label)}
 										else label = {found, strwidth(found)}
 									end
@@ -784,8 +782,8 @@ function M.setup(opts)
 								exec(input[3])
 								if popup then
 									local label = lang_labels[found]
-									if type(label) ~= t_tbl then
-										if type(label) == t_str
+									if type(label) ~= 'table' then
+										if type(label) == 'string'
 											then label = {label, strwidth(label)}
 											else label = {found, strwidth(found)}
 										end
@@ -874,8 +872,8 @@ function M.setup(opts)
 						exec(input[3])
 						if popup then
 							local label = lang_labels[lang]
-							if type(label) ~= t_tbl then
-								if type(label) == t_str
+							if type(label) ~= 'table' then
+								if type(label) == 'string'
 									then label = {label, strwidth(label)}
 									else label = {lang, strwidth(lang)}
 								end

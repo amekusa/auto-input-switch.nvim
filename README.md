@@ -108,6 +108,9 @@ With the default config:
 <!--TRUNCATE:END-->
 ## Changelog
 
+### v5.2.1
+Fix the issue that the buffers that already existed before `setup()` never get flagged automatically.
+
 ### v5.2.0
 Some default option values have been changed:
 - `normalize.on`
