@@ -26,6 +26,7 @@ local api = vim.api
 local uv  = vim.uv or vim.loop
 local bo  = vim.bo
 
+local type = type;
 local fmt  = string.format
 local find = string.find
 
@@ -185,6 +186,7 @@ function M.setup(opts)
 	local active = opts.activate
 	local async  = opts.async
 	local prefix = opts.prefix
+
 	opts = nil -- #GC
 
 	local schedule = vim.schedule
