@@ -224,7 +224,7 @@ function M.setup(opts)
 			pat = nil
 		end
 
-		local apply = function(buf)
+		local set_flags = function(buf)
 			if not buf or buf < 1 or (cond and not cond(buf)) then return end
 			local flags = buf_flags[buf]; if flags
 				then buf_flags[buf] = bor(flags, mask)
@@ -234,20 +234,22 @@ function M.setup(opts)
 
 		autocmd(on, {
 			pattern = pat,
-			callback = function(ev) apply(ev.buf) end
+			callback = function(ev)
+				set_flags(ev.buf)
+			end
 		})
 
 		-- also flag buffers that already existed before setup() ran
 		-- (e.g. the buffer nvim opens on startup, created before this autocmd existed)
-		for _, buf in ipairs(api.nvim_list_bufs()) do
+		for _,buf in ipairs(api.nvim_list_bufs()) do
 			if api.nvim_buf_is_loaded(buf) then
 				if not ft_list then
-					apply(buf)
+					set_flags(buf)
 				else
 					local ft = bo[buf].filetype
 					for i = 1, #ft_list do
 						if ft_list[i] == ft then
-							apply(buf)
+							set_flags(buf)
 							break
 						end
 					end
