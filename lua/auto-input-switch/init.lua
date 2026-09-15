@@ -26,7 +26,7 @@ local api = vim.api
 local uv  = vim.uv or vim.loop
 local bo  = vim.bo
 
-local type = type;
+local type = type
 local fmt  = string.format
 local find = string.find
 
