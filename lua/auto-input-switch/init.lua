@@ -640,7 +640,7 @@ function M.setup(opts)
 		end
 
 		local cond = function(buf) -- default condition
-			return bo[buf].modifiable
+			return bo[buf].modifiable or bo[buf].buftype == 'terminal'
 		end
 
 		local regex = vim.regex
