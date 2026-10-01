@@ -190,7 +190,8 @@ normalize:
 
   on_mode_change:
     __default:
-      - '[iR]:n'
+      - '[iRt]:n'
+      - '[iRt]:nt'
 
     __desc:
       en: |-
@@ -202,7 +203,7 @@ normalize:
           * |mode()|
 
         Default:
-          `'[iR]:n'` (From Insert/Replace to Normal mode)
+          From Insert/Replace/Terminal to Normal mode
       ja: |-
         Normalize のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Normalize が実行されます。
@@ -212,7 +213,7 @@ normalize:
           * |mode()|
 
         Default:
-          `'[iR]:n'` (Insert/Replace から Normal モード)
+          Insert/Replace/Terminal から Normal モード
 
   on:
     __default:
@@ -291,7 +292,8 @@ restore:
 
   on_mode_change:
     __default:
-      - '[nvV]:[iR]'
+      - '[nvV]:[iRt]'
+      - 'nt:[iRt]'
 
     __desc:
       en: |-
@@ -299,7 +301,7 @@ restore:
         If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
 
         Default:
-          `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
+          From Normal/Visual to Insert/Replace mode
       ja: |-
         Restore のトリガーとなる、モードの遷移パターン。
         `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
@@ -399,7 +401,8 @@ match:
 
   on_mode_change:
     __default:
-      - '[nvV]:[iR]'
+      - '[nvV]:[iRt]'
+      - 'nt:[iRt]'
 
     __desc:
       en: |-

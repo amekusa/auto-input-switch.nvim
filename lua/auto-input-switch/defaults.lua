@@ -60,9 +60,10 @@ return {
       --   * |mode()|
       -- 
       -- Default:
-      --   '[iR]:n' (From Insert/Replace to Normal mode)
+      --   From Insert/Replace/Terminal to Normal mode
 
-      '[iR]:n',
+      '[iRt]:n',
+      '[iRt]:nt',
     },
     on = { -- Extra events in addition to 'ModeChanged' that trigger Normalize. See: |events|
       'QuitPre',
@@ -93,9 +94,10 @@ return {
       -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- 
       -- Default:
-      --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
+      --   From Normal/Visual to Insert/Replace mode
 
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     },
     on = nil, -- Extra events in addition to 'ModeChanged' that trigger Restore.
       -- See: |events|
@@ -134,7 +136,8 @@ return {
       -- Default:
       --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
 
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     },
     on = nil, -- Extra events in addition to 'ModeChanged' that trigger Match.
       -- See: |events|
