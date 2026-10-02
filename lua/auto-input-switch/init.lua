@@ -66,15 +66,15 @@ local detect_os = function()
 end
 
 local M = {}
-function M.setup(opts)
+function M.setup(conf)
 	local defaults = require(ns..'.defaults')
-	if opts and type(opts) == 'table'
-		then opts = vim.tbl_deep_extend('force', defaults, opts)
-		else opts = defaults
+	if conf and type(conf) == 'table'
+		then conf = vim.tbl_deep_extend('force', defaults, conf)
+		else conf = defaults
 	end
 	defaults = nil -- #GC
 
-	local oss = opts.os_settings[opts.os or detect_os()]
+	local oss = conf.os_settings[conf.os or detect_os()]
 	if not oss.enable then return end
 
 	-- bit-wise operations module
@@ -86,7 +86,7 @@ function M.setup(opts)
 	end
 
 	local log, mem1, mem2
-	if opts.log then
+	if conf.log then
 		local out = vim.fn.stdpath('log')..'/auto-input-switch.log'
 		local f = io.open(out, 'w')
 		if f then
@@ -178,16 +178,16 @@ function M.setup(opts)
 	local input_n = format_input(oss.normal_input)
 	local input_r -- input to Restore
 
-	local popup     = opts.popup.enable     and opts.popup
-	local normalize = opts.normalize.enable and opts.normalize
-	local restore   = opts.restore.enable   and opts.restore
-	local match     = opts.match.enable     and opts.match
+	local popup     = conf.popup.enable     and conf.popup
+	local normalize = conf.normalize.enable and conf.normalize
+	local restore   = conf.restore.enable   and conf.restore
+	local match     = conf.match.enable     and conf.match
 
-	local active = opts.activate
-	local async  = opts.async
-	local prefix = opts.prefix
+	local active = conf.activate
+	local async  = conf.async
+	local prefix = conf.prefix
 
-	opts = nil -- #GC
+	conf = nil -- #GC
 
 	local schedule = vim.schedule
 	local strwidth = vim.fn.strdisplaywidth
