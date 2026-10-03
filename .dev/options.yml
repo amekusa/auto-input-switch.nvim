@@ -241,6 +241,14 @@ normalize:
           filetypes = { 'markdown', 'text' },
         <
 
+  buftypes:
+    __default: <!CODE>{ 'terminal' }
+    __desc:
+      en: |-
+        Additional buffer types where Normalize is enabled. See: |'buftype'|
+      ja: |-
+        Normalize を有効にする追加のバッファタイプ。参照: |'buftype'|
+
   debounce:
     __default: 500
     __desc:
@@ -341,6 +349,14 @@ restore:
         例: >lua
           filetypes = { 'markdown', 'text' },
         <
+
+  buftypes:
+    __default: <!CODE>{ 'terminal' }
+    __desc:
+      en: |-
+        Additional buffer types where Restore is enabled. See: |'buftype'|
+      ja: |-
+        Restore を有効にする追加のバッファタイプ。参照: |'buftype'|
 
   debounce:
     __default: 500
@@ -451,6 +467,14 @@ match:
         例: >lua
           filetypes = { 'markdown', 'text' },
         <
+
+  buftypes:
+    __default: false
+    __desc:
+      en: |-
+        Additional buffer types where Match is enabled. See: |'buftype'|
+      ja: |-
+        Match を有効にする追加のバッファタイプ。参照: |'buftype'|
 
   debounce:
     __default: 500
