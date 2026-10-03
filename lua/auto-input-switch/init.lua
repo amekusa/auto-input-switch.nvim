@@ -262,6 +262,11 @@ function M.setup(conf)
 			ac.pattern = '*'
 			autocmd('FileType', ac)
 		end
+		-- NOTE:
+		-- 'BufNew' is too early to determine buftype.
+		-- The 'TermOpen' hook here is necessary for `buftype = 'terminal'` specifically.
+		-- Unfortunately, we don't have any reliable way to support arbitrary buftypes,
+		-- due to the inconsistency of Neovim APIs.
 
 		-- scan existing buffers
 		for _,buf in ipairs(api.nvim_list_bufs()) do
