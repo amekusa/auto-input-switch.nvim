@@ -73,9 +73,10 @@
         --   * |mode()|
         -- 
         -- Default:
-        --   '[iR]:n' (Insert/Replace から Normal モード)
+        --   Insert/Replace/Terminal から Normal モード
   
-        '[iR]:n',
+        '[iRt]:n',
+        '[iRt]:nt',
       },
       on = { -- 'ModeChanged' に加え、Normalize を実行するイベントを追加します。参照: |events|
         'QuitPre',
@@ -84,6 +85,9 @@
         -- 
         -- 例:
         --   filetypes = { 'markdown', 'text' },
+  
+      buftypes = { 'terminal' }, -- Normalize を有効にする追加のバッファタイプ。参照: |'buftype'|
+        -- 現在、'terminal' のみサポートされています。
   
       debounce = 500, -- デバウンス時間 (ms) 。Normalize の連続実行を抑制します。
       buf_condition = nil, -- Normalize がバッファに対して有効となる条件を定義する関数です。
@@ -108,7 +112,8 @@
         -- デフォルト:
         --   '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
   
-        '[nvV]:[iR]',
+        '[nvV]:[iRt]',
+        'nt:[iRt]',
       },
       on = nil, -- 'ModeChanged' に加え、Restore を実行するイベントを追加します。
         -- 参照: |events|
@@ -120,6 +125,9 @@
         -- 
         -- 例:
         --   filetypes = { 'markdown', 'text' },
+  
+      buftypes = { 'terminal' }, -- Restore を有効にする追加のバッファタイプ。参照: |'buftype'|
+        -- 現在、'terminal' のみサポートされています。
   
       debounce = 500, -- デバウンス時間 (ms) 。Restore の連続実行を抑制します。
       buf_condition = nil, -- Restore がバッファに対して有効となる条件を定義する関数です。
@@ -147,7 +155,8 @@
         -- デフォルト:
         --   '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
   
-        '[nvV]:[iR]',
+        '[nvV]:[iRt]',
+        'nt:[iRt]',
       },
       on = nil, -- 'ModeChanged' に加え、Match を実行するイベントを追加します。
         -- 参照: |events|
@@ -159,6 +168,9 @@
         -- 
         -- 例:
         --   filetypes = { 'markdown', 'text' },
+  
+      buftypes = nil, -- Match を有効にする追加のバッファタイプ。参照: |'buftype'|
+        -- 現在、'terminal' のみサポートされています。
   
       debounce = 500, -- デバウンス時間 (ms) 。Match の連続実行を抑制します。
       buf_condition = nil, -- Match がバッファに対して有効となる条件を定義する関数です。

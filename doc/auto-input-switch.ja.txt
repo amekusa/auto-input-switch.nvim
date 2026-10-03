@@ -98,6 +98,19 @@ lazy.nvim (https://github.com/folke/lazy.nvim) を使用する場合:
 変更履歴                                 *auto-input-switch.nvim.ja.changelog*
 
 ------------------------------------------------------------------------------
+v5.3.0                                      *auto-input-switch.nvim.ja.v5-3-0*
+
+- AIS が `:terminal` バッファでも動作するようになりました。
+- オプション追加:
+  - `normalize.buftypes`
+  - `restore.buftypes`
+  - `match.buftypes`
+  - `buftypes = { 'terminal' }` と設定すれば、対応する機能が `:terminal` 
+    バッファに対して自動的に有効になります。
+- 各バッファに対するフラグが、ファイルタイプ変更時に自動で更新されるようになり
+  ました。
+
+------------------------------------------------------------------------------
 v5.2.0                                      *auto-input-switch.nvim.ja.v5-2-0*
 
 いくつかのオプションのデフォルト値が変更:

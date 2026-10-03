@@ -108,8 +108,17 @@ With the default config:
 <!--TRUNCATE:END-->
 ## Changelog
 
+### v5.3.0
+- AIS now works on `:terminal` buffers.
+- Added new options:
+  - `normalize.buftypes`
+  - `restore.buftypes`
+  - `match.buftypes`
+  - With `buftypes = { 'terminal' }`, the corresponding AIS feature is automatically enabled on `:terminal` buffers.
+- Buffer flags are now updated automatically when the filetype changes.
+
 ### v5.2.1
-Fix the issue that the buffers that already existed before `setup()` never get flagged automatically.
+Fixed the issue that the buffers that already existed before `setup()` never get flagged automatically.
 
 ### v5.2.0
 Some default option values have been changed:
