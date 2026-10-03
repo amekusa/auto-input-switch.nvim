@@ -44,6 +44,17 @@ local notify = function(msg, level)
 	api.nvim_notify('[auto-input-switch] '..msg, vim.log.levels[level or 'INFO'], {})
 end
 
+local includes = function(t, s)
+	for i = 1, #t do
+		if t[i] == s then return true end
+	end
+	return false
+end
+
+local tbl = function(x)
+	return type(x) == 'table' and x or {x}
+end
+
 local trim; do
 	local m = string.match
 	local p1 = '^()%s*$'
@@ -211,47 +222,51 @@ function M.setup(conf)
 	})
 
 	-- create an autocmd that initializes the flags for new buffer
-	local buf_init_flags = function(pat, mask, cond)
-		local on
-		local ft_list
-		if pat and pat ~= '*' then
-			on = 'FileType'
-			ft_list = type(pat) == 'table' and pat or {pat}
-		else
-			on = {'BufNew', 'VimEnter'}
-			pat = nil
-		end
+	local buf_init_flags = function(mask, o)
+		local ft = o.ft == '*' and '*' or tbl(o.ft)
+		local bt = o.bt and tbl(o.bt)
+		local cond = o.cond
 
-		local set_flags = function(buf)
-			if not buf or buf < 1 or (cond and not cond(buf)) then return end
-			local flags = buf_flags[buf]; if flags
-				then buf_flags[buf] = bor(flags, mask)
-				else buf_flags[buf] = mask + 1 -- +01
+		local update_flags = function(buf)
+			if not buf or buf < 1 then return end
+			local enable
+			local flags = buf_flags[buf]
+			local opts = bo[buf]
+			if opts.buftype == '' -- regular buffer
+				then enable = ft == '*' or includes(ft, opts.filetype) -- check filetype
+				else enable = bt and includes(bt, opts.buftype) -- check buftype
+			end
+			if enable and (not cond or cond(buf)) then -- set the flag
+				if flags
+					then buf_flags[buf] = bor(flags, mask)
+					else buf_flags[buf] = mask + 1 -- +01
+				end
+			elseif flags then -- remove the flag
+				flags = band(flags, bnot(mask))
+				buf_flags[buf] = flags > 0 and flags or nil
 			end
 		end
 
-		autocmd(on, {
-			pattern = pat,
+		local ac = {
 			callback = function(ev)
-				set_flags(ev.buf)
+				update_flags(ev.buf)
 			end
-		})
+		}
 
-		-- also flag buffers that already existed before setup() ran
-		-- (e.g. the buffer nvim opens on startup, created before this autocmd existed)
+		if ft == '*' then
+			autocmd({'TermOpen', 'BufNew', 'VimEnter'}, ac);
+		else
+			if bt and includes(bt, 'terminal') then
+				autocmd('TermOpen', ac)
+			end
+			ac.pattern = '*'
+			autocmd('FileType', ac)
+		end
+
+		-- scan existing buffers
 		for _,buf in ipairs(api.nvim_list_bufs()) do
 			if api.nvim_buf_is_loaded(buf) then
-				if not ft_list then
-					set_flags(buf)
-				else
-					local ft = bo[buf].filetype
-					for i = 1, #ft_list do
-						if ft_list[i] == ft then
-							set_flags(buf)
-							break
-						end
-					end
-				end
+				update_flags(buf)
 			end
 		end
 	end
@@ -556,8 +571,12 @@ function M.setup(conf)
 	-- #normalize
 	if normalize then
 
-		-- set flag +010 to new buffer
-		buf_init_flags(normalize.filetypes, 2, normalize.buf_condition) -- +010
+		-- set flag +010 to buffers
+		buf_init_flags(2, { -- +010
+			ft = normalize.filetypes or '*',
+			bt = normalize.buftypes,
+			cond = normalize.buf_condition,
+		})
 
 		--- auto-detect normal-input
 		if not input_n[1] then
@@ -653,6 +672,7 @@ function M.setup(conf)
 		local modes_allowed = {
 			i = true,
 			R = true,
+			t = true,
 		}
 
 		local lang_labels = popup and popup.labels.lang_inputs
@@ -666,11 +686,12 @@ function M.setup(conf)
 		-- #match
 		if match then
 
-			-- set flag +01000 to new buffer
-			buf_init_flags(
-				match.filetypes, 8, -- +01000
-				match.buf_condition or (match.buf_condition == nil and cond)
-			)
+			-- set flag +01000 to buffers
+			buf_init_flags(8, { -- +01000
+				ft = match.filetypes or '*',
+				bt = match.buftypes,
+				cond = match.buf_condition or (match.buf_condition == nil and cond),
+			})
 
 			-- finds a language matches with the given string
 			local match_lang; do
@@ -837,11 +858,12 @@ function M.setup(conf)
 		-- #restore
 		if restore then
 
-			-- set flag +0100 to new buffer
-			buf_init_flags(
-				restore.filetypes, 4, -- +0100
-				restore.buf_condition or (restore.buf_condition == nil and cond)
-			)
+			-- set flag +0100 to buffers
+			buf_init_flags(4, { -- +0100
+				ft = restore.filetypes or '*',
+				bt = restore.buftypes,
+				cond = restore.buf_condition or (restore.buf_condition == nil and cond),
+			})
 
 			-- create a reverse-lookup table of lang_inputs
 			local lang_lookup; if popup then
