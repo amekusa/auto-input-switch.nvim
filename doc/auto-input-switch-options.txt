@@ -150,7 +150,8 @@ normalize.enable                          *auto-input-switch.normalize.enable*
 normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
   ⇢  default: >lua
     {
-      '[iR]:n',
+      '[iRt]:n',
+      '[iRt]:nt',
     }
 <
   Mode transition patterns that trigger Normalize.
@@ -162,7 +163,7 @@ normalize.on_mode_change          *auto-input-switch.normalize.on_mode_change*
     * |mode()|
   
   Default:
-    `'[iR]:n'` (From Insert/Replace to Normal mode)
+    From Insert/Replace/Terminal to Normal mode
 
 ------------------------------------------------------------------------------
 normalize.on                                  *auto-input-switch.normalize.on*
@@ -182,6 +183,12 @@ normalize.filetypes                    *auto-input-switch.normalize.filetypes*
   Example: >lua
     filetypes = { 'markdown', 'text' },
 <
+
+------------------------------------------------------------------------------
+normalize.buftypes                      *auto-input-switch.normalize.buftypes*
+  ⇢  default: `{ 'terminal' }`
+  Additional buffer types where Normalize is enabled. See: |'buftype'|
+  Currently, only `'terminal'` is supported.
 
 ------------------------------------------------------------------------------
 normalize.debounce                      *auto-input-switch.normalize.debounce*
@@ -217,7 +224,8 @@ restore.enable                              *auto-input-switch.restore.enable*
 restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   ⇢  default: >lua
     {
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     }
 <
   Mode transition patterns that trigger Restore.
@@ -225,7 +233,7 @@ restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   with one of these patterns.
   
   Default:
-    `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
+    From Normal/Visual to Insert/Replace mode
 
 ------------------------------------------------------------------------------
 restore.on                                      *auto-input-switch.restore.on*
@@ -245,6 +253,12 @@ restore.filetypes                        *auto-input-switch.restore.filetypes*
   Example: >lua
     filetypes = { 'markdown', 'text' },
 <
+
+------------------------------------------------------------------------------
+restore.buftypes                          *auto-input-switch.restore.buftypes*
+  ⇢  default: `{ 'terminal' }`
+  Additional buffer types where Restore is enabled. See: |'buftype'|
+  Currently, only `'terminal'` is supported.
 
 ------------------------------------------------------------------------------
 restore.debounce                          *auto-input-switch.restore.debounce*
@@ -285,7 +299,8 @@ match.enable                                  *auto-input-switch.match.enable*
 match.on_mode_change                  *auto-input-switch.match.on_mode_change*
   ⇢  default: >lua
     {
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     }
 <
   Mode transition patterns that trigger Match.
@@ -313,6 +328,12 @@ match.filetypes                            *auto-input-switch.match.filetypes*
   Example: >lua
     filetypes = { 'markdown', 'text' },
 <
+
+------------------------------------------------------------------------------
+match.buftypes                              *auto-input-switch.match.buftypes*
+  ⇢  default: `nil`
+  Additional buffer types where Match is enabled. See: |'buftype'|
+  Currently, only `'terminal'` is supported.
 
 ------------------------------------------------------------------------------
 match.debounce                              *auto-input-switch.match.debounce*

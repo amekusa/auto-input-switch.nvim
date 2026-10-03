@@ -151,7 +151,8 @@ normalize.enable                       *auto-input-switch.ja.normalize.enable*
 normalize.on_mode_change       *auto-input-switch.ja.normalize.on_mode_change*
   ⇢  デフォルト: >lua
     {
-      '[iR]:n',
+      '[iRt]:n',
+      '[iRt]:nt',
     }
 <
   Normalize のトリガーとなる、モードの遷移パターン。
@@ -163,7 +164,7 @@ normalize.on_mode_change       *auto-input-switch.ja.normalize.on_mode_change*
     * |mode()|
   
   Default:
-    `'[iR]:n'` (Insert/Replace から Normal モード)
+    Insert/Replace/Terminal から Normal モード
 
 ------------------------------------------------------------------------------
 normalize.on                               *auto-input-switch.ja.normalize.on*
@@ -183,6 +184,12 @@ normalize.filetypes                 *auto-input-switch.ja.normalize.filetypes*
   例: >lua
     filetypes = { 'markdown', 'text' },
 <
+
+------------------------------------------------------------------------------
+normalize.buftypes                   *auto-input-switch.ja.normalize.buftypes*
+  ⇢  デフォルト: `{ 'terminal' }`
+  Normalize を有効にする追加のバッファタイプ。参照: |'buftype'|
+  現在、`'terminal'` のみサポートされています。
 
 ------------------------------------------------------------------------------
 normalize.debounce                   *auto-input-switch.ja.normalize.debounce*
@@ -220,7 +227,8 @@ restore.enable                           *auto-input-switch.ja.restore.enable*
 restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
   ⇢  デフォルト: >lua
     {
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     }
 <
   Restore のトリガーとなる、モードの遷移パターン。
@@ -248,6 +256,12 @@ restore.filetypes                     *auto-input-switch.ja.restore.filetypes*
   例: >lua
     filetypes = { 'markdown', 'text' },
 <
+
+------------------------------------------------------------------------------
+restore.buftypes                       *auto-input-switch.ja.restore.buftypes*
+  ⇢  デフォルト: `{ 'terminal' }`
+  Restore を有効にする追加のバッファタイプ。参照: |'buftype'|
+  現在、`'terminal'` のみサポートされています。
 
 ------------------------------------------------------------------------------
 restore.debounce                       *auto-input-switch.ja.restore.debounce*
@@ -289,7 +303,8 @@ match.enable                               *auto-input-switch.ja.match.enable*
 match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
   ⇢  デフォルト: >lua
     {
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     }
 <
   Match のトリガーとなる、モードの遷移パターン。
@@ -317,6 +332,12 @@ match.filetypes                         *auto-input-switch.ja.match.filetypes*
   例: >lua
     filetypes = { 'markdown', 'text' },
 <
+
+------------------------------------------------------------------------------
+match.buftypes                           *auto-input-switch.ja.match.buftypes*
+  ⇢  デフォルト: `nil`
+  Match を有効にする追加のバッファタイプ。参照: |'buftype'|
+  現在、`'terminal'` のみサポートされています。
 
 ------------------------------------------------------------------------------
 match.debounce                           *auto-input-switch.ja.match.debounce*

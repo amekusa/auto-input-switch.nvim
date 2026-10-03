@@ -60,9 +60,10 @@ return {
       --   * |mode()|
       -- 
       -- Default:
-      --   '[iR]:n' (From Insert/Replace to Normal mode)
+      --   From Insert/Replace/Terminal to Normal mode
 
-      '[iR]:n',
+      '[iRt]:n',
+      '[iRt]:nt',
     },
     on = { -- Extra events in addition to 'ModeChanged' that trigger Normalize. See: |events|
       'QuitPre',
@@ -71,6 +72,9 @@ return {
       -- 
       -- Example:
       --   filetypes = { 'markdown', 'text' },
+
+    buftypes = { 'terminal' }, -- Additional buffer types where Normalize is enabled. See: |'buftype'|
+      -- Currently, only 'terminal' is supported.
 
     debounce = 500, -- Debounce time (ms). Prevents repeated Normalize triggers.
     buf_condition = nil, -- Optional function that decides whether Normalize is enabled for a buffer.
@@ -93,9 +97,10 @@ return {
       -- If not `false`, Restore is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- 
       -- Default:
-      --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
+      --   From Normal/Visual to Insert/Replace mode
 
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     },
     on = nil, -- Extra events in addition to 'ModeChanged' that trigger Restore.
       -- See: |events|
@@ -107,6 +112,9 @@ return {
       -- 
       -- Example:
       --   filetypes = { 'markdown', 'text' },
+
+    buftypes = { 'terminal' }, -- Additional buffer types where Restore is enabled. See: |'buftype'|
+      -- Currently, only 'terminal' is supported.
 
     debounce = 500, -- Debounce time (ms). Prevents repeated Restore triggers.
     buf_condition = nil, -- Function that decides whether Restore is enabled for a buffer.
@@ -134,7 +142,8 @@ return {
       -- Default:
       --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
 
-      '[nvV]:[iR]',
+      '[nvV]:[iRt]',
+      'nt:[iRt]',
     },
     on = nil, -- Extra events in addition to 'ModeChanged' that trigger Match.
       -- See: |events|
@@ -146,6 +155,9 @@ return {
       -- 
       -- Example:
       --   filetypes = { 'markdown', 'text' },
+
+    buftypes = nil, -- Additional buffer types where Match is enabled. See: |'buftype'|
+      -- Currently, only 'terminal' is supported.
 
     debounce = 500, -- Debounce time (ms). Prevents repeated Match triggers.
     buf_condition = nil, -- Function that decides whether Match is enabled for a buffer.
