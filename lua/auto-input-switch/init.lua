@@ -332,7 +332,8 @@ function M.setup(conf)
 						end
 					end
 				elseif arg == 'off' then
-					buf_flags[buf] = band(flags, bnot(mask))
+					flags = band(flags, bnot(mask))
+					buf_flags[buf] = flags > 0 and flags or nil
 					if not cmd.bang then
 						if label
 							then notify(fmt('deactivated %s on current buffer', label))
