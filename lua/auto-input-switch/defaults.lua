@@ -74,6 +74,8 @@ return {
       --   filetypes = { 'markdown', 'text' },
 
     buftypes = { 'terminal' }, -- Additional buffer types where Normalize is enabled. See: |'buftype'|
+      -- Currently, only 'terminal' is supported.
+
     debounce = 500, -- Debounce time (ms). Prevents repeated Normalize triggers.
     buf_condition = nil, -- Optional function that decides whether Normalize is enabled for a buffer.
       -- Called on each buffer creation with its buffer number.
@@ -112,6 +114,8 @@ return {
       --   filetypes = { 'markdown', 'text' },
 
     buftypes = { 'terminal' }, -- Additional buffer types where Restore is enabled. See: |'buftype'|
+      -- Currently, only 'terminal' is supported.
+
     debounce = 500, -- Debounce time (ms). Prevents repeated Restore triggers.
     buf_condition = nil, -- Function that decides whether Restore is enabled for a buffer.
       -- Called on each buffer creation with its buffer number.
@@ -152,7 +156,9 @@ return {
       -- Example:
       --   filetypes = { 'markdown', 'text' },
 
-    buftypes = false, -- Additional buffer types where Match is enabled. See: |'buftype'|
+    buftypes = nil, -- Additional buffer types where Match is enabled. See: |'buftype'|
+      -- Currently, only 'terminal' is supported.
+
     debounce = 500, -- Debounce time (ms). Prevents repeated Match triggers.
     buf_condition = nil, -- Function that decides whether Match is enabled for a buffer.
       -- Called on each buffer creation with its buffer number.

@@ -246,8 +246,10 @@ normalize:
     __desc:
       en: |-
         Additional buffer types where Normalize is enabled. See: |'buftype'|
+        Currently, only `'terminal'` is supported.
       ja: |-
         Normalize を有効にする追加のバッファタイプ。参照: |'buftype'|
+        現在、`'terminal'` のみサポートされています。
 
   debounce:
     __default: 500
@@ -355,8 +357,10 @@ restore:
     __desc:
       en: |-
         Additional buffer types where Restore is enabled. See: |'buftype'|
+        Currently, only `'terminal'` is supported.
       ja: |-
         Restore を有効にする追加のバッファタイプ。参照: |'buftype'|
+        現在、`'terminal'` のみサポートされています。
 
   debounce:
     __default: 500
@@ -469,12 +473,14 @@ match:
         <
 
   buftypes:
-    __default: false
+    __default: null
     __desc:
       en: |-
         Additional buffer types where Match is enabled. See: |'buftype'|
+        Currently, only `'terminal'` is supported.
       ja: |-
         Match を有効にする追加のバッファタイプ。参照: |'buftype'|
+        現在、`'terminal'` のみサポートされています。
 
   debounce:
     __default: 500
