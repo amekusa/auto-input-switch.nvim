@@ -586,7 +586,7 @@ function M.setup(conf)
 
 		--- auto-detect normal-input
 		if not input_n[1] then
-			autocmd('InsertEnter', {
+			autocmd({'InsertEnter', 'TermEnter'}, {
 				callback = function()
 					exec_get(cmd_get, function(r)
 						input_n[1] = trim(r.stdout)
