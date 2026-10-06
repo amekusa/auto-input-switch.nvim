@@ -101,6 +101,7 @@ return {
 
       '[nvV]:[iRt]',
       'nt:[iRt]',
+      'no:[iR]',
     },
     on = nil, -- Extra events in addition to 'ModeChanged' that trigger Restore.
       -- See: |events|
@@ -144,6 +145,7 @@ return {
 
       '[nvV]:[iRt]',
       'nt:[iRt]',
+      'no:[iR]',
     },
     on = nil, -- Extra events in addition to 'ModeChanged' that trigger Match.
       -- See: |events|

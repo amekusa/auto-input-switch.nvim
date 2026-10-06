@@ -304,6 +304,7 @@ restore:
     __default:
       - '[nvV]:[iRt]'
       - 'nt:[iRt]'
+      - 'no:[iR]'
 
     __desc:
       en: |-
@@ -423,6 +424,7 @@ match:
     __default:
       - '[nvV]:[iRt]'
       - 'nt:[iRt]'
+      - 'no:[iR]'
 
     __desc:
       en: |-
