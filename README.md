@@ -10,7 +10,7 @@
  ▄█▄ ▄██▄ ━━━━━━━━━━━ ▄██▄ ━━━━━━━━━━━━━━━ █▀▄▄█▀ ━━━━━━━━━━━━━━━━━━ ★ NVIM
 
 ```
-[![GitHub Tag](https://img.shields.io/github/v/tag/amekusa/auto-input-switch.nvim?label=stable)](https://github.com/amekusa/auto-input-switch.nvim/tags) ➔ [Changelog](#changelog)
+[![GitHub Tag](https://img.shields.io/github/v/tag/amekusa/auto-input-switch.nvim?label=stable)](https://github.com/amekusa/auto-input-switch.nvim/tags) [![Changelog](https://img.shields.io/badge/%E2%9E%94%20changelog-8A2BE2?style=for-the-badge)](#changelog)
 
 ![Demo Gif](https://raw.githubusercontent.com/amekusa/assets/master/auto-input-switch.nvim/demo.gif)
 
