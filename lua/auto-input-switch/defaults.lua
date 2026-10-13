@@ -99,7 +99,7 @@ return {
       -- Default:
       --   From Normal/Visual to Insert/Replace mode
 
-      '[nvV]:[iRt]',
+      '[nvV\\x16]:[iRt]',
       'nt:[iRt]',
       'no:[iR]',
     },
@@ -141,9 +141,9 @@ return {
       -- If not `false`, Match is triggered by the 'ModeChanged' event matched with one of these patterns.
       -- 
       -- Default:
-      --   '[nvV]:[iR]' (From Normal/Visual to Insert/Replace mode)
+      --   From Normal/Visual to Insert/Replace mode
 
-      '[nvV]:[iRt]',
+      '[nvV\\x16]:[iRt]',
       'nt:[iRt]',
       'no:[iR]',
     },
