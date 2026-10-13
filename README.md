@@ -136,12 +136,12 @@ You can apply this workaround to other languages too, with correct input source 
 <!--TRUNCATE:END-->
 ## Changelog
 
+### v5.4.0
+Added *visual-block* mode to the default patterns of `restore|match.on_mode_change`. 
+
 ### v5.3.0
 - AIS now works on `:terminal` buffers.
-- Added new options:
-  - `normalize.buftypes`
-  - `restore.buftypes`
-  - `match.buftypes`
+- Added new options: `normalize|restore|match.buftypes`
   - With `buftypes = { 'terminal' }`, the corresponding AIS feature is automatically enabled on `:terminal` buffers.
 - Buffer flags are now updated automatically when the filetype changes.
 
@@ -175,7 +175,7 @@ If you’re upgrading, please review carefully.
 
 **Non-breaking Changes**:
 - `popup.labels.*` simplified (accepts plain strings).
-- New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`.
+- New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, `*.buf_condition`
 - New buffer-local commands:
   - `:AutoInputSwitchBuf on|off`
   - `:AutoInputSwitchBufNormalize on|off`

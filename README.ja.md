@@ -136,12 +136,12 @@ require('auto-input-switch').setup({
 <!--TRUNCATE:END-->
 ## 変更履歴 <!-- #changelog -->
 
+### v5.4.0
+*visual-block* モードを `restore|match.on_mode_change` のデフォルトパターンに加えました。
+
 ### v5.3.0
 - AIS が `:terminal` バッファでも動作するようになりました。
-- オプション追加:
-  - `normalize.buftypes`
-  - `restore.buftypes`
-  - `match.buftypes`
+- オプション追加: `normalize|restore|match.buftypes`
   - `buftypes = { 'terminal' }` と設定すれば、対応する機能が `:terminal` バッファに対して自動的に有効になります。
 - 各バッファに対するフラグが、ファイルタイプ変更時に自動で更新されるようになりました。
 
