@@ -54,11 +54,10 @@ require('lazy').setup({
 
 
 ## Configuration
-This plugin is highly configurable.  
 For all available options, see:
 
 - [`auto-input-switch-options.txt`](doc/auto-input-switch-options.txt)
-- [`defaults.lua`](lua/auto-input-switch/defaults.lua)
+- [`auto-input-switch-defaults.txt`](doc/auto-input-switch-defaults.txt)
 
 Example: enable **Match** for Japanese, Chinese, and Korean:
 
@@ -96,6 +95,35 @@ With the default config:
   (Alternatively, [macism](https://github.com/laishulu/macism) may work better on macOS.)
 - Linux: [ibus](https://github.com/ibus/ibus)
 
+If you have issues both with im-select and macism on macOS, there's **a workaround using AppleScript**.
+
+<details>
+<summary>AppleScript Setup:</summary>
+This is an example of Japanese setting specifically.
+It simulates pressing `Kana` key, which switches IME to Japanese.
+
+```lua
+require('auto-input-switch').setup({
+  os_settings = {
+    macos = {
+      lang_inputs = {
+        Ja = {
+          'com.apple.inputmethod.Kotoeri.Japanese', -- Input source ID
+          '104', -- Key code to simulate
+          cmd_set = {
+            'osascript',
+            '-e',
+            'tell application "System Events" to key code %s'
+          }
+        }
+      }
+    }
+  }
+})
+```
+
+You can apply this workaround to other languages too, with correct input source ID and key code.
+</details>
 
 <!--TRUNCATE:START-->
 ## Documents

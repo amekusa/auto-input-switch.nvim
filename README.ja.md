@@ -95,6 +95,35 @@ require('auto-input-switch').setup({
   (macOS の場合、[macism](https://github.com/laishulu/macism) の方がいいかもしれません。)
 - Linux: [ibus](https://github.com/ibus/ibus)
 
+もし macOS 環境で im-select と macism どちらの使用にも問題があるという場合は、**AppleScript で解決できるかもしれません**。
+
+<details>
+<summary>AppleScript による解決方法:</summary>
+これは日本語の設定例です。
+`かな` キーの押下をシミュレートすることで日本語 IME に切り替えます。
+
+```lua
+require('auto-input-switch').setup({
+  os_settings = {
+    macos = {
+      lang_inputs = {
+        Ja = {
+          'com.apple.inputmethod.Kotoeri.Japanese', -- 入力言語の ID
+          '104', -- シミュレートする key code
+          cmd_set = {
+            'osascript',
+            '-e',
+            'tell application "System Events" to key code %s'
+          }
+        }
+      }
+    }
+  }
+})
+```
+
+この設定は、適切な入力言語 ID とキーコードさえ設定すれば他の言語にも応用可能です。
+</details>
 
 <!--TRUNCATE:START-->
 ## ドキュメント <!-- #documents -->
