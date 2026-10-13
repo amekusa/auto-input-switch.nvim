@@ -227,8 +227,9 @@ restore.enable                           *auto-input-switch.ja.restore.enable*
 restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
   ⇢  デフォルト: >lua
     {
-      '[nvV]:[iRt]',
+      '[nvV\\x16]:[iRt]',
       'nt:[iRt]',
+      'no:[iR]',
     }
 <
   Restore のトリガーとなる、モードの遷移パターン。
@@ -236,7 +237,7 @@ restore.on_mode_change           *auto-input-switch.ja.restore.on_mode_change*
   イベントが発生した際に Restore が実行されます。
   
   デフォルト:
-    `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
+    Normal/Visual から Insert/Replace モード
 
 ------------------------------------------------------------------------------
 restore.on                                   *auto-input-switch.ja.restore.on*
@@ -303,8 +304,9 @@ match.enable                               *auto-input-switch.ja.match.enable*
 match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
   ⇢  デフォルト: >lua
     {
-      '[nvV]:[iRt]',
+      '[nvV\\x16]:[iRt]',
       'nt:[iRt]',
+      'no:[iR]',
     }
 <
   Match のトリガーとなる、モードの遷移パターン。
@@ -312,7 +314,7 @@ match.on_mode_change               *auto-input-switch.ja.match.on_mode_change*
   イベントが発生した際に Match が実行されます。
   
   デフォルト:
-    `'[nvV]:[iR]'` (Normal/Visual から Insert/Replace モード)
+    Normal/Visual から Insert/Replace モード
 
 ------------------------------------------------------------------------------
 match.on                                       *auto-input-switch.ja.match.on*

@@ -56,11 +56,10 @@ With lazy.nvim (https://github.com/folke/lazy.nvim):
 ==============================================================================
 Configuration                           *auto-input-switch.nvim.configuration*
 
-This plugin is highly configurable.
 For all available options, see:
 
 - `auto-input-switch-options.txt` (https://github.com/amekusa/auto-input-switch.nvim/doc/auto-input-switch-options.txt)
-- `defaults.lua` (https://github.com/amekusa/auto-input-switch.nvim/lua/auto-input-switch/defaults.lua)
+- `auto-input-switch-defaults.txt` (https://github.com/amekusa/auto-input-switch.nvim/doc/auto-input-switch-defaults.txt)
 
 Example: enable Match for Japanese, Chinese, and Korean:
 >lua
@@ -100,17 +99,48 @@ With the default config:
   on macOS.)
 - Linux: ibus (https://github.com/ibus/ibus)
 
+If you have issues both with im-select and macism on macOS, there&#39;s a 
+workaround using AppleScript.
+
+AppleScript Setup:
+This is an example of Japanese setting specifically.
+It simulates pressing `Kana` key, which switches IME to Japanese.
+>lua
+  require('auto-input-switch').setup({
+    os_settings = {
+      macos = {
+        lang_inputs = {
+          Ja = {
+            'com.apple.inputmethod.Kotoeri.Japanese', -- Input source ID
+            '104', -- Key code to simulate
+            cmd_set = {
+              'osascript',
+              '-e',
+              'tell application "System Events" to key code %s'
+            }
+          }
+        }
+      }
+    }
+  })
+<
+
+You can apply this workaround to other languages too, with correct input 
+source ID and key code.
+
 ==============================================================================
 Changelog                                   *auto-input-switch.nvim.changelog*
+
+------------------------------------------------------------------------------
+v5.4.0                                         *auto-input-switch.nvim.v5-4-0*
+
+Added visual-block mode to the default patterns of `restore|match.on_mode_change`.
 
 ------------------------------------------------------------------------------
 v5.3.0                                         *auto-input-switch.nvim.v5-3-0*
 
 - AIS now works on `:terminal` buffers.
-- Added new options:
-  - `normalize.buftypes`
-  - `restore.buftypes`
-  - `match.buftypes`
+- Added new options: `normalize|restore|match.buftypes`
   - With `buftypes = { 'terminal' }`, the corresponding AIS feature is 
     automatically enabled on `:terminal` buffers.
 - Buffer flags are now updated automatically when the filetype changes.
@@ -162,7 +192,7 @@ Non-breaking Changes:
 
 - `popup.labels.*` simplified (accepts plain strings).
 - New options: `normalize.debounce`, `restore.debounce`, `match.debounce`, 
-  `*.buf_condition`.
+  `*.buf_condition`
 - New buffer-local commands:
   - `:AutoInputSwitchBuf on|off`
   - `:AutoInputSwitchBufNormalize on|off`

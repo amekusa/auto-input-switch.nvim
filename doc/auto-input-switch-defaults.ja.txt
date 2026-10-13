@@ -110,10 +110,11 @@
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Restore が実行されます。
         -- 
         -- デフォルト:
-        --   '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+        --   Normal/Visual から Insert/Replace モード
   
-        '[nvV]:[iRt]',
+        '[nvV\\x16]:[iRt]',
         'nt:[iRt]',
+        'no:[iR]',
       },
       on = nil, -- 'ModeChanged' に加え、Restore を実行するイベントを追加します。
         -- 参照: |events|
@@ -153,10 +154,11 @@
         -- `false` ではない場合、このパターンに該当する 'ModeChanged' イベントが発生した際に Match が実行されます。
         -- 
         -- デフォルト:
-        --   '[nvV]:[iR]' (Normal/Visual から Insert/Replace モード)
+        --   Normal/Visual から Insert/Replace モード
   
-        '[nvV]:[iRt]',
+        '[nvV\\x16]:[iRt]',
         'nt:[iRt]',
+        'no:[iR]',
       },
       on = nil, -- 'ModeChanged' に加え、Match を実行するイベントを追加します。
         -- 参照: |events|

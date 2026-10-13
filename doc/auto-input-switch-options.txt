@@ -224,8 +224,9 @@ restore.enable                              *auto-input-switch.restore.enable*
 restore.on_mode_change              *auto-input-switch.restore.on_mode_change*
   ⇢  default: >lua
     {
-      '[nvV]:[iRt]',
+      '[nvV\\x16]:[iRt]',
       'nt:[iRt]',
+      'no:[iR]',
     }
 <
   Mode transition patterns that trigger Restore.
@@ -299,8 +300,9 @@ match.enable                                  *auto-input-switch.match.enable*
 match.on_mode_change                  *auto-input-switch.match.on_mode_change*
   ⇢  default: >lua
     {
-      '[nvV]:[iRt]',
+      '[nvV\\x16]:[iRt]',
       'nt:[iRt]',
+      'no:[iR]',
     }
 <
   Mode transition patterns that trigger Match.
@@ -308,7 +310,7 @@ match.on_mode_change                  *auto-input-switch.match.on_mode_change*
   one of these patterns.
   
   Default:
-    `'[nvV]:[iR]'` (From Normal/Visual to Insert/Replace mode)
+    From Normal/Visual to Insert/Replace mode
 
 ------------------------------------------------------------------------------
 match.on                                          *auto-input-switch.match.on*
