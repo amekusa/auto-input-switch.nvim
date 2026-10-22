@@ -43,6 +43,23 @@ log:
         * Linux/macOS: `~/.local/state/nvim/auto-input-switch.log`
         *     Windows: `~/AppData/Local/nvim-data/auto-input-switch.log`
 
+alert:
+  level:
+    __default: 1
+    __desc:
+      en: |-
+        Alert verbosity level.
+          * 0 = No alerts
+          * 1 = Errors
+          * 2 = Errors and warnings
+          * 3 = Errors, warnings, and info
+      js: |-
+        アラート表示のレベル。
+          * 0 = アラート無し
+          * 1 = Error
+          * 2 = Error, Warning
+          * 3 = Error, Warning, Info
+
 prefix:
   __default: AutoInputSwitch
   __desc:
